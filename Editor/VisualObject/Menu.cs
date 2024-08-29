@@ -33,6 +33,7 @@ namespace Recipe.Editor.VisualObject
         }
 
         private static bool init = false;
+        private static PictureBox callVO;
 
         /*Menu items*/
 
@@ -79,7 +80,14 @@ namespace Recipe.Editor.VisualObject
 
         private static void CloneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.InsertItem = (Editor.CurrentVObj.Tag as ItemObject).Item;
+            if (Editor.CurrentVObj != null) //one vo (same as item inserting)
+            {
+                Editor.InsertItem = (Editor.CurrentVObj.Tag as ItemObject).Item;
+            }
+            else //a massive cloning
+            {
+                Editor.CloneVOsStart(callVO);
+            }
         }
 
         private static void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -89,10 +97,11 @@ namespace Recipe.Editor.VisualObject
 
         /**/
 
-        public static void ShowMenu(Point location)
+        public static void ShowMenu(PictureBox sender, Point location)
         {
             bool en = Editor.CurrentVObj != null;
             link.Enabled = en;
+            callVO = sender;
 
             ObjMenu.Show(location);
         }

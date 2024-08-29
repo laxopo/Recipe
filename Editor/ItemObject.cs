@@ -18,6 +18,8 @@ namespace Recipe.Editor
         public List<int> LinksOut { get; set; }
 
         [JsonIgnore]
+        public int OldID { get; set; }
+        [JsonIgnore]
         public List<ItemObject> LinkInTags { get; set; }
         [JsonIgnore]
         public List<ItemObject> LinkOutTags { get; set; }
@@ -39,6 +41,7 @@ namespace Recipe.Editor
             LinkOutTags = new List<ItemObject>();
             LinkInHLs = new List<ItemObject>();
             LinkOutHLs = new List<ItemObject>();
+            OldID = -1;
         }
     }
 }

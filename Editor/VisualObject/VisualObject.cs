@@ -88,7 +88,7 @@ namespace Recipe.Editor.VisualObject
                         if (!Editor.linkProcess) //context menu
                         {
                             Editor.SelectVO(sender);
-                            Menu.ShowMenu(Cursor.Position);
+                            Menu.ShowMenu(sender as PictureBox, Cursor.Position);
                         }
                         break;
                 }
@@ -166,10 +166,7 @@ namespace Recipe.Editor.VisualObject
 
         public static void LocateLabels(Container ct)
         {
-            ct.Label.Location = new Point(
-                ct.Icon.Left + IconSize / 2 - ct.Label.Width / 2,
-                ct.Icon.Top + IconSize
-                );
+            LocateLabels(ct.Label);
         }
 
         public static void LocateLabels(Label label)

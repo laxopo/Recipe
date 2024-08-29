@@ -486,7 +486,7 @@ namespace Recipe
         private void pictureBoxArea_MouseEnter(object sender, EventArgs e)
         {
             //Cursor style
-            if (Editor.Editor.InsertItem != null)
+            if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning)
             {
                 insert = true;
                 pictureBoxArea.Cursor = GetCursor();
@@ -495,7 +495,7 @@ namespace Recipe
 
         private void pictureBoxArea_MouseClick(object sender, MouseEventArgs e)
         {
-            if (!Editor.Editor.linkProcess && !move)
+            if (!Editor.Editor.linkProcess && !move && !insert)
             {
                 Editor.Editor.DeselectVOs();
             }
@@ -503,7 +503,7 @@ namespace Recipe
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    if (Editor.Editor.InsertItem != null) //insert new item from the library
+                    if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert new item from the library
                     {
                         Editor.Editor.CreateVisualObject(e.Location);
 
@@ -517,9 +517,10 @@ namespace Recipe
                     {
                         Editor.Editor.LinkingDisable();
                     }
-                    else if (Editor.Editor.InsertItem != null) //Cancel inserting
+                    else if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //Cancel inserting
                     {
                         Editor.Editor.InsertItem = null;
+                        Editor.Editor.CloneVOsFinish();
                         insert = false;
                         pictureBoxArea.Cursor = GetCursor();
                     }
@@ -541,7 +542,7 @@ namespace Recipe
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
-                    if (!Editor.Editor.linkProcess)
+                    if (!Editor.Editor.linkProcess && !insert)
                     {
                         mouseDown = e.Location;
                         rectSel = true;
@@ -563,22 +564,30 @@ namespace Recipe
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
-                    int dx = Math.Abs(mouseDown.X - e.Location.X);
-                    int dy = Math.Abs(mouseDown.Y - e.Location.Y);
-                    if (dx > 5 || dy > 5)
+                    if (rectSel)
                     {
-                        if (rectSel)
+                        int dx = Math.Abs(mouseDown.X - e.Location.X);
+                        int dy = Math.Abs(mouseDown.Y - e.Location.Y);
+                        if (dx > 5 || dy > 5)
                         {
                             rescSelEv = true;
                             Editor.Editor.RectangleSelectDraw(mouseDown, e.Location);
                         }
                     }
+                        
                     break;
 
                 case MouseButtons.Middle: //area move
                     int x = posDown.X + Cursor.Position.X - mouseDown.X;
                     int y = posDown.Y + Cursor.Position.Y - mouseDown.Y;
                     AreaMove(x, y, false);
+                    break;
+
+                case MouseButtons.None: //clone massive
+                    if (insert && Editor.Editor.Cloning)
+                    {
+                        Editor.Editor.CloneBoundsDraw(e.Location);
+                    }
                     break;
             }
         }
@@ -587,7 +596,7 @@ namespace Recipe
         {
             switch (e.Button)
             {
-                case MouseButtons.Left:
+                case MouseButtons.Left: //rectSelect
                     if (rescSelEv)
                     {
                         Editor.Editor.RectangleSelectVOs();
@@ -596,7 +605,7 @@ namespace Recipe
                     }
                     break;
 
-                case MouseButtons.Middle:
+                case MouseButtons.Middle: //area move
                     move = false;
                     pictureBoxArea.Cursor = GetCursor();
                     break;
