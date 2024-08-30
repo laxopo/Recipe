@@ -18,10 +18,10 @@ namespace Recipe.Editor
         public static Size AreaSizeMax = new Size(30000, 30000);
 
         public static Library.Item InsertItem; //for inserting and one vo cloning
-        public static List<ItemObject> ItemObjects = new List<ItemObject>();
+        public static List<ItemObject> IODataBase = new List<ItemObject>();
         public static PictureBox CurrentVObj;
         public static PictureBox Area;
-        public static Button AreaResize;
+        public static Button AreaResizeButton;
         public static bool linkProcess;
         public static PropEditor propEditor;
         public static Config Configuration;
@@ -29,11 +29,13 @@ namespace Recipe.Editor
         private static bool retraceRq = false;
         private static int idCount = 0;
 
-        //Rectangle select
-        private static List<PictureBox> selectedVOs = new List<PictureBox>();
-        private static List<Point> locationVOs = new List<Point>();
+        //Selecting VOs
+        private static List<VOBuf> selectedVOs = new List<VOBuf>();
         private static Rectangle rectSelect;
+        private static Rectangle selBox;
+        private static Point selBoxStartPos;
         private static bool rsEnable;
+        private static bool selBoxEnable;
 
         //VOs cloning
         public static bool Cloning;
@@ -88,11 +90,11 @@ namespace Recipe.Editor
                 }
                 else if (ctrl.Name == "buttonAreaResize")
                 {
-                    AreaResize = ctrl as Button;
+                    AreaResizeButton = ctrl as Button;
                 }
             }
 
-            if (Area == null || AreaResize == null)
+            if (Area == null || AreaResizeButton == null)
             {
                 throw
                     new Exception("Editor control not found");
@@ -112,10 +114,10 @@ namespace Recipe.Editor
             Changed = false;
             idCount = 0;
             InsertItem = null;
-            ItemObjects.Clear();
+            IODataBase.Clear();
             Area.Controls.Clear();
             Area.Location = new Point(0, 0);
-            AreaResize.Location = new Point(728, 383);
+            AreaResizeButton.Location = new Point(728, 383);
             RetraceArea();
         }
 
@@ -161,16 +163,16 @@ namespace Recipe.Editor
             //Prepare area
             Area.Controls.Clear();
             Area.Location = new Point(0, 0);
-            AreaResize.Left = format.SheetSize.Width;
-            AreaResize.Top = format.SheetSize.Height;
+            AreaResizeButton.Left = format.SheetSize.Width;
+            AreaResizeButton.Top = format.SheetSize.Height;
 
             //Init database
-            ItemObjects = format.Data;
+            IODataBase = format.Data;
             idCount = format.Count;
 
             //Load IOs & VOs and show VOs
             GenerateLinks();
-            foreach (ItemObject iobj in ItemObjects)
+            foreach (ItemObject iobj in IODataBase)
             {
                 CreateVO(iobj, iobj.Location);
             }
@@ -183,7 +185,7 @@ namespace Recipe.Editor
                 FileFormat = FileFormat,
                 Version = FileVersion,
                 SheetSize = Area.Size,
-                Data = ItemObjects,
+                Data = IODataBase,
                 Count = idCount
             };
 
@@ -207,7 +209,7 @@ namespace Recipe.Editor
             DeselectVOs();
         }
 
-        public static void CreateLink(PictureBox endVObj)
+        public static void CreateLink(PictureBox endVObj)//Linking, creates new links between iobjs
         {
             ItemObject beg = CurrentVObj.Tag as ItemObject;
             ItemObject end = endVObj.Tag as ItemObject;
@@ -250,7 +252,7 @@ namespace Recipe.Editor
                 return;
             }
 
-            foreach (ItemObject iobjBeg in ItemObjects)
+            foreach (ItemObject iobjBeg in IODataBase)
             {
                 Point beg = iobjBeg.Location;
 
@@ -409,6 +411,14 @@ namespace Recipe.Editor
                 gpx.DrawRectangle(pen, cloneRect);
             }
 
+            if (selBoxEnable)
+            {
+                Pen pen = new Pen(Color.Blue, 1);
+                float[] dashPattern = { 1, 1 };
+                pen.DashPattern = dashPattern;
+                gpx.DrawRectangle(pen, selBox);
+            }
+
             retraceRq = false;
         }
 
@@ -419,97 +429,100 @@ namespace Recipe.Editor
             var vobj = sender as PictureBox;
 
             //Select and HL this VO
-            if (!selectedVOs.Contains(vobj))
+            if (selectedVOs.Find(x => x.VO == vobj) == null)
             {
                 //unHL other VOs
-                foreach (PictureBox oth in selectedVOs)
+                foreach (VOBuf vob in selectedVOs)
                 {
+                    PictureBox oth = vob.VO;
                     HighLightVO(oth, false);
                 }
 
                 //Deselect all VOs
                 selectedVOs.Clear();
-                locationVOs.Clear();
 
                 //Selest this VO
-                selectedVOs.Add(vobj);
-                locationVOs.Add(vobj.Location);
+                selectedVOs.Add(new VOBuf(vobj));
                 HighLightVO(vobj, true);
 
                 //activate this VO
                 CurrentVObj = vobj;
                 propEditor.LoadItem();
+
+                SelectBoxShow();
             }
         }
 
         public static void DeselectVOs() //unHL all VOs and deactivate
         {
             //unHL all VOs
-            foreach (PictureBox vobj in selectedVOs)
+            foreach (VOBuf vob in selectedVOs)
             {
-                HighLightVO(vobj, false);
+                HighLightVO(vob.VO, false);
             }
 
             //Deselect all VOs
             selectedVOs.Clear();
-            locationVOs.Clear();
 
             //Deactivate VO
             CurrentVObj = null;
             propEditor.LoadItem();
+
+            SelectBoxHide();
         }
 
-        public static void RectangleSelectDraw(Point begin, Point end)
+        public static void RectangleSelectDraw(Point begin, Point end)//Draw rectangle
         {
-            
+            //get TL point of rectangle
             int dx = begin.X - end.X;
             int dy = begin.Y - end.Y;
-            int x1, x2, y1, y2;
+            int xl, yt;
 
             if (dx < 0)
             {
-                x1 = begin.X;
-                x2 = end.X;
+                xl = begin.X;
             }
             else
             {
-                x1 = end.X;
-                x2 = begin.X;
+                xl = end.X;
             }
             if (dy < 0)
             {
-                y1 = begin.Y;
-                y2 = end.Y;
+                yt = begin.Y;
             }
             else
             {
-                y1 = end.Y;
-                y2 = begin.Y;
+                yt = end.Y;
             }
 
-            rectSelect = new Rectangle(new Point(x1, y1), new Size(Math.Abs(dx), Math.Abs(dy)));
+            //create rectangle of selection
+            rectSelect = new Rectangle(new Point(xl, yt), new Size(Math.Abs(dx), Math.Abs(dy)));
 
             rsEnable = true;
             RetraceArea();
-        }//Draw rectangle
+        }
 
         public static void RectangleSelectVOs() //HL all VO in the rectangle bounds
         {
+            //deselect previous VOs
             DeselectVOs();
 
+            //Select VOs in the select bounds
             foreach (Control vobj in Area.Controls)
             {
                 if (vobj.Name == VisualObject.VisualObject.IconName)
                 {
-                    if (rectSelect.Contains(vobj.Location))
+                    Point voRB = new Point(vobj.Right, vobj.Bottom);
+                    if (rectSelect.Contains(vobj.Location) || rectSelect.Contains(voRB))
                     {
                         PictureBox pb = vobj as PictureBox;
                         HighLightVO(pb, true);
-                        selectedVOs.Add(pb);
-                        locationVOs.Add(pb.Location);
+                        selectedVOs.Add(new VOBuf(pb));
                     }
                 }
             }
+
+            SelectBoxShow();
 
             //Clear rectangle drawing
             rsEnable = false;
@@ -519,94 +532,75 @@ namespace Recipe.Editor
         public static void MoveSelectedVOs(int dx, int dy)
         {
             //check bounds
-            for (int i = 0; i < selectedVOs.Count; i++)
-            {
-                PictureBox icon = selectedVOs[i];
-
-                Label label = (selectedVOs[i].Tag as ItemObject).TagLabel;
-
-                var rf = locationVOs[i];
-                var pos = new Point(rf.X + dx, rf.Y + dy);
-
-                Point bound = new Point()
-                {
-                    X = Area.Width - icon.Width,
-                    Y = Area.Height - icon.Height - label.Height
-                };
-
-                if (pos.X < 0)
-                {
-                    dx += -pos.X;
-                }
-                else if (pos.X > bound.X)
-                {
-                    dx -= pos.X - bound.X;
-                }
-
-                if (pos.Y < 0)
-                {
-                    dy += -pos.Y;
-                }
-                else if (pos.Y > bound.Y)
-                {
-                    dy -= pos.Y - bound.Y;
-                }
-            }
+            selBox = RelocationLimiter(ref dx, ref dy, selBox, selBoxStartPos);
 
             //set new location
-            for (int i = 0; i < selectedVOs.Count; i++)
+            foreach (VOBuf vob in selectedVOs)
             {
-                PictureBox icon = selectedVOs[i];
-                Label label = (selectedVOs[i].Tag as ItemObject).TagLabel;
+                PictureBox icon = vob.VO;
 
-                var rf = locationVOs[i];
+                var rf = vob.Location;
                 var pos = new Point(rf.X + dx, rf.Y + dy);
 
-                icon.Location = pos;
-                label.Location = new Point(
-                    icon.Left + VisualObject.VisualObject.IconSize / 2 - label.Width / 2,
-                    icon.Top + VisualObject.VisualObject.IconSize);
+                VisualObject.VisualObject.LocateVO(icon, pos);
 
                 icon.BringToFront();
-                label.BringToFront();
+                (icon.Tag as ItemObject).TagLabel.BringToFront();
             }
         }
 
-        public static void ShiftVOs(int dx, int dy)
+        public static void AreaResize(Size sizeNew, bool vobjShift)
         {
-            foreach (Control icon in Area.Controls)
+            //select all VOs
+            DeselectVOs();
+            foreach (ItemObject iobj in IODataBase)
             {
-                if (icon.Name == VisualObject.VisualObject.IconName)
+                selectedVOs.Add(new VOBuf(iobj.TagIcon));
+            }
+            selBox = SelectedVOsBox();
+            selBoxStartPos = selBox.Location;
+
+            //limit new area size (fit to vobj array bounds if smaller)
+            if (vobjShift)
+            {
+                if (sizeNew.Width < selBox.Width + 2)
                 {
-                    Label label = (icon.Tag as ItemObject).TagLabel;
-
-                    var rf = icon.Location;
-                    var pos = new Point(rf.X + dx, rf.Y + dy);
-
-                    Point bound = new Point()
-                    {
-                        X = Area.Width - icon.Width,
-                        Y = Area.Height - icon.Height - label.Height
-                    };
-
-                    if (pos.X < 0)
-                    {
-                        dx += -pos.X;
-                    }
-
-                    if (pos.Y < 0)
-                    {
-                        dy += -pos.Y;
-                    }
+                    sizeNew.Width = selBox.Width + 2;
+                }
+                if (sizeNew.Height < selBox.Height + 2)
+                {
+                    sizeNew.Height = selBox.Height + 2;
+                }
+            }
+            else
+            {
+                if (sizeNew.Width < selBox.Right + 2)
+                {
+                    sizeNew.Width = selBox.Right + 2;
+                }
+                if (sizeNew.Height < selBox.Bottom + 2)
+                {
+                    sizeNew.Height = selBox.Bottom + 2;
                 }
             }
 
-            foreach (Control ctrl in Area.Controls)
+            //size and locatiod differentiation
+            int dx = sizeNew.Width - Area.Width;
+            int dy = sizeNew.Height - Area.Height;
+
+            //Resize an area
+            Area.Size = sizeNew;
+            AreaResizeButton.Location = (Point)Area.Size;
+
+            //Move VOs
+            if (vobjShift)
             {
-                var rf = ctrl.Location;
-                var pos = new Point(rf.X + dx, rf.Y + dy);
-                ctrl.Location = pos;
+                MoveSelectedVOs(dx, dy);
             }
+
+            //finish
+            Changed = true;
+            selectedVOs.Clear();
         }
 
         public static void FinishMovingVOs()
@@ -616,17 +610,19 @@ namespace Recipe.Editor
                 return;
             }
 
-            for (int i = 0; i < selectedVOs.Count; i++)
+            foreach (VOBuf vob in selectedVOs)
             {
-                locationVOs[i] = selectedVOs[i].Location;
+                vob.Location = vob.VO.Location;
             }
+
+            selBoxStartPos = selBox.Location;
         }
 
         public static void CancelMovingVOs()
         {
-            for (int i = 0; i < selectedVOs.Count; i++)
+            foreach (VOBuf vob in selectedVOs)
             {
-                selectedVOs[i].Location = locationVOs[i];
+                vob.VO.Location = vob.Location;
             }
         }
 
@@ -650,41 +646,17 @@ namespace Recipe.Editor
                 return;
             }
 
+            //do the normal insert
             if (selectedVOs.Count == 1)
             {
-                InsertItem = (selectedVOs[0].Tag as ItemObject).Item;
+                InsertItem = (selectedVOs[0].VO.Tag as ItemObject).Item;
                 Cloning = false;
                 return;
             }
 
-            //get cloning bounds
-
-            int xl = selectedVOs[0].Left;
-            int xr = selectedVOs[0].Left;
-            int yt = selectedVOs[0].Top;
-            int yb = selectedVOs[0].Top;
-            foreach (PictureBox vo in selectedVOs)
-            {
-                if (vo.Left < xl)
-                {
-                    xl = vo.Left;
-                }
-                if (vo.Left + vo.Width > xr)
-                {
-                    xr = vo.Left + vo.Width;
-                }
-                if (vo.Top < yt)
-                {
-                    yt = vo.Top;
-                }
-                Label lbl = (vo.Tag as ItemObject).TagLabel;
-                if (vo.Top + vo.Height + lbl.Height > yb)
-                {
-                    yb = vo.Top + vo.Height + lbl.Height;
-                }
-            }
-            cloneRect = new Rectangle(0, 0, xr - xl, yb - yt);
-            cloneOffset = new Point(xl - sender.Left, yt - sender.Top);
+            //get the bounds of cloning massive
+            cloneRect = SelectedVOsBox();
+            cloneOffset = new Point(cloneRect.X - sender.Left, cloneRect.Y - sender.Top);
 
             Cloning = true;
             cloneSenderVO = sender;
@@ -705,9 +677,9 @@ namespace Recipe.Editor
 
         public static void RemoveVOs()
         {
-            for (int i = 0; i < selectedVOs.Count; i++)
+            foreach (VOBuf vob in selectedVOs)
             {
-                var delIObj = selectedVOs[i].Tag as ItemObject;
+                var delIObj = vob.VO.Tag as ItemObject;
 
                 if (CurrentVObj == delIObj.TagIcon)
                 {
@@ -729,11 +701,10 @@ namespace Recipe.Editor
                 //delete VO and IO record
                 Area.Controls.Remove(delIObj.TagIcon);
                 Area.Controls.Remove(delIObj.TagLabel);
-                ItemObjects.Remove(delIObj);
+                IODataBase.Remove(delIObj);
             }
 
             selectedVOs.Clear();
-            locationVOs.Clear();
 
             //Update area
             RetraceArea();
@@ -759,7 +730,7 @@ namespace Recipe.Editor
             if (createNew)
             {
                 //Create IO record
-                ItemObjects.Add(new ItemObject()
+                IODataBase.Add(new ItemObject()
                 {
                     Location = location,
                     Item = item,
@@ -769,8 +740,8 @@ namespace Recipe.Editor
                 });
  
                 //Create VO-IO reference
-                ct.Icon.Tag = ItemObjects.Last();
-                ct.Label.Tag = ItemObjects.Last();
+                ct.Icon.Tag = IODataBase.Last();
+                ct.Label.Tag = IODataBase.Last();
 
                 //Set an insert event flags
                 InsertItem = null;
@@ -790,7 +761,7 @@ namespace Recipe.Editor
                 ct.Icon, 
                 ct.Label
             });
-            VisualObject.VisualObject.LocateLabels(ct);
+            VisualObject.VisualObject.LabelPosUpdate(ct.Label);
         }
 
         private static void CloneVOs(Point location)
@@ -798,8 +769,10 @@ namespace Recipe.Editor
             clonedIObjs.Clear();
 
             //Generate VOs & IOs
-            foreach (PictureBox vobjSrc in selectedVOs)
+            foreach (VOBuf vob in selectedVOs)
             {
+                PictureBox vobjSrc = vob.VO;
+
                 //Calc new IO location
                 Point iObjPos = new Point()
                 {
@@ -813,7 +786,7 @@ namespace Recipe.Editor
                 CreateVO(iobjSrc, iObjPos);
 
                 //Write cloning data to the new IO, registry new IO as a cloned
-                var iobjNew = ItemObjects.Last();
+                var iobjNew = IODataBase.Last();
                 iobjNew.OldID = iobjSrc.ID;
                 iobjNew.LinksIn = new List<int>(iobjSrc.LinksIn);
                 iobjNew.LinksOut = new List<int>(iobjSrc.LinksOut);
@@ -869,7 +842,7 @@ namespace Recipe.Editor
             }
             else
             {
-                iObjList = ItemObjects;
+                iObjList = IODataBase;
             }
 
             //Generate cross-links by IDs (or old IDs)
@@ -883,11 +856,11 @@ namespace Recipe.Editor
                     ItemObject iobjEnd;
                     if (Cloning) 
                     {
-                        iobjEnd = ItemObjects.Find(x => x.OldID == idEnd);
+                        iobjEnd = IODataBase.Find(x => x.OldID == idEnd);
                     }
                     else
                     {
-                        iobjEnd = ItemObjects.Find(x => x.ID == idEnd);
+                        iobjEnd = IODataBase.Find(x => x.ID == idEnd);
                     }
                     
                     //if ID is defined & valid - create cross-link, else - delete this ID
@@ -929,6 +902,114 @@ namespace Recipe.Editor
                     iobj.OldID = -1;
                 }
             }
+        }
+
+        private static Rectangle SelectedVOsBox()//inside the area
+        {
+            int xl = -1, xr = -1, yt = -1, yb = -1;
+
+            foreach (VOBuf vob in selectedVOs)
+            {
+                PictureBox icon = vob.VO;
+                Label label = (icon.Tag as ItemObject).TagLabel;
+
+                //get VO bound box
+                Point lt = new Point (0, icon.Top);
+                if (label.Left < icon.Left)
+                {
+                    lt.X = label.Left;
+                }
+                else
+                {
+                    lt.X = icon.Left;
+                }
+
+                Point rb = new Point(0, label.Bottom);
+                if (label.Right > icon.Right)
+                {
+                    rb.X = label.Right;
+                }
+                else
+                {
+                    rb.X = icon.Right;
+                }
+
+                //Extend the bounds
+                if (lt.X < xl || xl == -1)
+                {
+                    xl = lt.X;
+                }
+                if (rb.X > xr || xr == -1)
+                {
+                    xr = rb.X;
+                }
+                if (lt.Y < yt || yt == -1)
+                {
+                    yt = lt.Y;
+                }
+                if (rb.Y > yb || yb == -1)
+                {
+                    yb = rb.Y;
+                }
+            }
+
+            return new Rectangle(xl - 2, yt - 2, xr - xl + 4, yb - yt + 4);
+        }
+
+        private static void SelectBoxShow()
+        {
+            selBox = SelectedVOsBox();
+            selBoxStartPos = selBox.Location;
+            selBoxEnable = true;
+        }
+
+        private static void SelectBoxHide()
+        {
+            selBoxEnable = false;
+            RetraceArea();
+        }
+
+        private static Rectangle RelocationLimiter(ref int dx, ref int dy, Rectangle box, Point boxRefPos)
+        {
+            return RelocationLimiter(ref dx, ref dy, box, boxRefPos, Area.ClientRectangle);
+        }
+
+        private static Rectangle RelocationLimiter(ref int dx, ref int dy, Rectangle box, Point boxRefPos, Rectangle bounds)
+        {
+            if (dx != 0 || dy != 0)
+            {
+
+            }
+            //limits dx|dy (relative to boxRefPos) if the resulting box are out of the bounds
+            Rectangle boxBuf = box;
+            boxBuf.Location = GetOffsetPoint(boxRefPos, dx, dy);
+
+            if (boxBuf.Left < 0)
+            {
+                dx -= boxBuf.Left;
+            }
+            else if (boxBuf.Right > bounds.Width)
+            {
+                dx -= boxBuf.Right - bounds.Width;
+            }
+            if (boxBuf.Top < 0)
+            {
+                dy -= boxBuf.Top;
+            }
+            else if (boxBuf.Bottom > bounds.Height)
+            {
+                dy -= boxBuf.Bottom - bounds.Height;
+            }
+
+            box.Location = GetOffsetPoint(boxRefPos, dx, dy);
+
+            return box;
+        }
+
+        private static Point GetOffsetPoint(Point reference, int dx, int dy)
+        {
+            reference.Offset(dx, dy);
+            return reference;
         }
     }
 }

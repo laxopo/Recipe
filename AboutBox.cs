@@ -28,10 +28,13 @@ namespace Recipe
             "Add multiselect",
             "Add drag and drop",
             "Add opening file from the command line",
-            "Add multiselect delete",
+            "Add multiselect deleting",
             "Fix deselecting objects during area moving",
             "Fix area redraw after window restoring",
-            "Change AboutBox style"
+            "Change AboutBox style",
+            "",
+            "v.1.1:",
+            "Add multiselect cloning"
         };
 
         private void ShowHistory()

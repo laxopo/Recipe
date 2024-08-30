@@ -164,17 +164,19 @@ namespace Recipe.Editor.VisualObject
             return new Container(icon, label);
         }
 
-        public static void LocateLabels(Container ct)
-        {
-            LocateLabels(ct.Label);
-        }
-
-        public static void LocateLabels(Label label)
+        public static void LabelPosUpdate(Label label)
         {
             PictureBox icon = (label.Tag as ItemObject).TagIcon;
+            LocateVO(icon, icon.Location);
+        }
+
+        public static void LocateVO(PictureBox vObj, Point location)
+        {
+            vObj.Location = location;
+            Label label = (vObj.Tag as ItemObject).TagLabel;
             label.Location = new Point(
-                icon.Left + IconSize / 2 - label.Width / 2,
-                icon.Top + IconSize
+                vObj.Left + vObj.Width / 2 - label.Width / 2,
+                vObj.Top + vObj.Height
                 );
         }
     }

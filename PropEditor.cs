@@ -103,7 +103,7 @@ namespace Recipe
             {
                 CurrentIObj.Item.Name = textBoxName.Text;
                 CurrentIObj.TagLabel.Text = textBoxName.Text;
-                Editor.VisualObject.VisualObject.LocateLabels(CurrentIObj.TagLabel);
+                Editor.VisualObject.VisualObject.LabelPosUpdate(CurrentIObj.TagLabel);
                 Editor.Editor.RetraceArea();
 
                 Editor.Editor.Changed = true;

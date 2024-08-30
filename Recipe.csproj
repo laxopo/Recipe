@@ -66,6 +66,7 @@
     <Compile Include="Editor\VisualObject\Menu.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\ItemObject.cs" />
+    <Compile Include="Editor\VOBuf.cs" />
     <Compile Include="FormLibraryImport.cs">
       <SubType>Form</SubType>
     </Compile>

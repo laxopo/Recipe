@@ -163,7 +163,7 @@ namespace Recipe
                     var path = Path.Combine(Routine.Directories.Library, selectedItem.IconPath);
 
                     //check if the item is used in the current project
-                    if (Editor.Editor.ItemObjects.Find(x => x.Item.IconPath == selectedItem.IconPath) != null)
+                    if (Editor.Editor.IODataBase.Find(x => x.Item.IconPath == selectedItem.IconPath) != null)
                     {
                         if (MessageBox.Show("This item is used in the project. Remove it from the library?", 
                             "Item Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
@@ -203,7 +203,7 @@ namespace Recipe
                         foreach (var file in files)
                         {
                             var item = Library.Directory.TrimPath(file);
-                            if (Editor.Editor.ItemObjects.Find(x => x.Item.IconPath == item) != null)
+                            if (Editor.Editor.IODataBase.Find(x => x.Item.IconPath == item) != null)
                             {
                                 if (MessageBox.Show("This branch contains the items used in the project. " +
                                     "Continue deleting branch?", "Branch Delete", 

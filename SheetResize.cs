@@ -15,17 +15,13 @@ namespace Recipe
         public SheetResize(Size size)
         {
             InitializeComponent();
-            buf = size;
             textBoxWidth.Text = size.Width.ToString();
             textBoxHeight.Text = size.Height.ToString();
         }
 
-        public int dx;
-        public int dy;
+        public Size newSize;
         public bool shift;
 
-
-        private Size buf;
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
@@ -53,8 +49,7 @@ namespace Recipe
             }
             else
             {
-                dx = w - buf.Width;
-                dy = h - buf.Height;
+                newSize = new Size(w, h);
                 DialogResult = DialogResult.OK;
             }
         }

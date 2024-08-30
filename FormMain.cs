@@ -54,15 +54,7 @@ namespace Recipe
             SheetResize rsz = new SheetResize(pictureBoxArea.Size);
             if (rsz.ShowDialog() == DialogResult.OK)
             {
-                buttonAreaResize.Left += rsz.dx;
-                buttonAreaResize.Top += rsz.dy;
-                if (rsz.shift)
-                {
-                    Editor.Editor.ShiftVOs(rsz.dx, rsz.dy);
-                }
-
-                Editor.Editor.Changed = true;
-                AreaResize();
+                Editor.Editor.AreaResize(rsz.newSize, rsz.shift);
                 FitTheControls();
             }
         }
@@ -151,7 +143,7 @@ namespace Recipe
             }
 
             Editor.Editor.NewSheet();
-            AreaResize();
+            AreaSizeUpdate();
             FitTheControls();
         }
 
@@ -166,7 +158,7 @@ namespace Recipe
             {
                 Editor.Editor.LoadSheet(openFileDialogProj.FileName);
             }
-            AreaResize();
+            AreaSizeUpdate();
             FitTheControls();
         }
 
@@ -417,7 +409,7 @@ namespace Recipe
             Editor.Editor.RetraceArea();
         }
 
-        private void AreaResize()
+        private void AreaSizeUpdate()
         {
             pictureBoxArea.Width = buttonAreaResize.Left - pictureBoxArea.Left;
             pictureBoxArea.Height = buttonAreaResize.Top - pictureBoxArea.Top;
@@ -493,48 +485,6 @@ namespace Recipe
             }
         }
 
-        private void pictureBoxArea_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (!Editor.Editor.linkProcess && !move && !insert)
-            {
-                Editor.Editor.DeselectVOs();
-            }
-
-            switch (e.Button)
-            {
-                case MouseButtons.Left:
-                    if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert new item from the library
-                    {
-                        Editor.Editor.CreateVisualObject(e.Location);
-
-                        insert = false;
-                        pictureBoxArea.Cursor = GetCursor();
-                    }
-                    break;
-
-                case MouseButtons.Right:
-                    if (Editor.Editor.linkProcess) //Cancel linking
-                    {
-                        Editor.Editor.LinkingDisable();
-                    }
-                    else if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //Cancel inserting
-                    {
-                        Editor.Editor.InsertItem = null;
-                        Editor.Editor.CloneVOsFinish();
-                        insert = false;
-                        pictureBoxArea.Cursor = GetCursor();
-                    }
-                    else //Editor context menu
-                    {
-                        Point loc = e.Location;
-                        loc.X += Left;
-                        loc.Y += Top;
-                        contextMenuStripEditor.Show(Cursor.Position);
-                    }
-                    break;
-            }
-        }
-
         private Point mouseDown;
         private Point posDown;
         private void pictureBoxArea_MouseDown(object sender, MouseEventArgs e)
@@ -561,6 +511,7 @@ namespace Recipe
 
         private void pictureBoxArea_MouseMove(object sender, MouseEventArgs e)
         {
+            labelCoordinates.Text = "X:" + e.X + " Y:" + e.Y;
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
@@ -594,9 +545,21 @@ namespace Recipe
 
         private void pictureBoxArea_MouseUp(object sender, MouseEventArgs e)
         {
+            if (!Editor.Editor.linkProcess && !move && !insert)
+            {
+                Editor.Editor.DeselectVOs();
+            }
+
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
+                    if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert new item from the library
+                    {
+                        Editor.Editor.CreateVisualObject(e.Location);
+
+                        insert = false;
+                        pictureBoxArea.Cursor = GetCursor();
+                    }
                     if (rescSelEv)
                     {
                         Editor.Editor.RectangleSelectVOs();
@@ -608,6 +571,27 @@ namespace Recipe
                 case MouseButtons.Middle: //area move
                     move = false;
                     pictureBoxArea.Cursor = GetCursor();
+                    break;
+
+                case MouseButtons.Right:
+                    if (Editor.Editor.linkProcess) //Cancel linking
+                    {
+                        Editor.Editor.LinkingDisable();
+                    }
+                    else if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //Cancel inserting
+                    {
+                        Editor.Editor.InsertItem = null;
+                        Editor.Editor.CloneVOsFinish();
+                        insert = false;
+                        pictureBoxArea.Cursor = GetCursor();
+                    }
+                    else //Editor context menu
+                    {
+                        Point loc = e.Location;
+                        loc.X += Left;
+                        loc.Y += Top;
+                        contextMenuStripEditor.Show(Cursor.Position);
+                    }
                     break;
             }
         }
@@ -662,7 +646,7 @@ namespace Recipe
 
                 Editor.Editor.Changed = true;
 
-                AreaResize();
+                AreaSizeUpdate();
             }
         }
 
@@ -696,7 +680,7 @@ namespace Recipe
             /*TEST*/
             string[] args = { 
             "",
-            @"C:\Users\Barii\Desktop\schematics\CircuitBoards.json"
+            @"C:\Users\Barii\Desktop\schematics\Titanium.json"
             };
 
             //string[] args = Environment.GetCommandLineArgs();
@@ -710,7 +694,7 @@ namespace Recipe
                         Close();
                     }
 
-                    AreaResize();
+                    AreaSizeUpdate();
                     FitTheControls();
                 }
             }
@@ -744,7 +728,7 @@ namespace Recipe
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
             Editor.Editor.LoadSheet(files[0]);
 
-            AreaResize();
+            AreaSizeUpdate();
             FitTheControls();
         }
 

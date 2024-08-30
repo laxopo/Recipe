@@ -56,6 +56,7 @@ namespace Recipe
             this.vScrollBarEditor = new System.Windows.Forms.VScrollBar();
             this.toolTipBAreaResz = new System.Windows.Forms.ToolTip(this.components);
             this.saveFileDialogSnapshot = new System.Windows.Forms.SaveFileDialog();
+            this.labelCoordinates = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArea)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.panelEditor.SuspendLayout();
@@ -73,7 +74,6 @@ namespace Recipe
             this.pictureBoxArea.TabStop = false;
             this.pictureBoxArea.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.pictureBoxArea_LoadCompleted);
             this.pictureBoxArea.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBoxArea_Paint);
-            this.pictureBoxArea.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBoxArea_MouseClick);
             this.pictureBoxArea.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBoxArea_MouseDown);
             this.pictureBoxArea.MouseEnter += new System.EventHandler(this.pictureBoxArea_MouseEnter);
             this.pictureBoxArea.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBoxArea_MouseMove);
@@ -278,12 +278,23 @@ namespace Recipe
     "f|WMF|*.wmf";
             this.saveFileDialogSnapshot.Title = "Save The Snapshot As";
             // 
+            // labelCoordinates
+            // 
+            this.labelCoordinates.AutoSize = true;
+            this.labelCoordinates.BackColor = System.Drawing.Color.Transparent;
+            this.labelCoordinates.Location = new System.Drawing.Point(691, 9);
+            this.labelCoordinates.Name = "labelCoordinates";
+            this.labelCoordinates.Size = new System.Drawing.Size(42, 13);
+            this.labelCoordinates.TabIndex = 5;
+            this.labelCoordinates.Text = "X:0 Y:0";
+            // 
             // FormMain
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(795, 465);
+            this.Controls.Add(this.labelCoordinates);
             this.Controls.Add(this.vScrollBarEditor);
             this.Controls.Add(this.hScrollBarEditor);
             this.Controls.Add(this.panelEditor);
@@ -336,6 +347,7 @@ namespace Recipe
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialogSnapshot;
+        private System.Windows.Forms.Label labelCoordinates;
     }
 }
 
