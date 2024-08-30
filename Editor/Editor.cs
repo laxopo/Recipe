@@ -168,38 +168,12 @@ namespace Recipe.Editor
             ItemObjects = format.Data;
             idCount = format.Count;
 
-            //Generate iobj links
-            foreach (ItemObject iobjBeg in ItemObjects) //Get the beginning iobj
-            {
-                for (int i = iobjBeg.LinksOut.Count - 1; i > -1; i--)  //Get id of the ending iobj
-                {
-                    int idEnd = iobjBeg.LinksOut[i];
-                    ItemObject iobjEnd = ItemObjects.Find(x => x.ID == idEnd); //Get the ending iobj
-                    if (iobjEnd == null)
-                    {
-                        iobjBeg.LinksOut.RemoveAt(i);
-                    }
-                    else
-                    {
-                        iobjBeg.LinkOutTags.Add(iobjEnd);
-                        iobjEnd.LinkInTags.Add(iobjBeg);
-                    }
-                }
-            }
-
-            //Generate visual objects
+            //Load IOs & VOs and show VOs
+            GenerateLinks();
             foreach (ItemObject iobj in ItemObjects)
             {
-                var ct = VisualObject.VisualObject.GenerateVO(iobj.Item, iobj.Location);
-                ct.Icon.Tag = iobj;
-                ct.Label.Tag = iobj;
-                iobj.TagIcon = ct.Icon;
-                iobj.TagLabel = ct.Label;
-                Area.Controls.Add(ct.Icon);
-                Area.Controls.Add(ct.Label);
-                VisualObject.VisualObject.LocateLabels(ct);
+                CreateVO(iobj, iobj.Location);
             }
-
             RetraceArea();
         }
 
@@ -660,104 +634,13 @@ namespace Recipe.Editor
         {
             if (Cloning) //massive cloning
             {
-                clonedIObjs.Clear();
-
-                //Generate VOs & IOs
-                foreach (PictureBox vobj in selectedVOs)
-                {
-                    Point pos = new Point()
-                    {
-                        X = vobj.Left + location.X - cloneSenderVO.Left,
-                        Y = vobj.Top + location.Y - cloneSenderVO.Top,
-                    };
-                    var iobj = vobj.Tag as ItemObject;
-
-                    //CreateVO(iobj.Item.Clone() as Library.Item, pos);
-                    var item = iobj.Item.Clone() as Library.Item;
-                    var ct = VisualObject.VisualObject.GenerateVO(item, pos);
-
-                    ItemObjects.Add(new ItemObject()
-                    {
-                        Location = pos,
-                        Item = item,
-                        ID = idCount++,
-                        OldID = iobj.ID, //
-                        LinksIn = new List<int>(iobj.LinksIn), //
-                        LinksOut = new List<int>(iobj.LinksOut), //
-                        TagIcon = ct.Icon,
-                        TagLabel = ct.Label
-                    });
-
-                    ct.Icon.Tag = ItemObjects.Last();
-                    ct.Label.Tag = ItemObjects.Last();
-                    clonedIObjs.Add(ItemObjects.Last());//
-
-                    InsertItem = null;
-                    Changed = true;
-
-                    Area.Controls.AddRange(new Control[] {
-                        ct.Icon,
-                        ct.Label
-                    });
-
-                    VisualObject.VisualObject.LocateLabels(ct);
-                }
-
-                //Generate links (ch: clonedIObjs; x.OldID
-                foreach (ItemObject iobjBeg in clonedIObjs) //Get the beginning iobj
-                {
-                    for (int i = iobjBeg.LinksOut.Count - 1; i > -1; i--)  //Get id of the ending iobj
-                    {
-                        int idEnd = iobjBeg.LinksOut[i];
-                        ItemObject iobjEnd = ItemObjects.Find(x => x.OldID == idEnd); //Get the ending iobj
-                        if (iobjEnd == null || idEnd == -1)
-                        {
-                            iobjBeg.LinksOut.RemoveAt(i);
-                        }
-                        else
-                        {
-                            iobjBeg.LinkOutTags.Add(iobjEnd);
-                            iobjEnd.LinkInTags.Add(iobjBeg);
-                        }
-                    }
-                }
-
-                //Update links IDs
-                foreach (ItemObject iobjBeg in clonedIObjs)
-                {
-                    iobjBeg.LinksIn.Clear();
-                    iobjBeg.LinksOut.Clear();
-
-                    foreach (ItemObject link in iobjBeg.LinkOutTags)
-                    {
-                        iobjBeg.LinksOut.Add(link.ID);
-                    }
-
-                    foreach (ItemObject link in iobjBeg.LinkInTags)
-                    {
-                        iobjBeg.LinksIn.Add(link.ID);
-                    }
-                }
-
-                //Remove old IDs
-                foreach (ItemObject iobj in clonedIObjs)
-                {
-                    iobj.OldID = -1;
-                }
-
-                //
-                CloneVOsFinish();
+                CloneVOs(location);
             }
             else //one
             {
                 CreateVO(InsertItem.Clone() as Library.Item, location);
             }
         }
-
-        /*public static void CreateVisualObject(Library.Item item, Point location)
-        {
-            CreateVO(item.Clone() as Library.Item, location);
-        }*/
 
         public static void CloneVOsStart(PictureBox sender)
         {
@@ -858,31 +741,88 @@ namespace Recipe.Editor
 
         /**/
 
-        private static void CreateVO(Library.Item item, Point location)
+        private static void CreateVO(Library.Item item, Point location) //Insert
         {
+            CreateVO(item, location, true, null);
+        }
+
+        private static void CreateVO(ItemObject source, Point location) //Load or clone
+        {
+            CreateVO(source.Item, location, Cloning, source);
+        }
+
+        private static void CreateVO(Library.Item item, Point location, bool createNew, ItemObject source)
+        {
+            //Get new VO
             var ct = VisualObject.VisualObject.GenerateVO(item, location);
 
-            ItemObjects.Add(new ItemObject()
+            if (createNew)
             {
-                Location = location,
-                Item = item,
-                ID = idCount++,
-                TagIcon = ct.Icon,
-                TagLabel = ct.Label
-            });
+                //Create IO record
+                ItemObjects.Add(new ItemObject()
+                {
+                    Location = location,
+                    Item = item,
+                    ID = idCount++,
+                    TagIcon = ct.Icon,
+                    TagLabel = ct.Label
+                });
+ 
+                //Create VO-IO reference
+                ct.Icon.Tag = ItemObjects.Last();
+                ct.Label.Tag = ItemObjects.Last();
 
-            ct.Icon.Tag = ItemObjects.Last();
-            ct.Label.Tag = ItemObjects.Last();
+                //Set an insert event flags
+                InsertItem = null;
+                Changed = true;
+            }
+            else
+            {
+                //Create VO-IO reference
+                ct.Icon.Tag = source;
+                ct.Label.Tag = source;
+                source.TagIcon = ct.Icon;
+                source.TagLabel = ct.Label;
+            }
 
-            InsertItem = null;
-            Changed = true;
-
+            //Show VO
             Area.Controls.AddRange(new Control[] { 
                 ct.Icon, 
                 ct.Label
             });
-
             VisualObject.VisualObject.LocateLabels(ct);
+        }
+
+        private static void CloneVOs(Point location)
+        {
+            clonedIObjs.Clear();
+
+            //Generate VOs & IOs
+            foreach (PictureBox vobjSrc in selectedVOs)
+            {
+                //Calc new IO location
+                Point iObjPos = new Point()
+                {
+                    X = vobjSrc.Left + location.X - cloneSenderVO.Left,
+                    Y = vobjSrc.Top + location.Y - cloneSenderVO.Top,
+                };
+
+                //Create new IO
+                var iobjSrc = vobjSrc.Tag as ItemObject;
+                var item = iobjSrc.Item.Clone() as Library.Item;
+                CreateVO(iobjSrc, iObjPos);
+
+                //Write cloning data to the new IO, registry new IO as a cloned
+                var iobjNew = ItemObjects.Last();
+                iobjNew.OldID = iobjSrc.ID;
+                iobjNew.LinksIn = new List<int>(iobjSrc.LinksIn);
+                iobjNew.LinksOut = new List<int>(iobjSrc.LinksOut);
+                clonedIObjs.Add(iobjNew);
+            }
+
+            //Generate links (ch: clonedIObjs; x.OldID
+            GenerateLinks();
+            CloneVOsFinish();
         }
 
         private static void CaptionUpdate()
@@ -917,6 +857,77 @@ namespace Recipe.Editor
             else
             {
                 label.BackColor = VisualObject.VisualObject.DefaultColor;
+            }
+        }
+
+        private static void GenerateLinks()//Generates cross-links by IDs
+        {
+            List<ItemObject> iObjList;
+            if (Cloning)
+            {
+                iObjList = clonedIObjs;
+            }
+            else
+            {
+                iObjList = ItemObjects;
+            }
+
+            //Generate cross-links by IDs (or old IDs)
+            foreach (ItemObject iobjBeg in iObjList) //Get the beginning iobj
+            {
+                for (int i = iobjBeg.LinksOut.Count - 1; i > -1; i--)  //Get id of the ending iobj
+                {
+                    int idEnd = iobjBeg.LinksOut[i];
+
+                    //Get the ending iobj
+                    ItemObject iobjEnd;
+                    if (Cloning) 
+                    {
+                        iobjEnd = ItemObjects.Find(x => x.OldID == idEnd);
+                    }
+                    else
+                    {
+                        iobjEnd = ItemObjects.Find(x => x.ID == idEnd);
+                    }
+                    
+                    //if ID is defined & valid - create cross-link, else - delete this ID
+                    if (iobjEnd == null || idEnd == -1)
+                    {
+                        iobjBeg.LinksOut.RemoveAt(i);
+                    }
+                    else
+                    {
+                        iobjBeg.LinkOutTags.Add(iobjEnd);
+                        iobjEnd.LinkInTags.Add(iobjBeg);
+                    }
+                }
+            }
+
+            if (Cloning)
+            {
+                //Update links IDs
+                foreach (ItemObject iobjBeg in clonedIObjs)
+                {
+                    //Remove old IDs
+                    iobjBeg.LinksIn.Clear();
+                    iobjBeg.LinksOut.Clear();
+
+                    //Generate new IDs
+                    foreach (ItemObject link in iobjBeg.LinkOutTags)
+                    {
+                        iobjBeg.LinksOut.Add(link.ID);
+                    }
+                    foreach (ItemObject link in iobjBeg.LinkInTags)
+                    {
+                        iobjBeg.LinksIn.Add(link.ID);
+                    }
+                }
+
+                //Reset OldID records
+                foreach (ItemObject iobj in clonedIObjs)
+                {
+                    iobj.OldID = -1;
+                }
             }
         }
     }
