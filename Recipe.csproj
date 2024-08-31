@@ -60,13 +60,13 @@
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="Editor\Clip.cs" />
     <Compile Include="Editor\Format.cs" />
     <Compile Include="Editor\VisualObject\Container.cs" />
     <Compile Include="Editor\VisualObject\VisualObject.cs" />
     <Compile Include="Editor\VisualObject\Menu.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\ItemObject.cs" />
-    <Compile Include="Editor\VOBuf.cs" />
     <Compile Include="FormLibraryImport.cs">
       <SubType>Form</SubType>
     </Compile>

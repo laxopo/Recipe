@@ -13,6 +13,7 @@ namespace Recipe.Editor
     {
         private const string FileFormat = "Recipe project file";
         private const string FileVersion = "1.0";
+        public const string DataFormat = "RECIPE_DATA";
 
         public static Size AreaSizeMin = new Size(200, 200);
         public static Size AreaSizeMax = new Size(30000, 30000);
@@ -30,7 +31,7 @@ namespace Recipe.Editor
         private static int idCount = 0;
 
         //Selecting VOs
-        private static List<VOBuf> selectedVOs = new List<VOBuf>();
+        private static List<ItemObject> selectedIObjs = new List<ItemObject>();
         private static Rectangle rectSelect;
         private static Rectangle selBox;
         private static Point selBoxStartPos;
@@ -39,10 +40,11 @@ namespace Recipe.Editor
 
         //VOs cloning
         public static bool Cloning;
-        private static PictureBox cloneSenderVO;
+        private static List<ItemObject> clonedIObjs = new List<ItemObject>();
+        private static Point cloneCenter;
         private static Rectangle cloneRect;
         private static Point cloneOffset;
-        private static List<ItemObject> clonedIObjs = new List<ItemObject>();
+        
 
         private static Form mainForm;
         private static string _filePath;
@@ -155,14 +157,10 @@ namespace Recipe.Editor
             }
 
             //Reset flags & params
-            InsertItem = null;
-            Cloning = false;
-            Changed = false;
+            NewSheet();
             FilePath = path;
 
             //Prepare area
-            Area.Controls.Clear();
-            Area.Location = new Point(0, 0);
             AreaResizeButton.Left = format.SheetSize.Width;
             AreaResizeButton.Top = format.SheetSize.Height;
 
@@ -426,27 +424,27 @@ namespace Recipe.Editor
 
         public static void SelectVO(object sender) //HL single VO and activate it, deselect and deact other
         {
-            var vobj = sender as PictureBox;
+            var iobj = (sender as PictureBox).Tag as ItemObject;
 
             //Select and HL this VO
-            if (selectedVOs.Find(x => x.VO == vobj) == null)
+            if (!selectedIObjs.Contains(iobj))
             {
                 //unHL other VOs
-                foreach (VOBuf vob in selectedVOs)
+                foreach (ItemObject io in selectedIObjs)
                 {
-                    PictureBox oth = vob.VO;
+                    PictureBox oth = io.TagIcon;
                     HighLightVO(oth, false);
                 }
 
                 //Deselect all VOs
-                selectedVOs.Clear();
+                selectedIObjs.Clear();
 
                 //Selest this VO
-                selectedVOs.Add(new VOBuf(vobj));
-                HighLightVO(vobj, true);
+                selectedIObjs.Add(iobj);
+                HighLightVO(iobj.TagIcon, true);
 
                 //activate this VO
-                CurrentVObj = vobj;
+                CurrentVObj = iobj.TagIcon;
                 propEditor.LoadItem();
 
                 SelectBoxShow();
@@ -456,13 +454,13 @@ namespace Recipe.Editor
         public static void DeselectVOs() //unHL all VOs and deactivate
         {
             //unHL all VOs
-            foreach (VOBuf vob in selectedVOs)
+            foreach (ItemObject iobj in selectedIObjs)
             {
-                HighLightVO(vob.VO, false);
+                HighLightVO(iobj.TagIcon, false);
             }
 
             //Deselect all VOs
-            selectedVOs.Clear();
+            selectedIObjs.Clear();
 
             //Deactivate VO
             CurrentVObj = null;
@@ -517,7 +515,7 @@ namespace Recipe.Editor
                     {
                         PictureBox pb = vobj as PictureBox;
                         HighLightVO(pb, true);
-                        selectedVOs.Add(new VOBuf(pb));
+                        selectedIObjs.Add(pb.Tag as ItemObject);
                     }
                 }
             }
@@ -535,11 +533,11 @@ namespace Recipe.Editor
             selBox = RelocationLimiter(ref dx, ref dy, selBox, selBoxStartPos);
 
             //set new location
-            foreach (VOBuf vob in selectedVOs)
+            foreach (ItemObject iobj in selectedIObjs)
             {
-                PictureBox icon = vob.VO;
+                PictureBox icon = iobj.TagIcon;
 
-                var rf = vob.Location;
+                var rf = iobj.StartLocation;
                 var pos = new Point(rf.X + dx, rf.Y + dy);
 
                 VisualObject.VisualObject.LocateVO(icon, pos);
@@ -555,7 +553,7 @@ namespace Recipe.Editor
             DeselectVOs();
             foreach (ItemObject iobj in IODataBase)
             {
-                selectedVOs.Add(new VOBuf(iobj.TagIcon));
+                selectedIObjs.Add(iobj);
             }
             selBox = SelectedVOsBox();
             selBoxStartPos = selBox.Location;
@@ -600,19 +598,20 @@ namespace Recipe.Editor
 
             //finish
             Changed = true;
-            selectedVOs.Clear();
+            FinishMovingVOs();
+            selectedIObjs.Clear();
         }
 
         public static void FinishMovingVOs()
         {
-            if (selectedVOs.Count < 0)
+            if (selectedIObjs.Count < 0)
             {
                 return;
             }
 
-            foreach (VOBuf vob in selectedVOs)
+            foreach (ItemObject iobj in selectedIObjs)
             {
-                vob.Location = vob.VO.Location;
+                iobj.StartLocation = iobj.Location;
             }
 
             selBoxStartPos = selBox.Location;
@@ -620,9 +619,9 @@ namespace Recipe.Editor
 
         public static void CancelMovingVOs()
         {
-            foreach (VOBuf vob in selectedVOs)
+            foreach (ItemObject iobj in selectedIObjs)
             {
-                vob.VO.Location = vob.Location;
+                iobj.Location = iobj.StartLocation;
             }
         }
 
@@ -638,28 +637,38 @@ namespace Recipe.Editor
             }
         }
 
-        public static void CloneVOsStart(PictureBox sender)
+        public static void CloneVOsStart(Point center, bool externBox)
         {
-            if (selectedVOs.Count == 0)
+            if (selectedIObjs.Count == 0)
             {
                 Cloning = false;
                 return;
             }
 
             //do the normal insert
-            if (selectedVOs.Count == 1)
+            if (selectedIObjs.Count == 1)
             {
-                InsertItem = (selectedVOs[0].VO.Tag as ItemObject).Item;
+                InsertItem = selectedIObjs[0].Item;
                 Cloning = false;
                 return;
             }
 
             //get the bounds of cloning massive
-            cloneRect = SelectedVOsBox();
-            cloneOffset = new Point(cloneRect.X - sender.Left, cloneRect.Y - sender.Top);
+            if (externBox)
+            {
+                cloneRect = selBox;
+                cloneOffset = new Point(-selBox.Width / 2, -selBox.Height / 2);
+            }
+            else
+            {
+                cloneRect = SelectedVOsBox();
+                cloneOffset = new Point(cloneRect.X - center.X, cloneRect.Y - center.Y);
+                
+            }
+            cloneCenter = center;
 
             Cloning = true;
-            cloneSenderVO = sender;
+            
         }
 
         public static void CloneVOsFinish()
@@ -668,7 +677,7 @@ namespace Recipe.Editor
             RetraceArea();
         }
 
-        public static void CloneBoundsDraw(Point position) //Draw a rectangle
+        public static void CloneBoxDraw(Point position) //Draw a rectangle
         {
             position.Offset(cloneOffset);
             cloneRect.Location = position;
@@ -677,10 +686,8 @@ namespace Recipe.Editor
 
         public static void RemoveVOs()
         {
-            foreach (VOBuf vob in selectedVOs)
+            foreach (ItemObject delIObj in selectedIObjs)
             {
-                var delIObj = vob.VO.Tag as ItemObject;
-
                 if (CurrentVObj == delIObj.TagIcon)
                 {
                     CurrentVObj = null;
@@ -702,12 +709,35 @@ namespace Recipe.Editor
                 Area.Controls.Remove(delIObj.TagIcon);
                 Area.Controls.Remove(delIObj.TagLabel);
                 IODataBase.Remove(delIObj);
+                Changed = true;
             }
 
-            selectedVOs.Clear();
+            selectedIObjs.Clear();
 
             //Update area
-            RetraceArea();
+            SelectBoxHide();
+        }
+
+        public static void Copy()
+        {
+            //Push the data into clipboard
+            Clipboard.Clear();
+            Clip clip = new Clip(selectedIObjs, selBox);
+            Clipboard.SetData(DataFormat, clip.Serialize());
+        }
+
+        public static void Paste()
+        {
+            //Get the data from clipboard
+            DeselectVOs();
+            Clip clip = Clip.Deserialize(Clipboard.GetData(DataFormat));
+
+            selectedIObjs = clip.IOs;
+            selBox = clip.Box;
+
+            Point location = new Point(selBox.X + selBox.Width / 2, selBox.Y + selBox.Height / 2);
+
+            CloneVOsStart(location, true);
         }
 
         /**/
@@ -733,6 +763,7 @@ namespace Recipe.Editor
                 IODataBase.Add(new ItemObject()
                 {
                     Location = location,
+                    StartLocation = location,
                     Item = item,
                     ID = idCount++,
                     TagIcon = ct.Icon,
@@ -754,6 +785,9 @@ namespace Recipe.Editor
                 ct.Label.Tag = source;
                 source.TagIcon = ct.Icon;
                 source.TagLabel = ct.Label;
+
+                //Reset iobj location
+                source.StartLocation = source.Location;
             }
 
             //Show VO
@@ -769,20 +803,16 @@ namespace Recipe.Editor
             clonedIObjs.Clear();
 
             //Generate VOs & IOs
-            foreach (VOBuf vob in selectedVOs)
+            foreach (ItemObject iobjSrc in selectedIObjs)
             {
-                PictureBox vobjSrc = vob.VO;
-
                 //Calc new IO location
                 Point iObjPos = new Point()
                 {
-                    X = vobjSrc.Left + location.X - cloneSenderVO.Left,
-                    Y = vobjSrc.Top + location.Y - cloneSenderVO.Top,
+                    X = iobjSrc.Location.X + location.X - cloneCenter.X,
+                    Y = iobjSrc.Location.Y + location.Y - cloneCenter.Y,
                 };
 
                 //Create new IO
-                var iobjSrc = vobjSrc.Tag as ItemObject;
-                var item = iobjSrc.Item.Clone() as Library.Item;
                 CreateVO(iobjSrc, iObjPos);
 
                 //Write cloning data to the new IO, registry new IO as a cloned
@@ -822,6 +852,11 @@ namespace Recipe.Editor
 
         private static void HighLightVO(PictureBox vobj, bool highLight)
         {
+            if (vobj == null)
+            {
+                return;
+            }
+
             Label label = (vobj.Tag as ItemObject).TagLabel;
             if (highLight)
             {
@@ -908,10 +943,10 @@ namespace Recipe.Editor
         {
             int xl = -1, xr = -1, yt = -1, yb = -1;
 
-            foreach (VOBuf vob in selectedVOs)
+            foreach (ItemObject iobj in selectedIObjs)
             {
-                PictureBox icon = vob.VO;
-                Label label = (icon.Tag as ItemObject).TagLabel;
+                PictureBox icon = iobj.TagIcon;
+                Label label = iobj.TagLabel;
 
                 //get VO bound box
                 Point lt = new Point (0, icon.Top);
@@ -976,10 +1011,6 @@ namespace Recipe.Editor
 
         private static Rectangle RelocationLimiter(ref int dx, ref int dy, Rectangle box, Point boxRefPos, Rectangle bounds)
         {
-            if (dx != 0 || dy != 0)
-            {
-
-            }
             //limits dx|dy (relative to boxRefPos) if the resulting box are out of the bounds
             Rectangle boxBuf = box;
             boxBuf.Location = GetOffsetPoint(boxRefPos, dx, dy);

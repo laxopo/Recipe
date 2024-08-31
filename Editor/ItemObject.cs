@@ -18,6 +18,8 @@ namespace Recipe.Editor
         public List<int> LinksOut { get; set; }
 
         [JsonIgnore]
+        public Point StartLocation { get; set; }
+        [JsonIgnore]
         public int OldID { get; set; }
         [JsonIgnore]
         public List<ItemObject> LinkInTags { get; set; }

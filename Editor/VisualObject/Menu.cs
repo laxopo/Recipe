@@ -16,6 +16,7 @@ namespace Recipe.Editor.VisualObject
                     link.Click += new EventHandler(LinkToolStripMenuItem_Click);
                     props.Click += new EventHandler(PropsToolStripMenuItem_Click);
                     clone.Click += new EventHandler(CloneToolStripMenuItem_Click);
+                    copy.Click += new EventHandler(CopyToolStripMenuItem_Click);
                     delete.Click += new EventHandler(DeleteToolStripMenuItem_Click);
                 }
 
@@ -26,6 +27,7 @@ namespace Recipe.Editor.VisualObject
                         link,
                         props,
                         clone,
+                        copy,
                         delete
                     }
                 };
@@ -33,7 +35,7 @@ namespace Recipe.Editor.VisualObject
         }
 
         private static bool init = false;
-        private static PictureBox callVO;
+        private static PictureBox voSender;
 
         /*Menu items*/
 
@@ -59,11 +61,19 @@ namespace Recipe.Editor.VisualObject
             Text = "Clone"
         };
 
+        private static ToolStripMenuItem copy = new ToolStripMenuItem()
+        {
+            Name = "copyToolStripMenuItem",
+            Size = new Size(103, 22),
+            Text = "Copy"
+        };
+
         private static ToolStripMenuItem delete = new ToolStripMenuItem()
         {
             Name = "deleteToolStripMenuItem",
             Size = new Size(103, 22),
-            Text = "Delete"
+            Text = "Delete",
+            ShortcutKeys = Keys.Delete
         };
 
         /*Item event handlers*/
@@ -86,8 +96,13 @@ namespace Recipe.Editor.VisualObject
             }
             else //a massive cloning
             {
-                Editor.CloneVOsStart(callVO);
+                Editor.CloneVOsStart(voSender.Location, false);
             }
+        }
+
+        private static void CopyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Editor.Copy();
         }
 
         private static void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -101,7 +116,7 @@ namespace Recipe.Editor.VisualObject
         {
             bool en = Editor.CurrentVObj != null;
             link.Enabled = en;
-            callVO = sender;
+            voSender = sender;
 
             ObjMenu.Show(location);
         }

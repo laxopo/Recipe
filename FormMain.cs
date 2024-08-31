@@ -284,6 +284,22 @@ namespace Recipe
             Editor.Editor.RetraceArea();
         }
 
+        //Edit
+        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.RemoveVOs();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void pasteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
         //Tools
         private void libraryToolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -303,6 +319,16 @@ namespace Recipe
             ResizeSheetDialog();
         }
 
+        private void fitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Sheet will fit to the object array.", "Sheet Resize",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+            {
+                Editor.Editor.AreaResize(new Size(0, 0), true);
+                FitTheControls();
+            }
+        }
+
         private void appToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SheetView sb = new SheetView(pictureBoxArea, config);
@@ -314,6 +340,12 @@ namespace Recipe
         {
             AboutBox about = new AboutBox();
             about.ShowDialog();
+        }
+
+        //Hotkey handler
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
         }
 
         /*Editor*/
@@ -537,7 +569,7 @@ namespace Recipe
                 case MouseButtons.None: //clone massive
                     if (insert && Editor.Editor.Cloning)
                     {
-                        Editor.Editor.CloneBoundsDraw(e.Location);
+                        Editor.Editor.CloneBoxDraw(e.Location);
                     }
                     break;
             }
@@ -652,6 +684,7 @@ namespace Recipe
 
         private void buttonAreaResize_MouseUp(object sender, MouseEventArgs e)
         {
+            Editor.Editor.AreaResize(pictureBoxArea.Size, false); //limit a new size
             FitTheControls();
         }
 
@@ -667,10 +700,21 @@ namespace Recipe
         }
 
         //Editor context menu
+        private void contextMenuStripEditor_Opening(object sender, CancelEventArgs e)
+        {
+            bool en = Clipboard.ContainsData(Editor.Editor.DataFormat);
+            pasteToolStripMenuItem.Enabled = en;
+        }
+
         private void insertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Show Library
             formLibrary.Show();
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.Paste();
         }
 
         /*Form*/

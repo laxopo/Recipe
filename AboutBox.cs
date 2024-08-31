@@ -24,7 +24,7 @@ namespace Recipe
         }
 
         private string[] History = {
-            "v.1.0:",
+            "2024.08.28 v.1.0:",
             "Add multiselect",
             "Add drag and drop",
             "Add opening file from the command line",
@@ -33,8 +33,11 @@ namespace Recipe
             "Fix area redraw after window restoring",
             "Change AboutBox style",
             "",
-            "v.1.1:",
-            "Add multiselect cloning"
+            "2024.08.31 v.1.1:",
+            "Add multiselect cloning",
+            "Fix sheet resizing",
+            "Add sheet fitting",
+            "Add clipboard operations"
         };
 
         private void ShowHistory()
