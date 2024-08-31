@@ -363,7 +363,6 @@ namespace Recipe
         bool move;
         bool rectSel;
         bool rescSelEv;
-        bool cursorInside;
         Point cursorPos;
         private Cursor GetCursor()//Changes the editor cursor (not vobj)
         {
@@ -727,7 +726,7 @@ namespace Recipe
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Editor.Editor.Paste();
+            Editor.Editor.Paste(cursorPos);
         }
 
         /*Form*/
@@ -804,6 +803,16 @@ namespace Recipe
                 minimized = false;
                 Editor.Editor.RetraceArea();
             }
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.SelectAll();
+        }
+
+        private void deselectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.DeselectVOs();
         }
     }
 }

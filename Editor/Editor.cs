@@ -725,6 +725,12 @@ namespace Recipe.Editor
             return true;
         }
 
+        public static void SelectAll()
+        {
+            rectSelect = Area.ClientRectangle;
+            RectangleSelectVOs();
+        }
+
         /**/
 
         private static void CreateVO(Library.Item item, Point location) //Insert
