@@ -31,7 +31,7 @@ namespace Recipe.Editor
         private static int idCount = 0;
 
         //Selecting VOs
-        private static List<ItemObject> selectedIObjs = new List<ItemObject>();
+        public static List<ItemObject> selectedIObjs = new List<ItemObject>();
         private static Rectangle rectSelect;
         private static Rectangle selBox;
         private static Point selBoxStartPos;
@@ -637,38 +637,14 @@ namespace Recipe.Editor
             }
         }
 
-        public static void CloneVOsStart(Point center, bool externBox)
+        public static void CloneVOsStart(Point center)
         {
-            if (selectedIObjs.Count == 0)
-            {
-                Cloning = false;
-                return;
-            }
+            CloneVOST(center, false, null);
+        }
 
-            //do the normal insert
-            if (selectedIObjs.Count == 1)
-            {
-                InsertItem = selectedIObjs[0].Item;
-                Cloning = false;
-                return;
-            }
-
-            //get the bounds of cloning massive
-            if (externBox)
-            {
-                cloneRect = selBox;
-                cloneOffset = new Point(-selBox.Width / 2, -selBox.Height / 2);
-            }
-            else
-            {
-                cloneRect = SelectedVOsBox();
-                cloneOffset = new Point(cloneRect.X - center.X, cloneRect.Y - center.Y);
-                
-            }
-            cloneCenter = center;
-
-            Cloning = true;
-            
+        public static void CloneVOsStart(Clip clipBoard)
+        {
+            CloneVOST(new Point(0, 0), true, clipBoard);
         }
 
         public static void CloneVOsFinish()
@@ -720,24 +696,33 @@ namespace Recipe.Editor
 
         public static void Copy()
         {
+            if (selectedIObjs.Count == 0)
+            {
+                Cloning = false;
+                return;
+            }
+
             //Push the data into clipboard
             Clipboard.Clear();
             Clip clip = new Clip(selectedIObjs, selBox);
             Clipboard.SetData(DataFormat, clip.Serialize());
         }
 
-        public static void Paste()
+        public static bool Paste(Point location)
         {
+            Clip clip = Clip.Deserialize(Clipboard.GetData(DataFormat));
+            if (clip == null)
+            {
+                return false;
+            }
+
             //Get the data from clipboard
             DeselectVOs();
-            Clip clip = Clip.Deserialize(Clipboard.GetData(DataFormat));
+            CloneVOsStart(clip);
+            CloneBoxDraw(location);
+            RetraceArea();
 
-            selectedIObjs = clip.IOs;
-            selBox = clip.Box;
-
-            Point location = new Point(selBox.X + selBox.Width / 2, selBox.Y + selBox.Height / 2);
-
-            CloneVOsStart(location, true);
+            return true;
         }
 
         /**/
@@ -808,8 +793,11 @@ namespace Recipe.Editor
                 //Calc new IO location
                 Point iObjPos = new Point()
                 {
-                    X = iobjSrc.Location.X + location.X - cloneCenter.X,
-                    Y = iobjSrc.Location.Y + location.Y - cloneCenter.Y,
+                    //old obj pos in src - old pos of center + new pos of center
+                    //x = dx + xc
+                    //dx: pos relative to the center (pos in the selection), xc: new center pos
+                    X = iobjSrc.Location.X - cloneCenter.X + location.X,
+                    Y = iobjSrc.Location.Y - cloneCenter.Y + location.Y,
                 };
 
                 //Create new IO
@@ -1041,6 +1029,41 @@ namespace Recipe.Editor
         {
             reference.Offset(dx, dy);
             return reference;
+        }
+
+        private static void CloneVOST(Point center, bool externData, Clip clip)
+        {
+            //do the normal insert
+            if (!externData && selectedIObjs.Count == 1)
+            {
+                InsertItem = selectedIObjs[0].Item;
+                Cloning = false;
+                return;
+            }
+
+            //get the bounds of cloning massive
+            if (externData)
+            {
+                selectedIObjs = clip.IOs;
+                cloneRect = clip.Box;
+                cloneOffset = clip.Offset;
+                cloneCenter = clip.Center;
+            }
+            else
+            {
+                cloneRect = SelectedVOsBox();
+                cloneOffset = new Point(cloneRect.X - center.X, cloneRect.Y - center.Y);
+                cloneCenter = center;
+            }
+
+            if (selectedIObjs.Count == 0)
+            {
+                Cloning = false;
+                return;
+            }
+
+            Cloning = true;
+            CloneBoxDraw(center);
         }
     }
 }

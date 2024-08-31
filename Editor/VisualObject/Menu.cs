@@ -96,7 +96,7 @@ namespace Recipe.Editor.VisualObject
             }
             else //a massive cloning
             {
-                Editor.CloneVOsStart(voSender.Location, false);
+                Editor.CloneVOsStart(voSender.Location);
             }
         }
 

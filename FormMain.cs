@@ -285,6 +285,12 @@ namespace Recipe
         }
 
         //Edit
+        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            copyToolStripMenuItem.Enabled = Editor.Editor.selectedIObjs.Count > 0;
+            pasteToolStripMenuItem.Enabled = Clipboard.ContainsData(Editor.Editor.DataFormat);
+        }
+
         private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             Editor.Editor.RemoveVOs();
@@ -292,12 +298,16 @@ namespace Recipe
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            Editor.Editor.Copy();
         }
 
         private void pasteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
+            if (Editor.Editor.Paste(cursorPos))
+            {
+                insert = true;
+                pictureBoxArea.Cursor = GetCursor();
+            }
         }
 
         //Tools
@@ -353,6 +363,8 @@ namespace Recipe
         bool move;
         bool rectSel;
         bool rescSelEv;
+        bool cursorInside;
+        Point cursorPos;
         private Cursor GetCursor()//Changes the editor cursor (not vobj)
         {
             if (move)
@@ -567,6 +579,7 @@ namespace Recipe
                     break;
 
                 case MouseButtons.None: //clone massive
+                    cursorPos = e.Location;
                     if (insert && Editor.Editor.Cloning)
                     {
                         Editor.Editor.CloneBoxDraw(e.Location);
@@ -585,7 +598,7 @@ namespace Recipe
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
-                    if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert new item from the library
+                    if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert, clone, copy
                     {
                         Editor.Editor.CreateVisualObject(e.Location);
 
@@ -703,10 +716,10 @@ namespace Recipe
         private void contextMenuStripEditor_Opening(object sender, CancelEventArgs e)
         {
             bool en = Clipboard.ContainsData(Editor.Editor.DataFormat);
-            pasteToolStripMenuItem.Enabled = en;
+            pasteToolStripMenuEditor.Enabled = en;
         }
 
-        private void insertToolStripMenuItem_Click(object sender, EventArgs e)
+        private void insertToolStripMenuEditor_Click(object sender, EventArgs e)
         {
             //Show Library
             formLibrary.Show();
@@ -714,7 +727,7 @@ namespace Recipe
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.Editor.Paste();
+            //Editor.Editor.Paste();
         }
 
         /*Form*/
@@ -724,7 +737,7 @@ namespace Recipe
             /*TEST*/
             string[] args = { 
             "",
-            @"C:\Users\Barii\Desktop\schematics\Titanium.json"
+            @"C:\Users\Barii\Desktop\schematics\test.json"
             };
 
             //string[] args = Environment.GetCommandLineArgs();

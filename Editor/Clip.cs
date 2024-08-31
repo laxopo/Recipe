@@ -11,6 +11,8 @@ namespace Recipe.Editor
     public class Clip
     {
         public Rectangle Box { get; set; }
+        public Point Center { get; set; }
+        public Point Offset { get; set; }
         public List<ItemObject> IOs { get; set; }
 
 
@@ -20,6 +22,8 @@ namespace Recipe.Editor
         {
             IOs = buffer;
             Box = box;
+            Offset = new Point(-box.Width / 2, -box.Height / 2);
+            Center = new Point(box.X - Offset.X, box.Y - Offset.Y);
         }
 
         public string Serialize()
@@ -29,7 +33,14 @@ namespace Recipe.Editor
 
         public static Clip Deserialize(object data)
         {
-            return JsonConvert.DeserializeObject<Clip>(data as string);
+            try
+            {
+                return JsonConvert.DeserializeObject<Clip>(data as string);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
