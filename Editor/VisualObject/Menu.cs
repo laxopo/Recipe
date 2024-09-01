@@ -15,6 +15,7 @@ namespace Recipe.Editor.VisualObject
                     init = true;
                     link.Click += new EventHandler(LinkToolStripMenuItem_Click);
                     props.Click += new EventHandler(PropsToolStripMenuItem_Click);
+                    library.Click += new EventHandler(LibraryToolStripMenuItem_Click);
                     clone.Click += new EventHandler(CloneToolStripMenuItem_Click);
                     copy.Click += new EventHandler(CopyToolStripMenuItem_Click);
                     delete.Click += new EventHandler(DeleteToolStripMenuItem_Click);
@@ -25,6 +26,7 @@ namespace Recipe.Editor.VisualObject
                     Size = new Size(104, 48),
                     Items = {
                         link,
+                        library,
                         props,
                         clone,
                         copy,
@@ -54,6 +56,13 @@ namespace Recipe.Editor.VisualObject
             Text = "Properties"
         };
 
+        private static ToolStripMenuItem library = new ToolStripMenuItem()
+        {
+            Name = "libraryToolStripMenuItem",
+            Size = new Size(103, 22),
+            Text = "Show In Library"
+        };
+
         private static ToolStripMenuItem clone = new ToolStripMenuItem()
         {
             Name = "cloneToolStripMenuItem",
@@ -73,7 +82,6 @@ namespace Recipe.Editor.VisualObject
             Name = "deleteToolStripMenuItem",
             Size = new Size(103, 22),
             Text = "Delete",
-            ShortcutKeys = Keys.Delete
         };
 
         /*Item event handlers*/
@@ -86,6 +94,13 @@ namespace Recipe.Editor.VisualObject
         private static void PropsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Editor.propEditor.Show();
+        }
+
+        private static void LibraryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Editor.LibraryForm.Show();
+            var item = (voSender.Tag as ItemObject).Item;
+            Editor.LibraryForm.OpenItem(item);
         }
 
         private static void CloneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -116,6 +131,7 @@ namespace Recipe.Editor.VisualObject
         {
             bool en = Editor.CurrentVObj != null;
             link.Enabled = en;
+            library.Enabled = en;
             voSender = sender;
 
             ObjMenu.Show(location);

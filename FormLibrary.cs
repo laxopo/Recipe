@@ -32,6 +32,33 @@ namespace Recipe
             lbPthPos = labelPath.Top - listBoxLibItems.Height - listBoxLibItems.Top;
         }
 
+        public void OpenItem(Library.Item item)
+        {   
+            //Get node
+            var path = Path.GetDirectoryName(item.IconPath);
+            Library.Directory dir = library.GetDirectory(path);
+            treeLibDir.SelectedNode = dir.NodeTag;
+
+            //get item index
+            int index;
+            bool found = false;
+            for (index = 0; index < dir.Items.Count; index++)
+            {
+                if (dir.Items[index].IconPath == item.IconPath)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            //select item in the list
+            if (!found)
+            {
+                index = -1;
+            }
+            listBoxLibItems.SelectedIndex = index;
+        }
+
         private void ExplorerUpdate()
         {
             treeLibDir.Nodes.Clear();
@@ -46,8 +73,10 @@ namespace Recipe
             foreach (Library.Directory dir in directory.Directories)
             {
                 nodes.Add(dir.Name);
-                nodes[nodes.Count - 1].Tag = dir;
-                LibDirScan(dir, nodes[nodes.Count - 1].Nodes);
+                TreeNode lastNode = nodes[nodes.Count - 1];
+                lastNode.Tag = dir;
+                dir.NodeTag = lastNode;
+                LibDirScan(dir, lastNode.Nodes);
             }
         }
 

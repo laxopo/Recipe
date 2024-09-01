@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace Recipe.Library
@@ -10,10 +11,14 @@ namespace Recipe.Library
         public string Name { get; set; }
         public List<Directory> Directories { get; set; }
         public List<Item> Items { get; set; }
+
         [JsonIgnore]
         public Directory Parent { get; set; }
 
-        
+        [JsonIgnore]
+        public TreeNode NodeTag { get; set; }
+
+
         public Directory(string name, Directory parent)
         {
             Name = name;

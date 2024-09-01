@@ -42,7 +42,7 @@ namespace Recipe
             propEditor = new PropEditor(config);
             propEditor.Owner = this;
 
-            Editor.Editor.Initialize(this, propEditor, panelEditor, config);
+            Editor.Editor.Initialize(this, formLibrary, propEditor, panelEditor, config);
 
             FitTheControls();
 

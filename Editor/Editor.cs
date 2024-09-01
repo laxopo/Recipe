@@ -26,6 +26,7 @@ namespace Recipe.Editor
         public static bool linkProcess;
         public static PropEditor propEditor;
         public static Config Configuration;
+        public static FormLibrary LibraryForm;
 
         private static bool retraceRq = false;
         private static int idCount = 0;
@@ -82,7 +83,8 @@ namespace Recipe.Editor
 
         /**/
 
-        public static void Initialize(Form formMain, PropEditor propEditor, Panel editorWindow, Config config)
+        public static void Initialize(Form formMain, FormLibrary formLibrary, PropEditor propEditor, 
+            Panel editorWindow, Config config)
         {
             foreach (Control ctrl in editorWindow.Controls)
             {
@@ -106,6 +108,7 @@ namespace Recipe.Editor
             Editor.propEditor = propEditor;
             defCaption = formMain.Text;
             Configuration = config;
+            LibraryForm = formLibrary;
         }
 
         /*File operations*/
