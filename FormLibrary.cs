@@ -281,6 +281,7 @@ namespace Recipe
                 index = treeNodes.FindIndex(x => x == treeLibDir.SelectedNode);
             }
 
+            seek:
             if (forward)
             {
                 for (index++; index < treeNodes.Count; index++)
@@ -304,28 +305,31 @@ namespace Recipe
 
             if (index >= treeNodes.Count)
             {
-                MessageBox.Show("End of the tree.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 if (searchDirEnd)
                 {
                     searchDirBeg = false;
                     searchDirEnd = false;
-
+                    index = 0;
+                    goto seek;
                 }
                 else
                 {
+                    MessageBox.Show("End of the tree.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     searchDirEnd = true;
                 }
             }
             else if (index < 0)
             {
-                MessageBox.Show("Beginning of the tree.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 if (searchDirBeg)
                 {
                     searchDirBeg = false;
                     searchDirEnd = false;
+                    index = treeNodes.Count - 1;
+                    goto seek;
                 }
                 else
                 {
+                    MessageBox.Show("Beginning of the tree.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     searchDirBeg = true;
                 }
             }
@@ -368,6 +372,15 @@ namespace Recipe
         private void treeLibDir_Click(object sender, EventArgs e)
         {
             lastCtrl = sender;
+        }
+
+        private void treeLibDir_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (!e.Node.Bounds.Contains(e.Location) && e.Button == MouseButtons.Left)
+            {
+                treeLibDir.SelectedNode = null;
+                treeLibDir_AfterSelect(null, null);
+            }
         }
 
         private void listBoxLibItems_SelectedIndexChanged(object sender, EventArgs e)
@@ -591,18 +604,13 @@ namespace Recipe
 
         private void buttonItemSearch_Click(object sender, EventArgs e)
         {
+            if (textBoxItemSearch.Text == "")
+            {
+                return;
+            }
             var node = treeLibDir.SelectedNode;
             Explorer(treeLibDir.SelectedNode, !checkBoxIncSubDir.Checked);
             SelectNode(node);
-        }
-
-        private void treeLibDir_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (!e.Node.Bounds.Contains(e.Location) && e.Button == MouseButtons.Left)
-            {
-                treeLibDir.SelectedNode = null;
-                treeLibDir_AfterSelect(null, null);
-            }
         }
 
         private void buttonItemSearchClear_Click(object sender, EventArgs e)
@@ -632,13 +640,40 @@ namespace Recipe
             SearchDirectory(false);
         }
 
-        private void buttonDirSearchHome_Click(object sender, EventArgs e)
+        private void buttonDirSearchBeg_Click(object sender, EventArgs e)
         {
-            if (treeLibDir.Nodes.Count == 0)
+            if (treeNodes.Count == 0)
             {
                 return;
             }
-            treeLibDir.SelectedNode = treeLibDir.Nodes[0];
+            treeLibDir.SelectedNode = treeNodes.First();
+        }
+
+        private void buttonDirSearchEnd_Click(object sender, EventArgs e)
+        {
+            if (treeNodes.Count == 0)
+            {
+                return;
+            }
+            treeLibDir.SelectedNode = treeNodes.Last();
+        }
+
+        private void textBoxDirSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
+            {
+                SearchDirectory(false);
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                 SearchDirectory(true);
+            }
+        }
+
+        private void textBoxDirSearch_TextChanged(object sender, EventArgs e)
+        {
+            searchDirBeg = false;
+            searchDirEnd = false;
         }
     }
 }

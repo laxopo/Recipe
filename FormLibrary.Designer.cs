@@ -44,9 +44,10 @@ namespace Recipe
             this.buttonItemSearchClear = new System.Windows.Forms.Button();
             this.buttonReplace = new System.Windows.Forms.Button();
             this.groupBoxSearch = new System.Windows.Forms.GroupBox();
+            this.buttonDirSearchEnd = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.buttonDirSearchHome = new System.Windows.Forms.Button();
+            this.buttonDirSearchBeg = new System.Windows.Forms.Button();
             this.buttonDirSearchFw = new System.Windows.Forms.Button();
             this.buttonDirSearchBack = new System.Windows.Forms.Button();
             this.textBoxDirSearch = new System.Windows.Forms.TextBox();
@@ -167,7 +168,7 @@ namespace Recipe
             // checkBoxIncSubDir
             // 
             this.checkBoxIncSubDir.AutoSize = true;
-            this.checkBoxIncSubDir.Location = new System.Drawing.Point(65, 19);
+            this.checkBoxIncSubDir.Location = new System.Drawing.Point(56, 19);
             this.checkBoxIncSubDir.Name = "checkBoxIncSubDir";
             this.checkBoxIncSubDir.Size = new System.Drawing.Size(131, 17);
             this.checkBoxIncSubDir.TabIndex = 13;
@@ -195,9 +196,10 @@ namespace Recipe
             // 
             // groupBoxSearch
             // 
+            this.groupBoxSearch.Controls.Add(this.buttonDirSearchEnd);
             this.groupBoxSearch.Controls.Add(this.label2);
             this.groupBoxSearch.Controls.Add(this.label1);
-            this.groupBoxSearch.Controls.Add(this.buttonDirSearchHome);
+            this.groupBoxSearch.Controls.Add(this.buttonDirSearchBeg);
             this.groupBoxSearch.Controls.Add(this.buttonDirSearchFw);
             this.groupBoxSearch.Controls.Add(this.buttonDirSearchBack);
             this.groupBoxSearch.Controls.Add(this.textBoxDirSearch);
@@ -211,6 +213,16 @@ namespace Recipe
             this.groupBoxSearch.TabIndex = 16;
             this.groupBoxSearch.TabStop = false;
             this.groupBoxSearch.Text = "Search";
+            // 
+            // buttonDirSearchEnd
+            // 
+            this.buttonDirSearchEnd.Location = new System.Drawing.Point(202, 41);
+            this.buttonDirSearchEnd.Name = "buttonDirSearchEnd";
+            this.buttonDirSearchEnd.Size = new System.Drawing.Size(23, 23);
+            this.buttonDirSearchEnd.TabIndex = 21;
+            this.buttonDirSearchEnd.Text = "↓";
+            this.buttonDirSearchEnd.UseVisualStyleBackColor = true;
+            this.buttonDirSearchEnd.Click += new System.EventHandler(this.buttonDirSearchEnd_Click);
             // 
             // label2
             // 
@@ -230,15 +242,15 @@ namespace Recipe
             this.label1.TabIndex = 19;
             this.label1.Text = "Items:";
             // 
-            // buttonDirSearchHome
+            // buttonDirSearchBeg
             // 
-            this.buttonDirSearchHome.Location = new System.Drawing.Point(202, 41);
-            this.buttonDirSearchHome.Name = "buttonDirSearchHome";
-            this.buttonDirSearchHome.Size = new System.Drawing.Size(23, 23);
-            this.buttonDirSearchHome.TabIndex = 18;
-            this.buttonDirSearchHome.Text = "↑";
-            this.buttonDirSearchHome.UseVisualStyleBackColor = true;
-            this.buttonDirSearchHome.Click += new System.EventHandler(this.buttonDirSearchHome_Click);
+            this.buttonDirSearchBeg.Location = new System.Drawing.Point(176, 41);
+            this.buttonDirSearchBeg.Name = "buttonDirSearchBeg";
+            this.buttonDirSearchBeg.Size = new System.Drawing.Size(23, 23);
+            this.buttonDirSearchBeg.TabIndex = 18;
+            this.buttonDirSearchBeg.Text = "↑";
+            this.buttonDirSearchBeg.UseVisualStyleBackColor = true;
+            this.buttonDirSearchBeg.Click += new System.EventHandler(this.buttonDirSearchBeg_Click);
             // 
             // buttonDirSearchFw
             // 
@@ -266,6 +278,8 @@ namespace Recipe
             this.textBoxDirSearch.Name = "textBoxDirSearch";
             this.textBoxDirSearch.Size = new System.Drawing.Size(163, 20);
             this.textBoxDirSearch.TabIndex = 15;
+            this.textBoxDirSearch.TextChanged += new System.EventHandler(this.textBoxDirSearch_TextChanged);
+            this.textBoxDirSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDirSearch_KeyDown);
             // 
             // FormLibrary
             // 
@@ -326,8 +340,9 @@ namespace Recipe
         private System.Windows.Forms.TextBox textBoxDirSearch;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button buttonDirSearchHome;
+        private System.Windows.Forms.Button buttonDirSearchBeg;
         private System.Windows.Forms.Button buttonDirSearchFw;
         private System.Windows.Forms.Button buttonDirSearchBack;
+        private System.Windows.Forms.Button buttonDirSearchEnd;
     }
 }
