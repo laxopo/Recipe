@@ -19,25 +19,11 @@ namespace Recipe.Editor.VisualObject
         public static Container GenerateVO(Library.Item item, Point location)
         {
             //object declaration
-            Image image;
-
-            var filePath = Path.Combine(Routine.Directories.Library, item.IconPath);
-            if (File.Exists(filePath))
-            {
-                var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                image = Routine.ImageNB(Image.FromStream(fs), new Size(IconSize, IconSize), 0, 0);
-                fs.Close();
-            }
-            else
-            {
-                image = new PictureBox().ErrorImage;
-            }
-
             PictureBox icon = new PictureBox() {
                 Name = IconName,
                 Location = location,
                 Size = new Size(IconSize, IconSize),
-                Image = image,
+                Image = LoadImage(item),
                 SizeMode = PictureBoxSizeMode.CenterImage,
                 BorderStyle = Editor.Configuration.VObjStyle.IconBorder,
                 BackColor = DefaultColor,
@@ -68,10 +54,25 @@ namespace Recipe.Editor.VisualObject
                         }
                         else
                         {
-                            Editor.SelectVO(sender);
-                            MouseDownLocation = Cursor.Position; //move
-                            bufPos = icon.Location;
-                            moveEn = true;
+                            if (Editor.InsertItem != null && Editor.Replacing)
+                            {
+                                Editor.Replacing = false;
+                                var iobj = icon.Tag as ItemObject;
+                                iobj.Item = Editor.InsertItem.Clone() as Library.Item;
+                                icon.Image = LoadImage(iobj.Item);
+                                icon.Cursor = Cursors.Hand;
+                                label.Text = iobj.Item.Name;
+                                LabelPosUpdate(label);
+                                Editor.InsertItem = null;
+                                Editor.Changed = true;
+                            }
+                            else
+                            {
+                                Editor.SelectVO(sender);
+                                MouseDownLocation = Cursor.Position; //move
+                                bufPos = icon.Location;
+                                moveEn = true;
+                            }
                         }
                         icon.BringToFront();
                         label.BringToFront();
@@ -128,6 +129,13 @@ namespace Recipe.Editor.VisualObject
                             Editor.RetraceArea();
                         }
                         break;
+
+                    case MouseButtons.None:
+                        if (Editor.InsertItem != null && Editor.Replacing)
+                        {
+                            icon.Cursor = Cursors.Cross;
+                        }
+                        break;
                 }
             }
 
@@ -171,6 +179,24 @@ namespace Recipe.Editor.VisualObject
                 vObj.Left + vObj.Width / 2 - label.Width / 2,
                 vObj.Top + vObj.Height
                 );
+        }
+
+        private static Image LoadImage(Library.Item item)
+        {
+            Image image;
+            var filePath = Path.Combine(Routine.Directories.Library, item.IconPath);
+            if (File.Exists(filePath))
+            {
+                var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                image = Routine.ImageNB(Image.FromStream(fs), new Size(IconSize, IconSize), 0, 0);
+                fs.Close();
+            }
+            else
+            {
+                image = new PictureBox().ErrorImage;
+            }
+
+            return image;
         }
     }
 }

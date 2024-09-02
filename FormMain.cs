@@ -604,8 +604,14 @@ namespace Recipe
                 case MouseButtons.Left: //rectSelect
                     if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert, clone, copy
                     {
-                        Editor.Editor.CreateVisualObject(e.Location);
-
+                        if (Editor.Editor.Replacing)
+                        {
+                            Editor.Editor.Replacing = false;
+                        }
+                        else
+                        {
+                            Editor.Editor.CreateVisualObject(e.Location);
+                        }
                         insert = false;
                         pictureBoxArea.Cursor = GetCursor();
                     }

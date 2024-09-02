@@ -19,6 +19,7 @@ namespace Recipe.Editor
         public static Size AreaSizeMax = new Size(30000, 30000);
 
         public static Library.Item InsertItem; //for inserting and one vo cloning
+        public static bool Replacing;
         public static List<ItemObject> IODataBase = new List<ItemObject>();
         public static PictureBox CurrentVObj;
         public static PictureBox Area;

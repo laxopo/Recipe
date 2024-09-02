@@ -409,6 +409,13 @@ namespace Recipe
 
         private void buttonItemInsert_Click(object sender, EventArgs e)
         {
+            Editor.Editor.Replacing = false;
+            Editor.Editor.InsertItem = selectedItem;
+        }
+
+        private void buttonReplace_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.Replacing = true;
             Editor.Editor.InsertItem = selectedItem;
         }
 
