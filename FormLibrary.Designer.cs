@@ -38,16 +38,25 @@ namespace Recipe
             this.buttonRename = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.checkBoxOpa = new System.Windows.Forms.CheckBox();
-            this.textBoxSearch = new System.Windows.Forms.TextBox();
-            this.buttonSearch = new System.Windows.Forms.Button();
+            this.textBoxItemSearch = new System.Windows.Forms.TextBox();
+            this.buttonItemSearch = new System.Windows.Forms.Button();
             this.checkBoxIncSubDir = new System.Windows.Forms.CheckBox();
-            this.buttonSearchClear = new System.Windows.Forms.Button();
+            this.buttonItemSearchClear = new System.Windows.Forms.Button();
             this.buttonReplace = new System.Windows.Forms.Button();
+            this.groupBoxSearch = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.buttonDirSearchHome = new System.Windows.Forms.Button();
+            this.buttonDirSearchFw = new System.Windows.Forms.Button();
+            this.buttonDirSearchBack = new System.Windows.Forms.Button();
+            this.textBoxDirSearch = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItemIcon)).BeginInit();
+            this.groupBoxSearch.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeLibDir
             // 
+            this.treeLibDir.HideSelection = false;
             this.treeLibDir.Location = new System.Drawing.Point(12, 25);
             this.treeLibDir.Name = "treeLibDir";
             this.treeLibDir.Size = new System.Drawing.Size(194, 225);
@@ -137,42 +146,43 @@ namespace Recipe
             this.checkBoxOpa.Text = "Opacity";
             this.checkBoxOpa.UseVisualStyleBackColor = true;
             // 
-            // textBoxSearch
+            // textBoxItemSearch
             // 
-            this.textBoxSearch.Location = new System.Drawing.Point(212, 258);
-            this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(194, 20);
-            this.textBoxSearch.TabIndex = 11;
+            this.textBoxItemSearch.Location = new System.Drawing.Point(231, 17);
+            this.textBoxItemSearch.Name = "textBoxItemSearch";
+            this.textBoxItemSearch.Size = new System.Drawing.Size(163, 20);
+            this.textBoxItemSearch.TabIndex = 11;
+            this.textBoxItemSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxItemSearch_KeyDown);
             // 
-            // buttonSearch
+            // buttonItemSearch
             // 
-            this.buttonSearch.Location = new System.Drawing.Point(412, 256);
-            this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(64, 23);
-            this.buttonSearch.TabIndex = 12;
-            this.buttonSearch.Text = "Search";
-            this.buttonSearch.UseVisualStyleBackColor = true;
-            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            this.buttonItemSearch.Location = new System.Drawing.Point(402, 15);
+            this.buttonItemSearch.Name = "buttonItemSearch";
+            this.buttonItemSearch.Size = new System.Drawing.Size(64, 23);
+            this.buttonItemSearch.TabIndex = 12;
+            this.buttonItemSearch.Text = "Search";
+            this.buttonItemSearch.UseVisualStyleBackColor = true;
+            this.buttonItemSearch.Click += new System.EventHandler(this.buttonItemSearch_Click);
             // 
             // checkBoxIncSubDir
             // 
             this.checkBoxIncSubDir.AutoSize = true;
-            this.checkBoxIncSubDir.Location = new System.Drawing.Point(12, 260);
+            this.checkBoxIncSubDir.Location = new System.Drawing.Point(65, 19);
             this.checkBoxIncSubDir.Name = "checkBoxIncSubDir";
             this.checkBoxIncSubDir.Size = new System.Drawing.Size(131, 17);
             this.checkBoxIncSubDir.TabIndex = 13;
             this.checkBoxIncSubDir.Text = "Include Subdirectories";
             this.checkBoxIncSubDir.UseVisualStyleBackColor = true;
             // 
-            // buttonSearchClear
+            // buttonItemSearchClear
             // 
-            this.buttonSearchClear.Location = new System.Drawing.Point(183, 256);
-            this.buttonSearchClear.Name = "buttonSearchClear";
-            this.buttonSearchClear.Size = new System.Drawing.Size(23, 23);
-            this.buttonSearchClear.TabIndex = 14;
-            this.buttonSearchClear.Text = "X";
-            this.buttonSearchClear.UseVisualStyleBackColor = true;
-            this.buttonSearchClear.Click += new System.EventHandler(this.buttonSearchClear_Click);
+            this.buttonItemSearchClear.Location = new System.Drawing.Point(202, 15);
+            this.buttonItemSearchClear.Name = "buttonItemSearchClear";
+            this.buttonItemSearchClear.Size = new System.Drawing.Size(23, 23);
+            this.buttonItemSearchClear.TabIndex = 14;
+            this.buttonItemSearchClear.Text = "X";
+            this.buttonItemSearchClear.UseVisualStyleBackColor = true;
+            this.buttonItemSearchClear.Click += new System.EventHandler(this.buttonItemSearchClear_Click);
             // 
             // buttonReplace
             // 
@@ -183,16 +193,87 @@ namespace Recipe
             this.buttonReplace.Text = "Replace";
             this.buttonReplace.UseVisualStyleBackColor = true;
             // 
+            // groupBoxSearch
+            // 
+            this.groupBoxSearch.Controls.Add(this.label2);
+            this.groupBoxSearch.Controls.Add(this.label1);
+            this.groupBoxSearch.Controls.Add(this.buttonDirSearchHome);
+            this.groupBoxSearch.Controls.Add(this.buttonDirSearchFw);
+            this.groupBoxSearch.Controls.Add(this.buttonDirSearchBack);
+            this.groupBoxSearch.Controls.Add(this.textBoxDirSearch);
+            this.groupBoxSearch.Controls.Add(this.buttonItemSearchClear);
+            this.groupBoxSearch.Controls.Add(this.checkBoxIncSubDir);
+            this.groupBoxSearch.Controls.Add(this.buttonItemSearch);
+            this.groupBoxSearch.Controls.Add(this.textBoxItemSearch);
+            this.groupBoxSearch.Location = new System.Drawing.Point(10, 258);
+            this.groupBoxSearch.Name = "groupBoxSearch";
+            this.groupBoxSearch.Size = new System.Drawing.Size(470, 70);
+            this.groupBoxSearch.TabIndex = 16;
+            this.groupBoxSearch.TabStop = false;
+            this.groupBoxSearch.Text = "Search";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 46);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(28, 13);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "Dirs:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 19;
+            this.label1.Text = "Items:";
+            // 
+            // buttonDirSearchHome
+            // 
+            this.buttonDirSearchHome.Location = new System.Drawing.Point(202, 41);
+            this.buttonDirSearchHome.Name = "buttonDirSearchHome";
+            this.buttonDirSearchHome.Size = new System.Drawing.Size(23, 23);
+            this.buttonDirSearchHome.TabIndex = 18;
+            this.buttonDirSearchHome.Text = "↑";
+            this.buttonDirSearchHome.UseVisualStyleBackColor = true;
+            this.buttonDirSearchHome.Click += new System.EventHandler(this.buttonDirSearchHome_Click);
+            // 
+            // buttonDirSearchFw
+            // 
+            this.buttonDirSearchFw.Location = new System.Drawing.Point(437, 41);
+            this.buttonDirSearchFw.Name = "buttonDirSearchFw";
+            this.buttonDirSearchFw.Size = new System.Drawing.Size(29, 23);
+            this.buttonDirSearchFw.TabIndex = 17;
+            this.buttonDirSearchFw.Text = ">";
+            this.buttonDirSearchFw.UseVisualStyleBackColor = true;
+            this.buttonDirSearchFw.Click += new System.EventHandler(this.buttonDirSearchFw_Click);
+            // 
+            // buttonDirSearchBack
+            // 
+            this.buttonDirSearchBack.Location = new System.Drawing.Point(402, 41);
+            this.buttonDirSearchBack.Name = "buttonDirSearchBack";
+            this.buttonDirSearchBack.Size = new System.Drawing.Size(29, 23);
+            this.buttonDirSearchBack.TabIndex = 16;
+            this.buttonDirSearchBack.Text = "<";
+            this.buttonDirSearchBack.UseVisualStyleBackColor = true;
+            this.buttonDirSearchBack.Click += new System.EventHandler(this.buttonDirSearchBack_Click);
+            // 
+            // textBoxDirSearch
+            // 
+            this.textBoxDirSearch.Location = new System.Drawing.Point(231, 43);
+            this.textBoxDirSearch.Name = "textBoxDirSearch";
+            this.textBoxDirSearch.Size = new System.Drawing.Size(163, 20);
+            this.textBoxDirSearch.TabIndex = 15;
+            // 
             // FormLibrary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(486, 289);
+            this.ClientSize = new System.Drawing.Size(486, 340);
+            this.Controls.Add(this.groupBoxSearch);
             this.Controls.Add(this.buttonReplace);
-            this.Controls.Add(this.buttonSearchClear);
-            this.Controls.Add(this.checkBoxIncSubDir);
-            this.Controls.Add(this.buttonSearch);
-            this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.checkBoxOpa);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonRename);
@@ -205,7 +286,7 @@ namespace Recipe
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(502, 10000);
-            this.MinimumSize = new System.Drawing.Size(502, 328);
+            this.MinimumSize = new System.Drawing.Size(502, 379);
             this.Name = "FormLibrary";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
@@ -218,6 +299,8 @@ namespace Recipe
             this.Move += new System.EventHandler(this.FormLibrary_Move);
             this.Resize += new System.EventHandler(this.FormLibrary_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItemIcon)).EndInit();
+            this.groupBoxSearch.ResumeLayout(false);
+            this.groupBoxSearch.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -234,10 +317,17 @@ namespace Recipe
         private System.Windows.Forms.Button buttonRename;
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.CheckBox checkBoxOpa;
-        private System.Windows.Forms.TextBox textBoxSearch;
-        private System.Windows.Forms.Button buttonSearch;
+        private System.Windows.Forms.TextBox textBoxItemSearch;
+        private System.Windows.Forms.Button buttonItemSearch;
         private System.Windows.Forms.CheckBox checkBoxIncSubDir;
-        private System.Windows.Forms.Button buttonSearchClear;
+        private System.Windows.Forms.Button buttonItemSearchClear;
         private System.Windows.Forms.Button buttonReplace;
+        private System.Windows.Forms.GroupBox groupBoxSearch;
+        private System.Windows.Forms.TextBox textBoxDirSearch;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button buttonDirSearchHome;
+        private System.Windows.Forms.Button buttonDirSearchFw;
+        private System.Windows.Forms.Button buttonDirSearchBack;
     }
 }

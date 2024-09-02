@@ -19,6 +19,9 @@ namespace Recipe
 
         private Library.Directory library = null;
         private Library.Exp explorerBuff = new Library.Exp();
+        private List<TreeNode> treeNodes = new List<TreeNode>();
+        private bool searchDirBeg = false;
+        private bool searchDirEnd = false;
         private bool filtered = false;
         private Config config;
 
@@ -31,8 +34,8 @@ namespace Recipe
         {
             InitializeComponent();
             this.config = config;
-            sOffset = buttonSearch.Top - listBoxLibItems.Bottom;
-            sHeight = ClientRectangle.Height - buttonSearch.Top;
+            sOffset = groupBoxSearch.Top - listBoxLibItems.Bottom;
+            sHeight = ClientRectangle.Height - groupBoxSearch.Top;
         }
 
         public void OpenItem(Library.Item item)
@@ -64,7 +67,7 @@ namespace Recipe
 
         private void ExplorerUpdate()
         {
-            textBoxSearch.Text = "";
+            textBoxItemSearch.Text = "";
             Explorer(null, false);
         }
 
@@ -76,7 +79,7 @@ namespace Recipe
 
             Library.Directory dir;
             Library.Exp exp = null;
-            var text = textBoxSearch.Text.ToUpper();
+            var text = textBoxItemSearch.Text.ToUpper();
             filtered = !(text == "");
 
             if (node == null)
@@ -167,6 +170,9 @@ namespace Recipe
                 TreeNode last = nodeColl[nodeColl.Count - 1];
                 TreeUpdate(last, subExp);
             }
+
+            treeNodes.Clear();
+            NodesListUpdate(treeLibDir.Nodes);
         }
 
         private void SelectNode(TreeNode node)
@@ -261,6 +267,81 @@ namespace Recipe
         {
             var data = JsonConvert.SerializeObject(library, Formatting.Indented);
             File.WriteAllText(Routine.Files.Library, data);
+        }
+
+        private void SearchDirectory(bool forward)
+        {
+            int index;
+            if (treeLibDir.SelectedNode == null)
+            {
+                index = 0;
+            }
+            else
+            {
+                index = treeNodes.FindIndex(x => x == treeLibDir.SelectedNode);
+            }
+
+            if (forward)
+            {
+                for (index++; index < treeNodes.Count; index++)
+                {
+                    if (treeNodes[index].Text.ToUpper().Contains(textBoxDirSearch.Text.ToUpper()))
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (index--; index >= 0; index--)
+                {
+                    if (treeNodes[index].Text.ToUpper().Contains(textBoxDirSearch.Text.ToUpper()))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (index >= treeNodes.Count)
+            {
+                MessageBox.Show("End of the tree.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (searchDirEnd)
+                {
+                    searchDirBeg = false;
+                    searchDirEnd = false;
+
+                }
+                else
+                {
+                    searchDirEnd = true;
+                }
+            }
+            else if (index < 0)
+            {
+                MessageBox.Show("Beginning of the tree.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (searchDirBeg)
+                {
+                    searchDirBeg = false;
+                    searchDirEnd = false;
+                }
+                else
+                {
+                    searchDirBeg = true;
+                }
+            }
+            else
+            {
+                treeLibDir.SelectedNode = treeNodes[index];
+            }
+        }
+
+        private void NodesListUpdate(TreeNodeCollection nodes)
+        {
+            foreach (TreeNode subNode in nodes)
+            {
+                treeNodes.Add(subNode);
+                NodesListUpdate(subNode.Nodes);
+            }
         }
 
         //  //  /////     ///    //  //    //  //     ////
@@ -505,14 +586,10 @@ namespace Recipe
         {
             listBoxLibItems.Height = ClientRectangle.Height - treeLibDir.Top - sHeight;
             treeLibDir.Height = listBoxLibItems.Height;
-            int searchTop = listBoxLibItems.Bottom + sOffset;
-            textBoxSearch.Top = searchTop + 2;
-            buttonSearchClear.Top = searchTop;
-            buttonSearch.Top = searchTop;
-            checkBoxIncSubDir.Top = searchTop + 4;
+            groupBoxSearch.Top = listBoxLibItems.Bottom + sOffset;
         }
 
-        private void buttonSearch_Click(object sender, EventArgs e)
+        private void buttonItemSearch_Click(object sender, EventArgs e)
         {
             var node = treeLibDir.SelectedNode;
             Explorer(treeLibDir.SelectedNode, !checkBoxIncSubDir.Checked);
@@ -528,13 +605,40 @@ namespace Recipe
             }
         }
 
-        private void buttonSearchClear_Click(object sender, EventArgs e)
+        private void buttonItemSearchClear_Click(object sender, EventArgs e)
         {
             var node = treeLibDir.SelectedNode;
             var item = listBoxLibItems.Text;
             ExplorerUpdate();
             SelectNode(node);
             listBoxLibItems.SelectedItem = item;
+        }
+
+        private void textBoxItemSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                buttonItemSearch_Click(null, null);
+            }
+        }
+
+        private void buttonDirSearchFw_Click(object sender, EventArgs e)
+        {
+            SearchDirectory(true);
+        }
+
+        private void buttonDirSearchBack_Click(object sender, EventArgs e)
+        {
+            SearchDirectory(false);
+        }
+
+        private void buttonDirSearchHome_Click(object sender, EventArgs e)
+        {
+            if (treeLibDir.Nodes.Count == 0)
+            {
+                return;
+            }
+            treeLibDir.SelectedNode = treeLibDir.Nodes[0];
         }
     }
 }
