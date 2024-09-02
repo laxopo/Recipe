@@ -79,10 +79,11 @@ namespace Recipe
             // 
             // pictureBoxItemIcon
             // 
+            this.pictureBoxItemIcon.BackColor = System.Drawing.SystemColors.Control;
             this.pictureBoxItemIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxItemIcon.Location = new System.Drawing.Point(412, 25);
             this.pictureBoxItemIcon.Name = "pictureBoxItemIcon";
-            this.pictureBoxItemIcon.Size = new System.Drawing.Size(63, 63);
+            this.pictureBoxItemIcon.Size = new System.Drawing.Size(64, 64);
             this.pictureBoxItemIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBoxItemIcon.TabIndex = 4;
             this.pictureBoxItemIcon.TabStop = false;

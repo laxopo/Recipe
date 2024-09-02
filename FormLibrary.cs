@@ -245,7 +245,7 @@ namespace Recipe
             }
 
             FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read);
-            pictureBoxItemIcon.Image = Routine.ImageNB(Image.FromStream(fs), pictureBoxItemIcon.Size);
+            pictureBoxItemIcon.Image = Routine.ImageNB(Image.FromStream(fs), pictureBoxItemIcon.Size, 0, 0);
             fs.Close();
         }
 
@@ -524,7 +524,6 @@ namespace Recipe
             if (!e.Node.Bounds.Contains(e.Location) && e.Button == MouseButtons.Left)
             {
                 treeLibDir.SelectedNode = null;
-                labelPath.Text = "<root>";
                 treeLibDir_AfterSelect(null, null);
             }
         }

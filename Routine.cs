@@ -36,13 +36,14 @@ namespace Recipe
             return false;
         }
 
-        public static Image ImageNB(Image image, Size size)
+        public static Image ImageNB(Image image, Size size, int x, int y)
         {
             Bitmap bmp = new Bitmap(size.Width, size.Height);
             Graphics itemIcon = Graphics.FromImage(bmp);
             itemIcon.InterpolationMode = InterpolationMode.NearestNeighbor;
+            itemIcon.PixelOffsetMode = PixelOffsetMode.Half;
 
-            itemIcon.DrawImage(image, 0, 0, size.Width, size.Height);
+            itemIcon.DrawImage(image, x, y, size.Width, size.Height);
 
             return bmp;
         }

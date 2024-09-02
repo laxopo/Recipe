@@ -106,18 +106,6 @@ namespace Recipe
                     if (control.Name == Editor.VisualObject.VisualObject.IconName)
                     {
                         (control as PictureBox).BorderStyle = config.VObjStyle.IconBorder;
-
-                        int offset = -1;
-
-                        if (config.VObjStyle.IconHasBorder)
-                        {
-                            offset = 1;
-                        }
-
-                        int w = control.Size.Width + offset;
-                        int h = control.Size.Height + offset;
-
-                        control.Size = new Size(w, h);
                     }
                 }
             }

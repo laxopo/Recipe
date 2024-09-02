@@ -19,20 +19,13 @@ namespace Recipe.Editor.VisualObject
         public static Container GenerateVO(Library.Item item, Point location)
         {
             //object declaration
-            int pbSize = IconSize;
-
-            if (!Editor.Configuration.VObjStyle.IconHasBorder)
-            {
-                pbSize -= 1;
-            }
-
             Image image;
 
             var filePath = Path.Combine(Routine.Directories.Library, item.IconPath);
             if (File.Exists(filePath))
             {
                 var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                image = Routine.ImageNB(Image.FromStream(fs), new Size(IconSize, IconSize));
+                image = Routine.ImageNB(Image.FromStream(fs), new Size(IconSize, IconSize), 0, 0);
                 fs.Close();
             }
             else
@@ -43,7 +36,7 @@ namespace Recipe.Editor.VisualObject
             PictureBox icon = new PictureBox() {
                 Name = IconName,
                 Location = location,
-                Size = new Size(pbSize, pbSize),
+                Size = new Size(IconSize, IconSize),
                 Image = image,
                 SizeMode = PictureBoxSizeMode.CenterImage,
                 BorderStyle = Editor.Configuration.VObjStyle.IconBorder,
