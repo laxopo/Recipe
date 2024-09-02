@@ -329,7 +329,9 @@ namespace Recipe
             if (ren.ShowDialog() == DialogResult.OK)
             {
                 selectedItem.Name = ren.ItemName;
-                listBoxLibItems.Items[listBoxLibItems.SelectedIndex] = ren.ItemName;
+                int index = listBoxLibItems.SelectedIndex;
+                listBoxLibItems.Items[index] = ren.ItemName;
+                (listBoxLibItems.Tag as Library.Exp).Items[index].Name = ren.ItemName;
                 SaveLibrary();
             }
         }
@@ -362,14 +364,21 @@ namespace Recipe
                         }
                     }
 
+                    //remove the file from disk
                     if (File.Exists(path))
                     {
                         File.Delete(path);
                     }
-                    var dir = treeLibDir.SelectedNode.Tag as Library.Directory;
-                    dir.Items.Remove(selectedItem);
+
+                    //remove the item from library
+                    var exp = (listBoxLibItems.Tag as Library.Exp);
+                    exp.Directory.Items.Remove(selectedItem);
+
+                    //remove the item from explorer
+                    exp.Items.RemoveAt(listBoxLibItems.SelectedIndex);
                     listBoxLibItems.Items.Remove(listBoxLibItems.SelectedItem);
-                    listBoxLibItems.SelectedIndex = -1;
+                    DeselectItem();
+
                     SaveLibrary();
                 }
             }
@@ -380,12 +389,13 @@ namespace Recipe
                     return;
                 }
 
-                text += "branch \"" + treeLibDir.SelectedNode.Text + "\" and its items?";
+                text += "directory \"" + treeLibDir.SelectedNode.Text + "\" and its items?";
 
-                if (MessageBox.Show(text, "Branch Delete",
+                if (MessageBox.Show(text, "Directory Delete",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                 {
                     DeselectItem();
+
                     var path = Path.Combine(Routine.Directories.Library, treeLibDir.SelectedNode.FullPath);
                     if (Directory.Exists(path))
                     {
@@ -395,8 +405,8 @@ namespace Recipe
                             var item = Library.Directory.TrimPath(file);
                             if (Editor.Editor.IODataBase.Find(x => x.Item.IconPath == item) != null)
                             {
-                                if (MessageBox.Show("This branch contains the items used in the project. " +
-                                    "Continue deleting branch?", "Branch Delete", 
+                                if (MessageBox.Show("This directory contains the items used in the project. " +
+                                    "Continue deleting?", "Directory Delete", 
                                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                                 {
                                     return;
@@ -407,9 +417,13 @@ namespace Recipe
 
                         Directory.Delete(path, true);
                     }
+
                     library.DeleteDirectory(treeLibDir.SelectedNode.FullPath);
+                    var exp = treeLibDir.SelectedNode.Tag as Library.Exp;
+                    exp.Node.Remove();
+                    exp.Parent.SubNodes.Remove(exp);
+
                     SaveLibrary();
-                    ExplorerUpdate();
                 }
             }
         }
