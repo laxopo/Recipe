@@ -93,6 +93,8 @@ namespace Recipe
         {
             await ImportAsync();
 
+            Sorting(library);
+
             MessageBox.Show("Imported " + itemAdd + " items, skiped " + itemSkip + ".", "Import Completed",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -106,6 +108,17 @@ namespace Recipe
             {
                 LibraryImport(root, cts.Token);
             });
+        }
+
+        private void Sorting(Library.Directory dir)
+        {
+            dir.Items.Sort((x, y) => x.Name.CompareTo(y.Name));
+            dir.Directories.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+            foreach (var subDir in dir.Directories)
+            {
+                Sorting(subDir);
+            }
         }
 
         private void LibraryImport(TreeNode currentNode, CancellationToken token)
