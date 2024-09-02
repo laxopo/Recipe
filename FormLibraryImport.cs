@@ -20,14 +20,12 @@ namespace Recipe
 
             this.library = library;
             buttonUpdate_Click(null, null);
-            formCaption = Text;
             ViewUpdate = viewUpdate;
         }
 
         /**/
 
         private Library.Directory library;
-        private string formCaption;
         private Action ViewUpdate;
 
         private void TreeUpdate(TreeNode root)
@@ -59,7 +57,8 @@ namespace Recipe
         private void Import()
         {
             var tempLib = library.Clone() as Library.Directory;
-            DialogResult = new ImportProgress(tempLib, treeView1.SelectedNode, checkBoxNormName.Checked).ShowDialog();
+            DialogResult = new ImportProgress(tempLib, treeView1.SelectedNode, checkBoxNormName.Checked, 
+                checkBoxTopDir.Checked).ShowDialog();
             if (DialogResult == DialogResult.OK)
             {
                 library = tempLib;

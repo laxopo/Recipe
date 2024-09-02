@@ -35,6 +35,7 @@ namespace Recipe
             this.buttonUpdate = new System.Windows.Forms.Button();
             this.buttonImport = new System.Windows.Forms.Button();
             this.checkBoxNormName = new System.Windows.Forms.CheckBox();
+            this.checkBoxTopDir = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonLibraryFolder
@@ -75,7 +76,7 @@ namespace Recipe
             // 
             // buttonImport
             // 
-            this.buttonImport.Location = new System.Drawing.Point(12, 134);
+            this.buttonImport.Location = new System.Drawing.Point(12, 183);
             this.buttonImport.Name = "buttonImport";
             this.buttonImport.Size = new System.Drawing.Size(114, 23);
             this.buttonImport.TabIndex = 4;
@@ -88,18 +89,29 @@ namespace Recipe
             this.checkBoxNormName.AutoSize = true;
             this.checkBoxNormName.Checked = true;
             this.checkBoxNormName.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxNormName.Location = new System.Drawing.Point(12, 189);
+            this.checkBoxNormName.Location = new System.Drawing.Point(12, 160);
             this.checkBoxNormName.Name = "checkBoxNormName";
             this.checkBoxNormName.Size = new System.Drawing.Size(108, 17);
             this.checkBoxNormName.TabIndex = 5;
             this.checkBoxNormName.Text = "Normalize Names";
             this.checkBoxNormName.UseVisualStyleBackColor = true;
             // 
+            // checkBoxTopDir
+            // 
+            this.checkBoxTopDir.AutoSize = true;
+            this.checkBoxTopDir.Location = new System.Drawing.Point(12, 137);
+            this.checkBoxTopDir.Name = "checkBoxTopDir";
+            this.checkBoxTopDir.Size = new System.Drawing.Size(101, 17);
+            this.checkBoxTopDir.TabIndex = 6;
+            this.checkBoxTopDir.Text = "Top Folder Only";
+            this.checkBoxTopDir.UseVisualStyleBackColor = true;
+            // 
             // FormLibraryImport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 218);
+            this.Controls.Add(this.checkBoxTopDir);
             this.Controls.Add(this.checkBoxNormName);
             this.Controls.Add(this.buttonImport);
             this.Controls.Add(this.buttonUpdate);
@@ -125,5 +137,6 @@ namespace Recipe
         private System.Windows.Forms.Button buttonUpdate;
         private System.Windows.Forms.Button buttonImport;
         private System.Windows.Forms.CheckBox checkBoxNormName;
+        private System.Windows.Forms.CheckBox checkBoxTopDir;
     }
 }

@@ -10,13 +10,14 @@ namespace Recipe
 {
     public partial class ImportProgress : Form
     {
-        public ImportProgress(Library.Directory library, TreeNode root, bool normNames)
+        public ImportProgress(Library.Directory library, TreeNode root, bool normNames, bool topDirectory)
         {
             InitializeComponent();
 
             this.library = library;
             this.root = root;
             this.normNames = normNames;
+            this.topDirectory = topDirectory;
             caption = Text;
         }
 
@@ -26,6 +27,7 @@ namespace Recipe
         private Library.Directory library;
         private TreeNode root;
         private bool normNames;
+        private bool topDirectory;
         private int itemAdd = 0;
         private int itemSkip = 0;
         private int amount = 0;
@@ -140,7 +142,7 @@ namespace Recipe
                 int h = img.Height;
                 double k = (double)w / h;
                 img.Dispose();
-                if (k != 1 || w >= 128)
+                if (k != 1 || w > 128)
                 {
                     ItemSkip++;
                     File.Delete(file);
@@ -174,9 +176,12 @@ namespace Recipe
             AbortRequestCheck(token);
 
             //Get folders
-            foreach (TreeNode node in currentNode.Nodes)
+            if (!topDirectory)
             {
-                LibraryImport(node, token);
+                foreach (TreeNode node in currentNode.Nodes)
+                {
+                    LibraryImport(node, token);
+                }
             }
 
             //Delete empty folder
@@ -250,8 +255,14 @@ namespace Recipe
             itemAdd = 0;
             itemSkip = 0;
             processed = 0;
+            SearchOption searchOption = SearchOption.AllDirectories;
+            if (topDirectory)
+            {
+                searchOption = SearchOption.TopDirectoryOnly;
+            }
+
             amount = Directory.GetFiles(Path.Combine(Routine.Directories.Root, root.FullPath), 
-                "*.png", SearchOption.AllDirectories).Length;
+                "*.png", searchOption).Length;
 
             Task task = Import();
             timerCurFileShow.Start();
