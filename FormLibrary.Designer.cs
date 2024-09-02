@@ -30,7 +30,6 @@ namespace Recipe
         private void InitializeComponent()
         {
             this.treeLibDir = new System.Windows.Forms.TreeView();
-            this.label1 = new System.Windows.Forms.Label();
             this.buttonImport = new System.Windows.Forms.Button();
             this.listBoxLibItems = new System.Windows.Forms.ListBox();
             this.pictureBoxItemIcon = new System.Windows.Forms.PictureBox();
@@ -39,6 +38,11 @@ namespace Recipe
             this.buttonRename = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.checkBoxOpa = new System.Windows.Forms.CheckBox();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.buttonSearch = new System.Windows.Forms.Button();
+            this.checkBoxIncSubDir = new System.Windows.Forms.CheckBox();
+            this.buttonSearchClear = new System.Windows.Forms.Button();
+            this.buttonReplace = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItemIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,23 +50,15 @@ namespace Recipe
             // 
             this.treeLibDir.Location = new System.Drawing.Point(12, 25);
             this.treeLibDir.Name = "treeLibDir";
-            this.treeLibDir.Size = new System.Drawing.Size(194, 212);
+            this.treeLibDir.Size = new System.Drawing.Size(194, 225);
             this.treeLibDir.TabIndex = 0;
             this.treeLibDir.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeLibDir_AfterSelect);
+            this.treeLibDir.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeLibDir_NodeMouseClick);
             this.treeLibDir.Click += new System.EventHandler(this.treeLibDir_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Item explorer";
             // 
             // buttonImport
             // 
-            this.buttonImport.Location = new System.Drawing.Point(412, 214);
+            this.buttonImport.Location = new System.Drawing.Point(412, 227);
             this.buttonImport.Name = "buttonImport";
             this.buttonImport.Size = new System.Drawing.Size(64, 23);
             this.buttonImport.TabIndex = 2;
@@ -75,7 +71,7 @@ namespace Recipe
             this.listBoxLibItems.FormattingEnabled = true;
             this.listBoxLibItems.Location = new System.Drawing.Point(212, 25);
             this.listBoxLibItems.Name = "listBoxLibItems";
-            this.listBoxLibItems.Size = new System.Drawing.Size(194, 212);
+            this.listBoxLibItems.Size = new System.Drawing.Size(194, 225);
             this.listBoxLibItems.TabIndex = 3;
             this.listBoxLibItems.Click += new System.EventHandler(this.listBoxLibItems_Click);
             this.listBoxLibItems.SelectedIndexChanged += new System.EventHandler(this.listBoxLibItems_SelectedIndexChanged);
@@ -104,7 +100,7 @@ namespace Recipe
             // labelPath
             // 
             this.labelPath.AutoSize = true;
-            this.labelPath.Location = new System.Drawing.Point(12, 240);
+            this.labelPath.Location = new System.Drawing.Point(12, 9);
             this.labelPath.Name = "labelPath";
             this.labelPath.Size = new System.Drawing.Size(29, 13);
             this.labelPath.TabIndex = 7;
@@ -112,7 +108,7 @@ namespace Recipe
             // 
             // buttonRename
             // 
-            this.buttonRename.Location = new System.Drawing.Point(412, 124);
+            this.buttonRename.Location = new System.Drawing.Point(412, 169);
             this.buttonRename.Name = "buttonRename";
             this.buttonRename.Size = new System.Drawing.Size(64, 23);
             this.buttonRename.TabIndex = 8;
@@ -122,7 +118,7 @@ namespace Recipe
             // 
             // buttonDelete
             // 
-            this.buttonDelete.Location = new System.Drawing.Point(412, 153);
+            this.buttonDelete.Location = new System.Drawing.Point(412, 198);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(64, 23);
             this.buttonDelete.TabIndex = 9;
@@ -133,8 +129,6 @@ namespace Recipe
             // checkBoxOpa
             // 
             this.checkBoxOpa.AutoSize = true;
-            this.checkBoxOpa.Checked = true;
-            this.checkBoxOpa.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxOpa.Location = new System.Drawing.Point(415, 5);
             this.checkBoxOpa.Name = "checkBoxOpa";
             this.checkBoxOpa.Size = new System.Drawing.Size(62, 17);
@@ -142,11 +136,62 @@ namespace Recipe
             this.checkBoxOpa.Text = "Opacity";
             this.checkBoxOpa.UseVisualStyleBackColor = true;
             // 
+            // textBoxSearch
+            // 
+            this.textBoxSearch.Location = new System.Drawing.Point(212, 258);
+            this.textBoxSearch.Name = "textBoxSearch";
+            this.textBoxSearch.Size = new System.Drawing.Size(194, 20);
+            this.textBoxSearch.TabIndex = 11;
+            // 
+            // buttonSearch
+            // 
+            this.buttonSearch.Location = new System.Drawing.Point(412, 256);
+            this.buttonSearch.Name = "buttonSearch";
+            this.buttonSearch.Size = new System.Drawing.Size(64, 23);
+            this.buttonSearch.TabIndex = 12;
+            this.buttonSearch.Text = "Search";
+            this.buttonSearch.UseVisualStyleBackColor = true;
+            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            // 
+            // checkBoxIncSubDir
+            // 
+            this.checkBoxIncSubDir.AutoSize = true;
+            this.checkBoxIncSubDir.Location = new System.Drawing.Point(12, 260);
+            this.checkBoxIncSubDir.Name = "checkBoxIncSubDir";
+            this.checkBoxIncSubDir.Size = new System.Drawing.Size(131, 17);
+            this.checkBoxIncSubDir.TabIndex = 13;
+            this.checkBoxIncSubDir.Text = "Include Subdirectories";
+            this.checkBoxIncSubDir.UseVisualStyleBackColor = true;
+            // 
+            // buttonSearchClear
+            // 
+            this.buttonSearchClear.Location = new System.Drawing.Point(183, 256);
+            this.buttonSearchClear.Name = "buttonSearchClear";
+            this.buttonSearchClear.Size = new System.Drawing.Size(23, 23);
+            this.buttonSearchClear.TabIndex = 14;
+            this.buttonSearchClear.Text = "X";
+            this.buttonSearchClear.UseVisualStyleBackColor = true;
+            this.buttonSearchClear.Click += new System.EventHandler(this.buttonSearchClear_Click);
+            // 
+            // buttonReplace
+            // 
+            this.buttonReplace.Location = new System.Drawing.Point(412, 124);
+            this.buttonReplace.Name = "buttonReplace";
+            this.buttonReplace.Size = new System.Drawing.Size(64, 23);
+            this.buttonReplace.TabIndex = 15;
+            this.buttonReplace.Text = "Replace";
+            this.buttonReplace.UseVisualStyleBackColor = true;
+            // 
             // FormLibrary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(486, 258);
+            this.ClientSize = new System.Drawing.Size(486, 289);
+            this.Controls.Add(this.buttonReplace);
+            this.Controls.Add(this.buttonSearchClear);
+            this.Controls.Add(this.checkBoxIncSubDir);
+            this.Controls.Add(this.buttonSearch);
+            this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.checkBoxOpa);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonRename);
@@ -155,14 +200,12 @@ namespace Recipe
             this.Controls.Add(this.pictureBoxItemIcon);
             this.Controls.Add(this.listBoxLibItems);
             this.Controls.Add(this.buttonImport);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.treeLibDir);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(502, 1000);
-            this.MinimumSize = new System.Drawing.Size(502, 297);
+            this.MaximumSize = new System.Drawing.Size(502, 10000);
+            this.MinimumSize = new System.Drawing.Size(502, 328);
             this.Name = "FormLibrary";
-            this.Opacity = 0.5D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Library";
@@ -182,7 +225,6 @@ namespace Recipe
         #endregion
 
         private System.Windows.Forms.TreeView treeLibDir;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonImport;
         private System.Windows.Forms.ListBox listBoxLibItems;
         private System.Windows.Forms.PictureBox pictureBoxItemIcon;
@@ -191,5 +233,10 @@ namespace Recipe
         private System.Windows.Forms.Button buttonRename;
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.CheckBox checkBoxOpa;
+        private System.Windows.Forms.TextBox textBoxSearch;
+        private System.Windows.Forms.Button buttonSearch;
+        private System.Windows.Forms.CheckBox checkBoxIncSubDir;
+        private System.Windows.Forms.Button buttonSearchClear;
+        private System.Windows.Forms.Button buttonReplace;
     }
 }

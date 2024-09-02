@@ -98,7 +98,6 @@ namespace Recipe.Editor.VisualObject
 
         private static void LibraryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.LibraryForm.Show();
             var item = (voSender.Tag as ItemObject).Item;
             Editor.LibraryForm.OpenItem(item);
         }

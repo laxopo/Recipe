@@ -15,9 +15,6 @@ namespace Recipe.Library
         [JsonIgnore]
         public Directory Parent { get; set; }
 
-        [JsonIgnore]
-        public TreeNode NodeTag { get; set; }
-
 
         public Directory(string name, Directory parent)
         {
@@ -72,12 +69,6 @@ namespace Recipe.Library
             parent.Directories.Remove(directory);
         }
 
-        public static void DeleteDirectory(Directory directory)
-        {
-            var parent = directory.Parent;
-            parent.Directories.Remove(directory);
-        }
-
         public Directory GetDirectory(string path)
         {
             var lpath = DeserializePath(path);
@@ -105,6 +96,27 @@ namespace Recipe.Library
             }
 
             return directory;
+        }
+
+        public string GetDirectoryPath()
+        {
+            return SerializePath(GetDirectoryLPath(), -1);
+        }
+
+        public List<string> GetDirectoryLPath()
+        {
+            var lpath = new List<string>();
+            Directory dir = this;
+
+            while (dir.Parent != null)
+            {
+                lpath.Add(dir.Name);
+                dir = dir.Parent;
+            }
+
+            lpath.Reverse();
+
+            return lpath;
         }
 
         public void CreateItem(string path, Item item)
@@ -145,14 +157,7 @@ namespace Recipe.Library
             return path;
         }
 
-        public object Clone()
-        {
-            return this.MemberwiseClone();
-        }
-
-        /*Private methods*/
-
-        private List<string> DeserializePath(string path)
+        public static List<string> DeserializePath(string path)
         {
             var list = new List<string>();
             int beg = 0;
@@ -179,16 +184,28 @@ namespace Recipe.Library
                     {
                         list.Add(name);
                     }
-                    
+
                 }
             }
 
             return list;
         }
 
-        private string SerializePath(List<string> lpath, int endLevel)
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        /*Private methods*/
+
+        private static string SerializePath(List<string> lpath, int endLevel)
         {
             string path = "";
+
+            if (endLevel == -1)
+            {
+                endLevel = lpath.Count - 1;
+            }
 
             for (int i = 0; i <= endLevel; i++)
             {
@@ -196,13 +213,14 @@ namespace Recipe.Library
                 {
                     path += "\\";
                 }
+
                 path += lpath[i];
             }
 
             return path;
         }
 
-        private void Relations(Directory parent)
+        private static void Relations(Directory parent)
         {
             foreach (Directory child in parent.Directories)
             {

@@ -526,6 +526,11 @@ namespace Recipe
                 insert = true;
                 pictureBoxArea.Cursor = GetCursor();
             }
+            else if (insert)
+            {
+                insert = false;
+                pictureBoxArea.Cursor = GetCursor();
+            }
         }
 
         private Point mouseDown;

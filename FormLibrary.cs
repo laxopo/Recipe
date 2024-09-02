@@ -18,78 +18,249 @@ namespace Recipe
         public Library.Item selectedItem;
 
         private Library.Directory library = null;
+        private Library.Exp explorerBuff = new Library.Exp();
+        private bool filtered = false;
         private Config config;
 
         private bool loaded = false;
         private object lastCtrl;
-
-        private int lbPthPos;
+        private int sOffset;
+        private int sHeight;
 
         public FormLibrary(Config config)
         {
             InitializeComponent();
             this.config = config;
-            lbPthPos = labelPath.Top - listBoxLibItems.Height - listBoxLibItems.Top;
+            sOffset = buttonSearch.Top - listBoxLibItems.Bottom;
+            sHeight = ClientRectangle.Height - buttonSearch.Top;
         }
 
         public void OpenItem(Library.Item item)
-        {   
-            //Get node
-            var path = Path.GetDirectoryName(item.IconPath);
-            Library.Directory dir = library.GetDirectory(path);
-            treeLibDir.SelectedNode = dir.NodeTag;
+        {
+            Show();
 
-            //get item index
-            int index;
-            bool found = false;
-            for (index = 0; index < dir.Items.Count; index++)
+            //reset search
+            if (filtered)
             {
-                if (dir.Items[index].IconPath == item.IconPath)
-                {
-                    found = true;
-                    break;
-                }
+                ExplorerUpdate();
             }
 
-            //select item in the list
-            if (!found)
+            //Select node
+            var lpath = Library.Directory.DeserializePath(Path.GetDirectoryName(item.IconPath));
+            SelectNode(lpath);
+
+            if (treeLibDir.SelectedNode == null)
             {
-                index = -1;
+                return;
             }
-            listBoxLibItems.SelectedIndex = index;
+
+            //Show item
+            var exp = treeLibDir.SelectedNode.Tag as Library.Exp;
+            int index = exp.Items.FindIndex(x => x.IconPath == item.IconPath);
+            listBoxLibItems.SelectedIndex = index; 
         }
+
+        /**/
 
         private void ExplorerUpdate()
         {
-            treeLibDir.Nodes.Clear();
-            listBoxLibItems.Items.Clear();
-            DeselectItem();
-
-            LibDirScan(library, treeLibDir.Nodes);
+            textBoxSearch.Text = "";
+            Explorer(null, false);
         }
 
-        private void LibDirScan(Library.Directory directory, TreeNodeCollection nodes)
+        private void Explorer(TreeNode node, bool topOnly)
         {
-            foreach (Library.Directory dir in directory.Directories)
+            DeselectItem();
+            listBoxLibItems.Items.Clear();
+            labelPath.Text = "";
+
+            Library.Directory dir;
+            Library.Exp exp = null;
+            var text = textBoxSearch.Text.ToUpper();
+            filtered = !(text == "");
+
+            if (node == null)
             {
-                nodes.Add(dir.Name);
-                TreeNode lastNode = nodes[nodes.Count - 1];
-                lastNode.Tag = dir;
-                dir.NodeTag = lastNode;
-                LibDirScan(dir, lastNode.Nodes);
+                dir = library;
+            }
+            else
+            {
+                exp = node.Tag as Library.Exp;
+                dir = exp.Directory;
+            }
+
+            //Clear all nodes
+            treeLibDir.Nodes.Clear();
+            explorerBuff = new Library.Exp();
+
+            //create selected node tree
+            var lpath = dir.GetDirectoryLPath();
+            exp = explorerBuff;
+            foreach (var name in lpath)
+            {
+                exp.SubNodes.Add(new Library.Exp(name));
+                exp = exp.SubNodes.Last();
+            }
+
+            //explore
+            Explore(dir, exp, text, topOnly);
+
+            //show results
+            TreeUpdate(null, explorerBuff);
+        }
+
+        private void Explore(Library.Directory dir, Library.Exp exp, string searchText, bool topOnly)
+        {
+            //setup node
+            exp.Directory = dir;
+
+            //items
+            foreach (var item in exp.Directory.Items)
+            {
+                if (item.Name.ToUpper().Contains(searchText))
+                {
+                    exp.Items.Add(item);
+                }
+            }
+
+            if (topOnly)
+            {
+                return;
+            }
+
+            //directories
+            foreach (var subDir in exp.Directory.Directories)
+            {
+                exp.SubNodes.Add(new Library.Exp() { 
+                    Parent = exp,
+                    Node = new TreeNode(subDir.Name),
+                    Directory = subDir,
+                });
+
+                Library.Exp last = exp.SubNodes.Last();
+
+                Explore(subDir, last, searchText, false);
+
+                if (last.Items.Count == 0 && last.SubNodes.Count == 0)
+                {
+                    exp.SubNodes.Remove(last);
+                }
             }
         }
 
-        private void SaveLibrary()
+        private void TreeUpdate(TreeNode node, Library.Exp exp)
         {
-            var data = JsonConvert.SerializeObject(library, Formatting.Indented);
-            File.WriteAllText(Routine.Files.Library, data);
+            TreeNodeCollection nodeColl;
+            if (node == null)
+            {
+                nodeColl = treeLibDir.Nodes;
+            }
+            else
+            {
+                nodeColl = node.Nodes;
+                node.Tag = exp;
+            }
+
+            foreach (Library.Exp subExp in exp.SubNodes)
+            {
+                nodeColl.Add(subExp.Node);
+                TreeNode last = nodeColl[nodeColl.Count - 1];
+                TreeUpdate(last, subExp);
+            }
+        }
+
+        private void SelectNode(TreeNode node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            var lpath = (node.Tag as Library.Exp).Directory.GetDirectoryLPath();
+            SelectNode(lpath);
+        }
+
+        private void SelectNode(List<string> lpath)
+        {
+            var nodeColl = treeLibDir.Nodes;
+            TreeNode curNode = null;
+
+            foreach (var dirName in lpath)
+            {
+                curNode = null;
+                foreach (TreeNode nd in nodeColl)
+                {
+                    if (nd.Text == dirName)
+                    {
+                        curNode = nd;
+                        break;
+                    }
+                }
+
+                if (curNode == null)
+                {
+                    return;
+                }
+                nodeColl = curNode.Nodes;
+            }
+
+            treeLibDir.SelectedNode = curNode;
+        }
+
+        private void ItemListUpdate(TreeNode node)
+        {
+            Library.Exp exp;
+
+            if (node == null)
+            {
+                exp = explorerBuff;
+            }
+            else
+            {
+                exp = node.Tag as Library.Exp;
+            }
+
+            listBoxLibItems.Items.Clear();
+            foreach (Library.Item item in exp.Items)
+            {
+                listBoxLibItems.Items.Add(item.Name);
+            }
+            listBoxLibItems.Tag = exp;
+        }
+
+        private void ItemPreview()
+        {
+            if (selectedItem == null)
+            {
+                return;
+            }
+
+            string file = Path.Combine(Routine.Directories.Library, selectedItem.IconPath);
+
+            if (!File.Exists(file))
+            {
+                pictureBoxItemIcon.Image = pictureBoxItemIcon.ErrorImage;
+                selectedItem = null;
+                return;
+            }
+
+            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read);
+            pictureBoxItemIcon.Image = Routine.ImageNB(Image.FromStream(fs), pictureBoxItemIcon.Size);
+            fs.Close();
         }
 
         private void DeselectItem()
         {
             pictureBoxItemIcon.Image = null;
             selectedItem = null;
+            Editor.Editor.InsertItem = null;
+            listBoxLibItems.SelectedIndex = -1;
+        }
+
+        private void SaveLibrary()
+        {
+            var data = JsonConvert.SerializeObject(library, Formatting.Indented);
+            File.WriteAllText(Routine.Files.Library, data);
         }
 
         //  //  /////     ///    //  //    //  //     ////
@@ -100,15 +271,16 @@ namespace Recipe
 
         private void treeLibDir_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            Library.Directory dir = treeLibDir.SelectedNode.Tag as Library.Directory;
-            labelPath.Text = treeLibDir.SelectedNode.FullPath;
-
-            listBoxLibItems.Items.Clear();
             DeselectItem();
+            ItemListUpdate(treeLibDir.SelectedNode);
 
-            foreach (Library.Item item in dir.Items)
+            if (treeLibDir.SelectedNode == null)
             {
-                listBoxLibItems.Items.Add(item.Name);
+                labelPath.Text = "<root>";
+            }
+            else
+            {
+                labelPath.Text = treeLibDir.SelectedNode.FullPath;
             }
         }
 
@@ -125,21 +297,10 @@ namespace Recipe
                 return;
             }
 
-            Library.Directory dir = treeLibDir.SelectedNode.Tag as Library.Directory;
-            selectedItem = dir.Items[listBoxLibItems.SelectedIndex];
-
-            string file = Path.Combine(Routine.Directories.Library, selectedItem.IconPath);
-            
-            if (!File.Exists(file))
-            {
-                pictureBoxItemIcon.Image = pictureBoxItemIcon.ErrorImage;
-                selectedItem = null;
-                return;
-            }
-
-            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read);
-            pictureBoxItemIcon.Image = Routine.ImageNB(Image.FromStream(fs), pictureBoxItemIcon.Size);
-            fs.Close();
+            Editor.Editor.InsertItem = null;
+            var exp = listBoxLibItems.Tag as Library.Exp;
+            selectedItem = exp.Items[listBoxLibItems.SelectedIndex];
+            ItemPreview();
         }
 
         private void listBoxLibItems_Click(object sender, EventArgs e)
@@ -328,10 +489,39 @@ namespace Recipe
         
         private void FormLibrary_Resize(object sender, EventArgs e)
         {
-            listBoxLibItems.Height = ClientRectangle.Height - treeLibDir.Top - labelPath.Height;
+            listBoxLibItems.Height = ClientRectangle.Height - treeLibDir.Top - sHeight;
             treeLibDir.Height = listBoxLibItems.Height;
-            labelPath.Top = listBoxLibItems.Height + listBoxLibItems.Top + lbPthPos;
-            buttonImport.Top = listBoxLibItems.Height + listBoxLibItems.Top - buttonImport.Height;
+            int searchTop = listBoxLibItems.Bottom + sOffset;
+            textBoxSearch.Top = searchTop + 2;
+            buttonSearchClear.Top = searchTop;
+            buttonSearch.Top = searchTop;
+            checkBoxIncSubDir.Top = searchTop + 4;
+        }
+
+        private void buttonSearch_Click(object sender, EventArgs e)
+        {
+            var node = treeLibDir.SelectedNode;
+            Explorer(treeLibDir.SelectedNode, !checkBoxIncSubDir.Checked);
+            SelectNode(node);
+        }
+
+        private void treeLibDir_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (!e.Node.Bounds.Contains(e.Location) && e.Button == MouseButtons.Left)
+            {
+                treeLibDir.SelectedNode = null;
+                labelPath.Text = "<root>";
+                treeLibDir_AfterSelect(null, null);
+            }
+        }
+
+        private void buttonSearchClear_Click(object sender, EventArgs e)
+        {
+            var node = treeLibDir.SelectedNode;
+            var item = listBoxLibItems.Text;
+            ExplorerUpdate();
+            SelectNode(node);
+            listBoxLibItems.SelectedItem = item;
         }
     }
 }

@@ -33,11 +33,14 @@ namespace Recipe
             "Fix area redraw after window restoring",
             "Change AboutBox style",
             "",
-            "2024.08.31 v.1.1:",
+            "2024.09.01 v.1.1:",
             "Add multiselect cloning",
             "Fix sheet resizing",
             "Add sheet fitting",
-            "Add clipboard operations"
+            "Add clipboard operations",
+            "Add the Edit menu",
+            "Add \"Select All\"",
+            "Add \"Show In Library\""
         };
 
         private void ShowHistory()
