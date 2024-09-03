@@ -86,6 +86,7 @@
       <DependentUpon>FormLibrary.cs</DependentUpon>
     </Compile>
     <Compile Include="FormatTable.cs" />
+    <Compile Include="FormOpacity.cs" />
     <Compile Include="FormRename.cs">
       <SubType>Form</SubType>
     </Compile>

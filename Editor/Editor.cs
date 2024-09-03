@@ -426,12 +426,15 @@ namespace Recipe.Editor
 
         /*VObject*/
 
-        public static void SelectVO(object sender) //HL single VO and activate it, deselect and deact other
+        public static void SelectVO(object sender, bool reselect)
         {
-            var iobj = (sender as PictureBox).Tag as ItemObject;
+            SelectVO((sender as PictureBox).Tag as ItemObject, reselect);
+        }
 
+        public static void SelectVO(ItemObject iobj, bool reselect) //HL single VO and activate it, deselect and deact other
+        {
             //Select and HL this VO
-            if (!selectedIObjs.Contains(iobj))
+            if (!selectedIObjs.Contains(iobj) || reselect)
             {
                 //unHL other VOs
                 foreach (ItemObject io in selectedIObjs)
@@ -452,6 +455,7 @@ namespace Recipe.Editor
                 propEditor.LoadItem();
 
                 SelectBoxShow();
+                RetraceArea();
             }
         }
 

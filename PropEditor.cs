@@ -15,22 +15,13 @@ namespace Recipe
         private Editor.ItemObject CurrentIObj;
         private Config config;
         private bool loaded = false;
-        private int opacityCnt;
-        private int opacityTimSec;
-
-        private static List<Library.Item.Type> Types = new List<Library.Item.Type>() {
-            Library.Item.Type.Default,
-            Library.Item.Type.Mechanism,
-            Library.Item.Type.Block,
-            Library.Item.Type.Fluid
-        };
-
+        private FormOpacity opacity;
 
         public PropEditor(Config config)
         {
             InitializeComponent();
             this.config = config;
-            opacityTimSec = 1000 / timerOpacity.Interval;
+            opacity = new FormOpacity(this, checkBoxOpa);
         }
 
         /**/
@@ -79,6 +70,8 @@ namespace Recipe
 
             textBoxName.Text = CurrentIObj.Item.Name;
 
+            comboBoxTypes.Text = Enum.GetName(typeof(Library.Item.Type), CurrentIObj.Item.ItemType);
+
             listBoxLinksInput.Items.Clear();
             foreach (var link in CurrentIObj.LinkInTags)
             {
@@ -111,21 +104,18 @@ namespace Recipe
             if (e.KeyCode == Keys.Enter)
             {
                 CurrentIObj.Item.Name = textBoxName.Text;
-                CurrentIObj.TagLabel.Text = textBoxName.Text;
 
-                Editor.VisualObject.VisualObject.LabelPosUpdate(CurrentIObj.TagLabel);
-                Editor.Editor.RetraceArea();
-                Editor.Editor.Changed = true;
+                Editor.VisualObject.VisualObject.VOTextUpdate(CurrentIObj);
+                Editor.Editor.SelectVO(CurrentIObj, true);
             }
         }
 
         private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentIObj.Item.ItemType = Types[comboBoxTypes.SelectedIndex];
-            Editor.VisualObject.VisualObject.ItemTypeStyleUpdate(CurrentIObj);
+            CurrentIObj.Item.ItemType = (Library.Item.Type)comboBoxTypes.SelectedIndex;
 
-            Editor.Editor.RetraceArea();
-            Editor.Editor.Changed = true;
+            Editor.VisualObject.VisualObject.ItemTypeStyleUpdate(CurrentIObj);
+            Editor.Editor.SelectVO(CurrentIObj, true);
         }
 
         int indexIn = -1, indexOut = -1;
@@ -193,34 +183,6 @@ namespace Recipe
             {
                 config.ToolPosition.PropEditor = Location;
             }    
-        }
-
-        private void PropEditor_MouseEnter(object sender, EventArgs e)
-        {
-            timerOpacity.Start();
-            Opacity = 1.0;
-            opacityCnt = 0;
-        }
-
-        private void timerOpacity_Tick(object sender, EventArgs e)
-        {
-            if (ClientRectangle.Contains(PointToClient(MousePosition)))
-            {
-                Opacity = 1.0;
-                opacityCnt = 0;
-            }
-            else
-            {
-                opacityCnt++;
-                if (opacityCnt > opacityTimSec / 2)
-                {
-                    Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
-                }
-                if (Opacity <= 0.5)
-                {
-                    timerOpacity.Stop();
-                }
-            }
         }
 
         private void buttonDeleteLink_Click(object sender, EventArgs e)

@@ -56,7 +56,7 @@ namespace Recipe.Editor.VisualObject
                         }
                         else
                         {
-                            if (Editor.InsertItem != null && Editor.Replacing)
+                            if (Editor.InsertItem != null && Editor.Replacing) //insert | replace
                             {
                                 Editor.Replacing = false;
                                 var iobj = icon.Tag as ItemObject;
@@ -71,7 +71,7 @@ namespace Recipe.Editor.VisualObject
                             }
                             else
                             {
-                                Editor.SelectVO(sender);
+                                Editor.SelectVO(sender, false);
                                 MouseDownLocation = Cursor.Position; //move
                                 bufPos = icon.Location;
                                 moveEn = true;
@@ -84,7 +84,7 @@ namespace Recipe.Editor.VisualObject
                     case MouseButtons.Right: 
                         if (!Editor.linkProcess) //context menu
                         {
-                            Editor.SelectVO(sender);
+                            Editor.SelectVO(sender, false);
                             Menu.ShowMenu(sender as PictureBox, Cursor.Position);
                         }
                         break;
@@ -192,6 +192,15 @@ namespace Recipe.Editor.VisualObject
         {
             SetItemTypeStyle(iobj.Item, iobj.TagLabel);
             LabelPosUpdate(iobj.TagLabel);
+            Editor.Changed = true;
+        }
+
+        public static void VOTextUpdate(ItemObject iobj)
+        {
+            var label = iobj.TagLabel;
+            label.Text = iobj.Item.Name;
+            LabelPosUpdate(label);
+            Editor.Changed = true;
         }
 
         /**/

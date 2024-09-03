@@ -29,7 +29,6 @@ namespace Recipe
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxName = new System.Windows.Forms.TextBox();
             this.listBoxLinksInput = new System.Windows.Forms.ListBox();
@@ -39,7 +38,6 @@ namespace Recipe
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxOpa = new System.Windows.Forms.CheckBox();
-            this.timerOpacity = new System.Windows.Forms.Timer(this.components);
             this.label4 = new System.Windows.Forms.Label();
             this.comboBoxTypes = new System.Windows.Forms.ComboBox();
             this.groupBoxLinks.SuspendLayout();
@@ -137,11 +135,6 @@ namespace Recipe
             this.checkBoxOpa.Text = "Opacity";
             this.checkBoxOpa.UseVisualStyleBackColor = true;
             // 
-            // timerOpacity
-            // 
-            this.timerOpacity.Interval = 17;
-            this.timerOpacity.Tick += new System.EventHandler(this.timerOpacity_Tick);
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -184,7 +177,6 @@ namespace Recipe
             this.Text = "Properties Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PropEditor_FormClosing);
             this.Load += new System.EventHandler(this.ItemProperties_Load);
-            this.MouseEnter += new System.EventHandler(this.PropEditor_MouseEnter);
             this.Move += new System.EventHandler(this.PropEditor_Move);
             this.groupBoxLinks.ResumeLayout(false);
             this.groupBoxLinks.PerformLayout();
@@ -204,7 +196,6 @@ namespace Recipe
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBoxOpa;
-        private System.Windows.Forms.Timer timerOpacity;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox comboBoxTypes;
     }

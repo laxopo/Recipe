@@ -29,8 +29,7 @@ namespace Recipe
         private object lastCtrl;
         private int sOffset;
         private int sHeight;
-        private int opacityCnt = 0;
-        private int opacityTimSec;
+        private FormOpacity opacity; //autonomic form opacity handler
 
         public FormLibrary(Config config)
         {
@@ -38,7 +37,7 @@ namespace Recipe
             this.config = config;
             sOffset = groupBoxSearch.Top - listBoxLibItems.Bottom;
             sHeight = ClientRectangle.Height - groupBoxSearch.Top;
-            opacityTimSec = 1000 / timerOpacity.Interval;
+            opacity = new FormOpacity(this, checkBoxOpa);
         }
 
         public void OpenItem(Library.Item item)
@@ -577,13 +576,6 @@ namespace Recipe
 
             loaded = true;
         }
-
-        private void FormLibrary_MouseEnter(object sender, EventArgs e)
-        {
-            timerOpacity.Start();
-            Opacity = 1.0;
-            opacityCnt = 0;
-        }
         
         private void FormLibrary_Resize(object sender, EventArgs e)
         {
@@ -594,27 +586,6 @@ namespace Recipe
             if (loaded)
             {
                 config.ToolPosition.Library_Height = Height;
-            }
-        }
-
-        private void timerOpacity_Tick(object sender, EventArgs e)
-        {
-            if (ClientRectangle.Contains(PointToClient(MousePosition)))
-            {
-                Opacity = 1.0;
-                opacityCnt = 0;
-            }
-            else
-            {
-                opacityCnt++;
-                if (opacityCnt > opacityTimSec / 2)
-                {
-                    Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
-                }
-                if (Opacity <= 0.5)
-                {
-                    timerOpacity.Stop();
-                }
             }
         }
 

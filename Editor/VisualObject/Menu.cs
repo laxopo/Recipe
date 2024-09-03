@@ -6,6 +6,10 @@ namespace Recipe.Editor.VisualObject
 {
     public static class Menu
     {
+        private static bool init = false;
+        private static PictureBox voSender;
+
+
         public static ContextMenuStrip ObjMenu 
         { 
             get
@@ -22,12 +26,11 @@ namespace Recipe.Editor.VisualObject
                 }
 
                 return new ContextMenuStrip() {
-                    Name = "contextMenuStripIObj",
-                    Size = new Size(104, 48),
+                    Name = "contextMenuStripVObj",
                     Items = {
                         link,
-                        library,
                         props,
+                        library,
                         clone,
                         copy,
                         delete
@@ -36,8 +39,15 @@ namespace Recipe.Editor.VisualObject
             }
         }
 
-        private static bool init = false;
-        private static PictureBox voSender;
+        public static void ShowMenu(PictureBox sender, Point location)
+        {
+            bool en = Editor.CurrentVObj != null;
+            link.Enabled = en;
+            library.Enabled = en;
+            voSender = sender;
+
+            ObjMenu.Show(location);
+        }
 
         /*Menu items*/
 
@@ -122,18 +132,6 @@ namespace Recipe.Editor.VisualObject
         private static void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Editor.RemoveVOs();
-        }
-
-        /**/
-
-        public static void ShowMenu(PictureBox sender, Point location)
-        {
-            bool en = Editor.CurrentVObj != null;
-            link.Enabled = en;
-            library.Enabled = en;
-            voSender = sender;
-
-            ObjMenu.Show(location);
         }
     }
 }
