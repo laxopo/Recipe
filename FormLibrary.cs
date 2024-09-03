@@ -29,6 +29,8 @@ namespace Recipe
         private object lastCtrl;
         private int sOffset;
         private int sHeight;
+        private int opacityCnt = 0;
+        private int opacityTimSec;
 
         public FormLibrary(Config config)
         {
@@ -36,6 +38,7 @@ namespace Recipe
             this.config = config;
             sOffset = groupBoxSearch.Top - listBoxLibItems.Bottom;
             sHeight = ClientRectangle.Height - groupBoxSearch.Top;
+            opacityTimSec = 1000 / timerOpacity.Interval;
         }
 
         public void OpenItem(Library.Item item)
@@ -556,6 +559,7 @@ namespace Recipe
             if (config.Loaded)
             {
                 Location = config.ToolPosition.Library;
+                Height = config.ToolPosition.Library_Height;
             }
 
             if (File.Exists(Routine.Files.Library))
@@ -586,7 +590,8 @@ namespace Recipe
         {
             if (!ClientRectangle.Contains(PointToClient(MousePosition)) && checkBoxOpa.Checked)
             {
-                Opacity = 0.5;
+                opacityCnt = 0;
+                timerOpacity.Start();
             }
         }
 
@@ -598,7 +603,8 @@ namespace Recipe
             }
             else if (checkBoxOpa.Checked)
             {
-                Opacity = 0.5;
+                opacityCnt = 0;
+                timerOpacity.Start();
             }
         }
         
@@ -607,6 +613,24 @@ namespace Recipe
             listBoxLibItems.Height = ClientRectangle.Height - treeLibDir.Top - sHeight;
             treeLibDir.Height = listBoxLibItems.Height;
             groupBoxSearch.Top = listBoxLibItems.Bottom + sOffset;
+
+            if (loaded)
+            {
+                config.ToolPosition.Library_Height = Height;
+            }
+        }
+
+        private void timerOpacity_Tick(object sender, EventArgs e)
+        {
+            opacityCnt++;
+            if (opacityCnt > opacityTimSec / 2)
+            {
+                Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
+            }
+            if (Opacity <= 0.5)
+            {
+                timerOpacity.Stop();
+            }
         }
 
         private void buttonItemSearch_Click(object sender, EventArgs e)

@@ -39,6 +39,25 @@ namespace Recipe
                 }
             }
 
+            public int Library_Height
+            {
+                get
+                {
+                    return libH;
+                }
+                set
+                {
+                    libH = value;
+                    if (libH + lib.Y > Screen.PrimaryScreen.Bounds.Height)
+                    {
+                        lib.Y = 10;
+                        libH = Screen.PrimaryScreen.Bounds.Height - 100;
+                    }
+
+                    cfg.Changed = true;
+                }
+            }
+
             public Point PropEditor
             {
                 get
@@ -54,6 +73,8 @@ namespace Recipe
 
             [JsonIgnore]
             private Point lib;
+            [JsonIgnore]
+            private int libH;
             [JsonIgnore]
             private Point props;
             [JsonIgnore]

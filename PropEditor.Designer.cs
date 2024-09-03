@@ -29,6 +29,7 @@ namespace Recipe
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxName = new System.Windows.Forms.TextBox();
             this.listBoxLinksInput = new System.Windows.Forms.ListBox();
@@ -38,6 +39,7 @@ namespace Recipe
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxOpa = new System.Windows.Forms.CheckBox();
+            this.timerOpacity = new System.Windows.Forms.Timer(this.components);
             this.groupBoxLinks.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -133,6 +135,11 @@ namespace Recipe
             this.checkBoxOpa.Text = "Opacity";
             this.checkBoxOpa.UseVisualStyleBackColor = true;
             // 
+            // timerOpacity
+            // 
+            this.timerOpacity.Interval = 50;
+            this.timerOpacity.Tick += new System.EventHandler(this.timerOpacity_Tick);
+            // 
             // PropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -144,7 +151,6 @@ namespace Recipe
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "PropEditor";
-            this.Opacity = 0.5D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Properties Editor";
@@ -172,5 +178,6 @@ namespace Recipe
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBoxOpa;
+        private System.Windows.Forms.Timer timerOpacity;
     }
 }

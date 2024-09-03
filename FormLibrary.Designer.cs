@@ -29,6 +29,7 @@ namespace Recipe
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.treeLibDir = new System.Windows.Forms.TreeView();
             this.buttonImport = new System.Windows.Forms.Button();
             this.listBoxLibItems = new System.Windows.Forms.ListBox();
@@ -51,6 +52,7 @@ namespace Recipe
             this.buttonDirSearchFw = new System.Windows.Forms.Button();
             this.buttonDirSearchBack = new System.Windows.Forms.Button();
             this.textBoxDirSearch = new System.Windows.Forms.TextBox();
+            this.timerOpacity = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItemIcon)).BeginInit();
             this.groupBoxSearch.SuspendLayout();
             this.SuspendLayout();
@@ -140,6 +142,8 @@ namespace Recipe
             // checkBoxOpa
             // 
             this.checkBoxOpa.AutoSize = true;
+            this.checkBoxOpa.Checked = true;
+            this.checkBoxOpa.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxOpa.Location = new System.Drawing.Point(415, 5);
             this.checkBoxOpa.Name = "checkBoxOpa";
             this.checkBoxOpa.Size = new System.Drawing.Size(62, 17);
@@ -282,6 +286,11 @@ namespace Recipe
             this.textBoxDirSearch.TextChanged += new System.EventHandler(this.textBoxDirSearch_TextChanged);
             this.textBoxDirSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDirSearch_KeyDown);
             // 
+            // timerOpacity
+            // 
+            this.timerOpacity.Interval = 20;
+            this.timerOpacity.Tick += new System.EventHandler(this.timerOpacity_Tick);
+            // 
             // FormLibrary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -345,5 +354,6 @@ namespace Recipe
         private System.Windows.Forms.Button buttonDirSearchFw;
         private System.Windows.Forms.Button buttonDirSearchBack;
         private System.Windows.Forms.Button buttonDirSearchEnd;
+        private System.Windows.Forms.Timer timerOpacity;
     }
 }

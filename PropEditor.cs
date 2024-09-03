@@ -12,17 +12,19 @@ namespace Recipe
 {
     public partial class PropEditor : Form
     {
+        private Editor.ItemObject CurrentIObj;
+        private Config config;
+        private bool loaded = false;
+        private int opacityCnt;
+        private int opacityTimSec;
+
+
         public PropEditor(Config config)
         {
             InitializeComponent();
             this.config = config;
+            opacityTimSec = 1000 / timerOpacity.Interval;
         }
-
-        /**/
-
-        private Editor.ItemObject CurrentIObj;
-        private Config config;
-        private bool loaded = false;
 
         /**/
 
@@ -185,7 +187,8 @@ namespace Recipe
             }
             else if (checkBoxOpa.Checked)
             {
-                Opacity = 0.5;
+                opacityCnt = 0;
+                timerOpacity.Start();
             }
         }
 
@@ -193,7 +196,8 @@ namespace Recipe
         {
             if (!ClientRectangle.Contains(PointToClient(MousePosition)) && checkBoxOpa.Checked)
             {
-                Opacity = 0.5;
+                opacityCnt = 0;
+                timerOpacity.Start();
             }
         }
 
@@ -202,6 +206,19 @@ namespace Recipe
             if (ClientRectangle.Contains(PointToClient(MousePosition)))
             {
                 Opacity = 1.0;
+            }
+        }
+
+        private void timerOpacity_Tick(object sender, EventArgs e)
+        {
+            opacityCnt++;
+            if (opacityCnt > opacityTimSec / 2)
+            {
+                Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
+            }
+            if (Opacity <= 0.5)
+            {
+                timerOpacity.Stop();
             }
         }
 
