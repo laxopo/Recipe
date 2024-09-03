@@ -191,9 +191,14 @@ namespace Recipe
             if (index != -1)
             {
                 CurrentIObj.LinkInHLs.Clear();
+
                 Editor.ItemObject beg = CurrentIObj.LinkInTags[index];
+
+                beg.LinksOut.Remove(CurrentIObj.ID);
                 beg.LinkOutTags.Remove(CurrentIObj);
-                CurrentIObj.LinkInTags.RemoveAt(index);
+                CurrentIObj.LinkInTags.Remove(beg);
+                CurrentIObj.LinksIn.Remove(beg.ID);
+
                 listBoxLinksInput.Items.RemoveAt(index);
 
                 Editor.Editor.Changed = true;
@@ -203,9 +208,14 @@ namespace Recipe
             if (index != -1)
             {
                 CurrentIObj.LinkOutHLs.Clear();
+
                 Editor.ItemObject end = CurrentIObj.LinkOutTags[index];
+
                 end.LinkInTags.Remove(CurrentIObj);
-                CurrentIObj.LinkOutTags.RemoveAt(index);
+                end.LinksIn.Remove(CurrentIObj.ID);
+                CurrentIObj.LinkOutTags.Remove(end);
+                CurrentIObj.LinksOut.Remove(end.ID);
+
                 listBoxLinksOutput.Items.RemoveAt(index);
 
                 Editor.Editor.Changed = true;

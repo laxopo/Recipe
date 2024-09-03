@@ -28,6 +28,7 @@ namespace Recipe
             "Add tool opacity animation",
             "Add item type support",
             "Fix object selection after papameters editing",
+            "Fix link ID deleting",
             "",
             "2024.09.02 v.1.1:",
             "Add multiselect cloning",
