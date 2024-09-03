@@ -65,6 +65,7 @@ namespace Recipe.Editor.VisualObject
                                 LabelPosUpdate(label);
                                 Editor.InsertItem = null;
                                 Editor.Changed = true;
+                                Editor.DeselectVOs();
                             }
                             else
                             {
@@ -134,6 +135,10 @@ namespace Recipe.Editor.VisualObject
                         if (Editor.InsertItem != null && Editor.Replacing)
                         {
                             icon.Cursor = Cursors.Cross;
+                        }
+                        else if (icon.Cursor != Cursors.Hand)
+                        {
+                            icon.Cursor = Cursors.Hand;
                         }
                         break;
                 }

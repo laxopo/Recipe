@@ -31,16 +31,22 @@ namespace Recipe
             "Add multiselect deleting",
             "Fix deselecting objects during area moving",
             "Fix area redraw after window restoring",
-            "Change AboutBox style",
             "",
-            "2024.09.01 v.1.1:",
+            "2024.09.03 v.1.1:",
             "Add multiselect cloning",
-            "Fix sheet resizing",
             "Add sheet fitting",
             "Add clipboard operations",
             "Add the Edit menu",
             "Add \"Select All\"",
-            "Add \"Show In Library\""
+            "Add \"Show In Library\"",
+            "Add item/directory search in the library",
+            "Add \"Top Directory\" in the library import",
+            "Add \"Replace\" in the library",
+            "Fix sheet resizing",
+            "Fix an icon image drawing",
+            "Fix sorting items/directories during importing",
+            "Set maximum size of imported images to 128",
+            "Change AboutBox style"
         };
 
         private void ShowHistory()

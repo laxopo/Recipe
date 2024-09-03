@@ -559,7 +559,6 @@ namespace Recipe
 
         private void pictureBoxArea_MouseMove(object sender, MouseEventArgs e)
         {
-            labelCoordinates.Text = "X:" + e.X + " Y:" + e.Y;
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
@@ -597,6 +596,14 @@ namespace Recipe
             if (!Editor.Editor.linkProcess && !move && !insert)
             {
                 Editor.Editor.DeselectVOs();
+            }
+
+            if (Editor.Editor.Replacing)
+            {
+                Editor.Editor.Replacing = false;
+                Editor.Editor.InsertItem = null;
+                insert = false;
+                pictureBoxArea.Cursor = GetCursor();
             }
 
             switch (e.Button)
@@ -745,12 +752,12 @@ namespace Recipe
         private void FormMain_Load(object sender, EventArgs e)
         {
             /*TEST*/
-            string[] args = { 
+            /*string[] args = { 
             "",
             @"C:\Users\Barii\Desktop\schematics\test.json"
-            };
+            };*/
 
-            //string[] args = Environment.GetCommandLineArgs();
+            string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
                 if (File.Exists(args[1]))
