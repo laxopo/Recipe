@@ -580,32 +580,9 @@ namespace Recipe
 
         private void FormLibrary_MouseEnter(object sender, EventArgs e)
         {
-            if (ClientRectangle.Contains(PointToClient(MousePosition)))
-            {
-                Opacity = 1.0;
-            }
-        }
-
-        private void FormLibrary_MouseLeave(object sender, EventArgs e)
-        {
-            if (!ClientRectangle.Contains(PointToClient(MousePosition)) && checkBoxOpa.Checked)
-            {
-                opacityCnt = 0;
-                timerOpacity.Start();
-            }
-        }
-
-        private void FormLibrary_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (ClientRectangle.Contains(PointToClient(MousePosition)))
-            {
-                Opacity = 1.0;
-            }
-            else if (checkBoxOpa.Checked)
-            {
-                opacityCnt = 0;
-                timerOpacity.Start();
-            }
+            timerOpacity.Start();
+            Opacity = 1.0;
+            opacityCnt = 0;
         }
         
         private void FormLibrary_Resize(object sender, EventArgs e)
@@ -622,14 +599,22 @@ namespace Recipe
 
         private void timerOpacity_Tick(object sender, EventArgs e)
         {
-            opacityCnt++;
-            if (opacityCnt > opacityTimSec / 2)
+            if (ClientRectangle.Contains(PointToClient(MousePosition)))
             {
-                Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
+                Opacity = 1.0;
+                opacityCnt = 0;
             }
-            if (Opacity <= 0.5)
+            else
             {
-                timerOpacity.Stop();
+                opacityCnt++;
+                if (opacityCnt > opacityTimSec / 2)
+                {
+                    Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
+                }
+                if (Opacity <= 0.5)
+                {
+                    timerOpacity.Stop();
+                }
             }
         }
 

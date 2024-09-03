@@ -15,8 +15,8 @@ namespace Recipe.Library
         
         public enum Type
         {
-            None,
-            Item,
+            Default,
+            Mechanism,
             Block,
             Fluid
         }

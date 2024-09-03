@@ -39,6 +39,8 @@ namespace Recipe.Editor.VisualObject
                 BorderStyle = Editor.Configuration.VObjStyle.LabelBorder
             };
 
+            SetItemTypeStyle(item, label);
+
             //object event handlers
             bool moveEn = false;
             Point bufPos = new Point(0, 0);
@@ -186,6 +188,14 @@ namespace Recipe.Editor.VisualObject
                 );
         }
 
+        public static void ItemTypeStyleUpdate(ItemObject iobj)
+        {
+            SetItemTypeStyle(iobj.Item, iobj.TagLabel);
+            LabelPosUpdate(iobj.TagLabel);
+        }
+
+        /**/
+
         private static Image LoadImage(Library.Item item)
         {
             Image image;
@@ -202,6 +212,32 @@ namespace Recipe.Editor.VisualObject
             }
 
             return image;
+        }
+
+        private static void SetItemTypeStyle(Library.Item item, Label label)
+        {
+            switch (item.ItemType)
+            {
+                case Library.Item.Type.Mechanism:
+                    label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+                    label.ForeColor = SystemColors.ControlText;
+                    break;
+
+                case Library.Item.Type.Block:
+                    label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+                    label.ForeColor = Color.Maroon;
+                    break;
+
+                case Library.Item.Type.Fluid:
+                    label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+                    label.ForeColor = Color.Blue;
+                    break;
+
+                default:
+                    label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+                    label.ForeColor = SystemColors.ControlText;
+                    break;
+            }
         }
     }
 }

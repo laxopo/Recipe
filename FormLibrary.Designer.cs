@@ -288,7 +288,7 @@ namespace Recipe
             // 
             // timerOpacity
             // 
-            this.timerOpacity.Interval = 20;
+            this.timerOpacity.Interval = 17;
             this.timerOpacity.Tick += new System.EventHandler(this.timerOpacity_Tick);
             // 
             // FormLibrary
@@ -318,8 +318,6 @@ namespace Recipe
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormLibrary_FormClosing);
             this.Load += new System.EventHandler(this.FormLibrary_Load);
             this.MouseEnter += new System.EventHandler(this.FormLibrary_MouseEnter);
-            this.MouseLeave += new System.EventHandler(this.FormLibrary_MouseLeave);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FormLibrary_MouseMove);
             this.Move += new System.EventHandler(this.FormLibrary_Move);
             this.Resize += new System.EventHandler(this.FormLibrary_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxItemIcon)).EndInit();

@@ -211,8 +211,8 @@ namespace Recipe
             // libraryToolStripMenuItem
             // 
             this.libraryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.libraryToolStripMenuItem1,
-            this.itemPropertiesToolStripMenuItem});
+            this.itemPropertiesToolStripMenuItem,
+            this.libraryToolStripMenuItem1});
             this.libraryToolStripMenuItem.Name = "libraryToolStripMenuItem";
             this.libraryToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.libraryToolStripMenuItem.Text = "Tools";
@@ -220,14 +220,14 @@ namespace Recipe
             // libraryToolStripMenuItem1
             // 
             this.libraryToolStripMenuItem1.Name = "libraryToolStripMenuItem1";
-            this.libraryToolStripMenuItem1.Size = new System.Drawing.Size(161, 22);
+            this.libraryToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.libraryToolStripMenuItem1.Text = "Library";
             this.libraryToolStripMenuItem1.Click += new System.EventHandler(this.libraryToolStripMenuItem1_Click);
             // 
             // itemPropertiesToolStripMenuItem
             // 
             this.itemPropertiesToolStripMenuItem.Name = "itemPropertiesToolStripMenuItem";
-            this.itemPropertiesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.itemPropertiesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.itemPropertiesToolStripMenuItem.Text = "Properties Editor";
             this.itemPropertiesToolStripMenuItem.Click += new System.EventHandler(this.itemPropertiesToolStripMenuItem_Click);
             // 

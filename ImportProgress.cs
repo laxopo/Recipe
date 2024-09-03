@@ -180,7 +180,7 @@ namespace Recipe
                 {
                     IconPath = iconPath,
                     Name = name,
-                    ItemType = Library.Item.Type.None
+                    ItemType = Library.Item.Type.Default
                 });
 
                 ItemAdd++;

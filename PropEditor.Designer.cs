@@ -40,6 +40,8 @@ namespace Recipe
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxOpa = new System.Windows.Forms.CheckBox();
             this.timerOpacity = new System.Windows.Forms.Timer(this.components);
+            this.label4 = new System.Windows.Forms.Label();
+            this.comboBoxTypes = new System.Windows.Forms.ComboBox();
             this.groupBoxLinks.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,7 +90,7 @@ namespace Recipe
             this.groupBoxLinks.Controls.Add(this.label2);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksInput);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksOutput);
-            this.groupBoxLinks.Location = new System.Drawing.Point(12, 32);
+            this.groupBoxLinks.Location = new System.Drawing.Point(12, 59);
             this.groupBoxLinks.Name = "groupBoxLinks";
             this.groupBoxLinks.Size = new System.Drawing.Size(261, 164);
             this.groupBoxLinks.TabIndex = 5;
@@ -137,14 +139,40 @@ namespace Recipe
             // 
             // timerOpacity
             // 
-            this.timerOpacity.Interval = 50;
+            this.timerOpacity.Interval = 17;
             this.timerOpacity.Tick += new System.EventHandler(this.timerOpacity_Tick);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(16, 35);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(34, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Type:";
+            // 
+            // comboBoxTypes
+            // 
+            this.comboBoxTypes.FormattingEnabled = true;
+            this.comboBoxTypes.Items.AddRange(new object[] {
+            "Default",
+            "Mechanism",
+            "Block",
+            "Fluid"});
+            this.comboBoxTypes.Location = new System.Drawing.Point(56, 32);
+            this.comboBoxTypes.Name = "comboBoxTypes";
+            this.comboBoxTypes.Size = new System.Drawing.Size(127, 21);
+            this.comboBoxTypes.TabIndex = 8;
+            this.comboBoxTypes.Text = "Default";
+            this.comboBoxTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxTypes_SelectedIndexChanged);
             // 
             // PropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(286, 204);
+            this.ClientSize = new System.Drawing.Size(286, 232);
+            this.Controls.Add(this.comboBoxTypes);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.checkBoxOpa);
             this.Controls.Add(this.groupBoxLinks);
             this.Controls.Add(this.textBoxName);
@@ -157,8 +185,6 @@ namespace Recipe
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PropEditor_FormClosing);
             this.Load += new System.EventHandler(this.ItemProperties_Load);
             this.MouseEnter += new System.EventHandler(this.PropEditor_MouseEnter);
-            this.MouseLeave += new System.EventHandler(this.PropEditor_MouseLeave);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PropEditor_MouseMove);
             this.Move += new System.EventHandler(this.PropEditor_Move);
             this.groupBoxLinks.ResumeLayout(false);
             this.groupBoxLinks.PerformLayout();
@@ -179,5 +205,7 @@ namespace Recipe
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBoxOpa;
         private System.Windows.Forms.Timer timerOpacity;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox comboBoxTypes;
     }
 }

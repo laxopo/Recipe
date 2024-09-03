@@ -18,6 +18,13 @@ namespace Recipe
         private int opacityCnt;
         private int opacityTimSec;
 
+        private static List<Library.Item.Type> Types = new List<Library.Item.Type>() {
+            Library.Item.Type.Default,
+            Library.Item.Type.Mechanism,
+            Library.Item.Type.Block,
+            Library.Item.Type.Fluid
+        };
+
 
         public PropEditor(Config config)
         {
@@ -105,11 +112,20 @@ namespace Recipe
             {
                 CurrentIObj.Item.Name = textBoxName.Text;
                 CurrentIObj.TagLabel.Text = textBoxName.Text;
+
                 Editor.VisualObject.VisualObject.LabelPosUpdate(CurrentIObj.TagLabel);
                 Editor.Editor.RetraceArea();
-
                 Editor.Editor.Changed = true;
             }
+        }
+
+        private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CurrentIObj.Item.ItemType = Types[comboBoxTypes.SelectedIndex];
+            Editor.VisualObject.VisualObject.ItemTypeStyleUpdate(CurrentIObj);
+
+            Editor.Editor.RetraceArea();
+            Editor.Editor.Changed = true;
         }
 
         int indexIn = -1, indexOut = -1;
@@ -179,46 +195,31 @@ namespace Recipe
             }    
         }
 
-        private void PropEditor_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (ClientRectangle.Contains(PointToClient(MousePosition)))
-            {
-                Opacity = 1.0;
-            }
-            else if (checkBoxOpa.Checked)
-            {
-                opacityCnt = 0;
-                timerOpacity.Start();
-            }
-        }
-
-        private void PropEditor_MouseLeave(object sender, EventArgs e)
-        {
-            if (!ClientRectangle.Contains(PointToClient(MousePosition)) && checkBoxOpa.Checked)
-            {
-                opacityCnt = 0;
-                timerOpacity.Start();
-            }
-        }
-
         private void PropEditor_MouseEnter(object sender, EventArgs e)
         {
-            if (ClientRectangle.Contains(PointToClient(MousePosition)))
-            {
-                Opacity = 1.0;
-            }
+            timerOpacity.Start();
+            Opacity = 1.0;
+            opacityCnt = 0;
         }
 
         private void timerOpacity_Tick(object sender, EventArgs e)
         {
-            opacityCnt++;
-            if (opacityCnt > opacityTimSec / 2)
+            if (ClientRectangle.Contains(PointToClient(MousePosition)))
             {
-                Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
+                Opacity = 1.0;
+                opacityCnt = 0;
             }
-            if (Opacity <= 0.5)
+            else
             {
-                timerOpacity.Stop();
+                opacityCnt++;
+                if (opacityCnt > opacityTimSec / 2)
+                {
+                    Opacity = 1 - 0.5 * ((opacityCnt - (double)opacityTimSec / 2) / opacityTimSec);
+                }
+                if (Opacity <= 0.5)
+                {
+                    timerOpacity.Stop();
+                }
             }
         }
 
