@@ -1,0 +1,37 @@
+﻿v.1.3 : 04.09.2024:
+Fix sheet fitting
+Fix location limiting during inserting or cloning objects
+Fix area retracing after window moving of switching
+Fix filename-autofill in filedialogs
+Fix selecting the first result after item search in library
+Fix the drawing of object borders in graphics export
+
+v.1.2 : 03.09.2024:
+Add tool opacity animation
+Add item type support
+Fix object selection after papameters editing
+Fix link ID deleting
+
+v.1.1 : 02.09.2024:
+Add multiselect cloning
+Add sheet fitting
+Add clipboard operations
+Add the Edit menu
+Add "Select All"
+Add "Show In Library"
+Add item/directory search in the library
+Add "Top Directory" in the library import
+Add "Replace" in the library
+Fix sheet resizing
+Fix an icon image drawing
+Fix sorting items/directories during importing
+Set maximum size of imported images to 128
+Change AboutBox style
+
+v.1.0 : 28.08.2024:
+Add multiselect
+Add drag and drop
+Add opening file from the command line
+Add multiselect deleting
+Fix deselecting objects during area moving
+Fix area redraw after window restoring"
