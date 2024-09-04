@@ -23,6 +23,7 @@ namespace Recipe.Editor
         public static bool Replacing;
         public static List<ItemObject> IODataBase = new List<ItemObject>();
         public static PictureBox CurrentVObj;
+        public static PictureBox LinkBegVObj;
         public static bool linkProcess;
 
         private static bool retraceRq = false;
@@ -203,22 +204,48 @@ namespace Recipe.Editor
 
         /*Linking*/
 
-        public static void LinkingEnable()
+        public static void LinkingEnable(PictureBox begVObj)
         {
+            LinkBegVObj = begVObj;
             linkProcess = true;
         }
 
         public static void LinkingDisable()
         {
             linkProcess = false;
+            LinkBegVObj = null;
             DeselectVOs();
         }
 
-        public static void CreateLink(PictureBox endVObj)//Linking, creates new links between iobjs
+        public static void CreateLinks(PictureBox endVObj)
         {
-            ItemObject beg = CurrentVObj.Tag as ItemObject;
-            ItemObject end = endVObj.Tag as ItemObject;
+            if (endVObj == null) //beg to end array
+            {
+                ItemObject beg = LinkBegVObj.Tag as ItemObject;
 
+                foreach (var end in selectedIObjs)
+                {
+                    CreateLink(beg, end);
+                }
+            }
+            else //(beg|array) to end
+            {
+                ItemObject end = endVObj.Tag as ItemObject;
+
+                foreach (var beg in selectedIObjs)
+                {
+                    CreateLink(beg, end);
+                }
+            }
+
+            Changed = true;
+
+            LinkingDisable();
+            RetraceArea();
+        }
+
+        public static void CreateLink(ItemObject beg, ItemObject end)//Linking, creates new links between iobjs
+        {
             //Find dublicate
             if (beg.LinkOutTags.Contains(end))
             {
@@ -234,11 +261,6 @@ namespace Recipe.Editor
 
             end.LinksIn.Add(beg.ID);
             end.LinkInTags.Add(beg);
-
-            Changed = true;
-
-            LinkingDisable();
-            RetraceArea();
         }
 
         /*Area Drawing*/

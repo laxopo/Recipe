@@ -403,7 +403,7 @@ namespace Recipe
         bool insert;
         bool move;
         bool rectSel;
-        bool rescSelEv;
+        bool rectSelEv;
         Point cursorPos;
         private Cursor GetCursor()//Changes the editor cursor (not vobj)
         {
@@ -581,7 +581,7 @@ namespace Recipe
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
-                    if (!Editor.Editor.linkProcess && !insert)
+                    if (!insert)
                     {
                         mouseDown = e.Location;
                         rectSel = true;
@@ -609,7 +609,7 @@ namespace Recipe
                         int dy = Math.Abs(mouseDown.Y - e.Location.Y);
                         if (dx > 5 || dy > 5)
                         {
-                            rescSelEv = true;
+                            rectSelEv = true;
                             Editor.Editor.RectangleSelectDraw(mouseDown, e.Location);
                         }
                     }
@@ -650,7 +650,18 @@ namespace Recipe
             switch (e.Button)
             {
                 case MouseButtons.Left: //rectSelect
-                    if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert, clone, copy
+                    if (rectSelEv)
+                    {
+                        Editor.Editor.RectangleSelectVOs();
+                        rectSel = false;
+                        rectSelEv = false;
+                    }
+
+                    if (Editor.Editor.linkProcess) //multi linking (beg to end array)
+                    {
+                        Editor.Editor.CreateLinks(null);
+                    }
+                    else if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert, clone, copy
                     {
                         if (Editor.Editor.Replacing)
                         {
@@ -662,12 +673,6 @@ namespace Recipe
                         }
                         insert = false;
                         pictureBoxArea.Cursor = GetCursor();
-                    }
-                    if (rescSelEv)
-                    {
-                        Editor.Editor.RectangleSelectVOs();
-                        rectSel = false;
-                        rescSelEv = false;
                     }
                     break;
 

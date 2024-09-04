@@ -54,7 +54,7 @@ namespace Recipe.Editor.VisualObject
                     case MouseButtons.Left: 
                         if (Editor.linkProcess) //complete the link
                         {
-                            Editor.CreateLink(icon);
+                            Editor.CreateLinks(icon); // beg/array -> end (this icon)
                         }
                         else
                         {

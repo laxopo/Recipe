@@ -42,7 +42,7 @@ namespace Recipe.Editor.VisualObject
         public static void ShowMenu(PictureBox sender, Point location)
         {
             bool en = Editor.CurrentVObj != null;
-            link.Enabled = en;
+            //link.Enabled = en;
             library.Enabled = en;
             voSender = sender;
 
@@ -98,7 +98,7 @@ namespace Recipe.Editor.VisualObject
 
         private static void LinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.LinkingEnable();
+            Editor.LinkingEnable(voSender);
         }
 
         private static void PropsToolStripMenuItem_Click(object sender, EventArgs e)
