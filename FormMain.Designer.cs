@@ -46,8 +46,8 @@ namespace Recipe
             this.deselectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.libraryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.libraryToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.itemPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.libraryToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.sheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -217,19 +217,19 @@ namespace Recipe
             this.libraryToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.libraryToolStripMenuItem.Text = "Tools";
             // 
-            // libraryToolStripMenuItem1
-            // 
-            this.libraryToolStripMenuItem1.Name = "libraryToolStripMenuItem1";
-            this.libraryToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.libraryToolStripMenuItem1.Text = "Library";
-            this.libraryToolStripMenuItem1.Click += new System.EventHandler(this.libraryToolStripMenuItem1_Click);
-            // 
             // itemPropertiesToolStripMenuItem
             // 
             this.itemPropertiesToolStripMenuItem.Name = "itemPropertiesToolStripMenuItem";
-            this.itemPropertiesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.itemPropertiesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.itemPropertiesToolStripMenuItem.Text = "Properties Editor";
             this.itemPropertiesToolStripMenuItem.Click += new System.EventHandler(this.itemPropertiesToolStripMenuItem_Click);
+            // 
+            // libraryToolStripMenuItem1
+            // 
+            this.libraryToolStripMenuItem1.Name = "libraryToolStripMenuItem1";
+            this.libraryToolStripMenuItem1.Size = new System.Drawing.Size(161, 22);
+            this.libraryToolStripMenuItem1.Text = "Library";
+            this.libraryToolStripMenuItem1.Click += new System.EventHandler(this.libraryToolStripMenuItem1_Click);
             // 
             // sheetToolStripMenuItem
             // 
@@ -245,7 +245,7 @@ namespace Recipe
             // 
             this.resizeToolStripMenuItem.Name = "resizeToolStripMenuItem";
             this.resizeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.resizeToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.resizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.resizeToolStripMenuItem.Text = "Resize";
             this.resizeToolStripMenuItem.Click += new System.EventHandler(this.resizeToolStripMenuItem_Click);
             // 
@@ -253,7 +253,7 @@ namespace Recipe
             // 
             this.fitToolStripMenuItem.Name = "fitToolStripMenuItem";
             this.fitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.fitToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.fitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fitToolStripMenuItem.Text = "Fit";
             this.fitToolStripMenuItem.Click += new System.EventHandler(this.fitToolStripMenuItem_Click);
             // 
@@ -261,7 +261,7 @@ namespace Recipe
             // 
             this.appToolStripMenuItem.Name = "appToolStripMenuItem";
             this.appToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.appToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.appToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.appToolStripMenuItem.Text = "Appearance";
             this.appToolStripMenuItem.Click += new System.EventHandler(this.appToolStripMenuItem_Click);
             // 
@@ -384,6 +384,7 @@ namespace Recipe
             this.Text = "Recipe";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
+            this.ResizeEnd += new System.EventHandler(this.FormMain_ResizeEnd);
             this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.FormMain_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.FormMain_DragEnter);

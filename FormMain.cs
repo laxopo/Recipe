@@ -34,15 +34,20 @@ namespace Recipe
         public FormMain()
         {
             InitializeComponent();
+            this.GotFocus += new EventHandler(FormMain_GotFocus);
 
             config = Config.Load(Routine.Files.Config);
 
-            formLibrary = new FormLibrary(config);
-            formLibrary.Owner = this;
-            propEditor = new PropEditor(config);
-            propEditor.Owner = this;
+            formLibrary = new FormLibrary(config)
+            {
+                Owner = this
+            };
+            propEditor = new PropEditor(config)
+            {
+                Owner = this
+            };
 
-            Editor.Editor.Initialize(this, formLibrary, propEditor, panelEditor, config);
+            Editor.Editor.Initialize(this, formLibrary, propEditor, panelEditor, config, FitTheControls);
 
             FitTheControls();
 
@@ -54,8 +59,7 @@ namespace Recipe
             SheetResize rsz = new SheetResize(pictureBoxArea.Size);
             if (rsz.ShowDialog() == DialogResult.OK)
             {
-                Editor.Editor.AreaResize(rsz.newSize, rsz.shift);
-                FitTheControls();
+                Editor.Editor.AreaResize(rsz.newSize, rsz.shift, false);
             }
         }
 
@@ -143,6 +147,7 @@ namespace Recipe
             }
 
             Editor.Editor.NewSheet();
+            saveFileDialogProj.FileName = "";
             AreaSizeUpdate();
             FitTheControls();
         }
@@ -152,6 +157,15 @@ namespace Recipe
             if (!UnsavedFile("Open File"))
             {
                 return;
+            }
+
+            if (Editor.Editor.FilePath != "")
+            {
+                openFileDialogProj.FileName = Path.GetDirectoryName(Editor.Editor.FilePath);
+            }
+            else
+            {
+                openFileDialogProj.FileName = "";
             }
 
             if (openFileDialogProj.ShowDialog() == DialogResult.OK)
@@ -170,6 +184,16 @@ namespace Recipe
                 {
                     if (File.Exists(Editor.Editor.FilePath))
                     {
+                        if (new FileInfo(Editor.Editor.FilePath).IsReadOnly)
+                        {
+                            if (MessageBox.Show("This file is read only. Do you want to save it with the other name or path?",
+                                "Saving", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                            {
+                                return;
+                            }
+
+                            saveAsToolStripMenuItem_Click(null, null);
+                        }
                         File.Delete(Editor.Editor.FilePath);
                     }
 
@@ -177,16 +201,15 @@ namespace Recipe
                 }
                 else
                 {
-                    if (saveFileDialogProj.ShowDialog() == DialogResult.OK)
-                    {
-                        Editor.Editor.SaveSheet(saveFileDialogProj.FileName);
-                    }
+                    saveAsToolStripMenuItem_Click(null, null);
                 }
             }
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            saveFileDialogProj.InitialDirectory = Path.GetDirectoryName(Editor.Editor.FilePath);
+            saveFileDialogProj.FileName = Editor.Editor.FilePath;
             if (saveFileDialogProj.ShowDialog() == DialogResult.OK)
             {
                 Editor.Editor.SaveSheet(saveFileDialogProj.FileName);
@@ -197,14 +220,15 @@ namespace Recipe
         {
             if (Editor.Editor.FilePath != null)
             {
+                saveFileDialogSnapshot.InitialDirectory = Path.GetDirectoryName(Editor.Editor.FilePath);
                 saveFileDialogSnapshot.FileName = Path.GetFileNameWithoutExtension(Editor.Editor.FilePath);
             }
             else
             {
                 saveFileDialogSnapshot.FileName = "";
             }
-            
 
+            
             if (saveFileDialogSnapshot.ShowDialog() != DialogResult.OK)
             {
                 return;
@@ -310,6 +334,16 @@ namespace Recipe
             }
         }
 
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.SelectAll();
+        }
+
+        private void deselectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.DeselectVOs();
+        }
+
         //Tools
         private void libraryToolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -331,11 +365,16 @@ namespace Recipe
 
         private void fitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Editor.Editor.IODataBase.Count == 0)
+            {
+                Editor.Editor.AreaResize(Editor.Editor.AreaSizeDef, true, false);
+                return;
+            }
+
             if (MessageBox.Show("Sheet will fit to the object array.", "Sheet Resize",
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
             {
-                Editor.Editor.AreaResize(new Size(0, 0), true);
-                FitTheControls();
+                Editor.Editor.AreaResize(new Size(0, 0), true, false);
             }
         }
 
@@ -714,8 +753,7 @@ namespace Recipe
 
         private void buttonAreaResize_MouseUp(object sender, MouseEventArgs e)
         {
-            Editor.Editor.AreaResize(pictureBoxArea.Size, false); //limit a new size
-            FitTheControls();
+            Editor.Editor.AreaResize(pictureBoxArea.Size, false, false); //limit a new size
         }
 
         //Area update
@@ -823,14 +861,16 @@ namespace Recipe
             }
         }
 
-        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        private void FormMain_ResizeEnd(object sender, EventArgs e)
         {
-            Editor.Editor.SelectAll();
+            Editor.Editor.RetraceArea();
         }
 
-        private void deselectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void FormMain_GotFocus(object sender, EventArgs e)
         {
-            Editor.Editor.DeselectVOs();
+            Editor.Editor.RetraceArea();
         }
+
+        /**/
     }
 }

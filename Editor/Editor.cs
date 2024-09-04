@@ -17,17 +17,13 @@ namespace Recipe.Editor
 
         public static Size AreaSizeMin = new Size(200, 200);
         public static Size AreaSizeMax = new Size(30000, 30000);
+        public static Size AreaSizeDef = new Size(728, 383);
 
         public static Library.Item InsertItem; //for inserting and one vo cloning
         public static bool Replacing;
         public static List<ItemObject> IODataBase = new List<ItemObject>();
         public static PictureBox CurrentVObj;
-        public static PictureBox Area;
-        public static Button AreaResizeButton;
         public static bool linkProcess;
-        public static PropEditor propEditor;
-        public static Config Configuration;
-        public static FormLibrary LibraryForm;
 
         private static bool retraceRq = false;
         private static int idCount = 0;
@@ -46,13 +42,19 @@ namespace Recipe.Editor
         private static Point cloneCenter;
         private static Rectangle cloneRect;
         private static Point cloneOffset;
-        
 
-        private static Form mainForm;
         private static string _filePath;
         private static bool _changed = false;
         private static string defCaption;
 
+        private static Form mainForm;
+        private static Action FitTheControls;
+        public static PropEditor propEditor;
+        public static Config configuration;
+        public static FormLibrary libraryForm;
+        public static PictureBox Area;
+        public static Button AreaResizeButton;
+        
 
         public static string FilePath
         {
@@ -85,7 +87,7 @@ namespace Recipe.Editor
         /**/
 
         public static void Initialize(Form formMain, FormLibrary formLibrary, PropEditor propEditor, 
-            Panel editorWindow, Config config)
+            Panel editorWindow, Config config, Action ctrlFit)
         {
             foreach (Control ctrl in editorWindow.Controls)
             {
@@ -102,14 +104,15 @@ namespace Recipe.Editor
             if (Area == null || AreaResizeButton == null)
             {
                 throw
-                    new Exception("Editor control not found");
+                    new Exception("Editor's control not found");
             }
 
             mainForm = formMain;
             Editor.propEditor = propEditor;
             defCaption = formMain.Text;
-            Configuration = config;
-            LibraryForm = formLibrary;
+            configuration = config;
+            libraryForm = formLibrary;
+            FitTheControls = ctrlFit;
         }
 
         /*File operations*/
@@ -123,7 +126,7 @@ namespace Recipe.Editor
             IODataBase.Clear();
             Area.Controls.Clear();
             Area.Location = new Point(0, 0);
-            AreaResizeButton.Location = new Point(728, 383);
+            AreaResizeButton.Location = (Point)AreaSizeDef;
             RetraceArea();
         }
 
@@ -555,39 +558,52 @@ namespace Recipe.Editor
             }
         }
 
-        public static void AreaResize(Size sizeNew, bool vobjShift)
+        public static void AreaResize(Size sizeNew, bool vobjShift, bool bypass)
         {
-            //select all VOs
-            DeselectVOs();
-            foreach (ItemObject iobj in IODataBase)
+            if (!bypass)
             {
-                selectedIObjs.Add(iobj);
-            }
-            selBox = SelectedVOsBox();
-            selBoxStartPos = selBox.Location;
+                //select all VOs
+                DeselectVOs();
+                foreach (ItemObject iobj in IODataBase)
+                {
+                    selectedIObjs.Add(iobj);
+                }
+                selBox = SelectedVOsBox();
+                selBoxStartPos = selBox.Location;
 
-            //limit new area size (fit to vobj array bounds if smaller)
-            if (vobjShift)
-            {
-                if (sizeNew.Width < selBox.Width + 2)
+                //limit new area size (fit to vobj array bounds if smaller)
+                if (vobjShift)
                 {
-                    sizeNew.Width = selBox.Width + 2;
+                    if (sizeNew.Width < selBox.Width + 2)
+                    {
+                        sizeNew.Width = selBox.Width + 2;
+                    }
+                    if (sizeNew.Height < selBox.Height + 2)
+                    {
+                        sizeNew.Height = selBox.Height + 2;
+                    }
                 }
-                if (sizeNew.Height < selBox.Height + 2)
+                else
                 {
-                    sizeNew.Height = selBox.Height + 2;
+                    if (sizeNew.Width < selBox.Right + 2)
+                    {
+                        sizeNew.Width = selBox.Right + 2;
+                    }
+                    if (sizeNew.Height < selBox.Bottom + 2)
+                    {
+                        sizeNew.Height = selBox.Bottom + 2;
+                    }
                 }
             }
-            else
+
+            //check the minimal size
+            if (sizeNew.Width < AreaSizeMin.Width)
             {
-                if (sizeNew.Width < selBox.Right + 2)
-                {
-                    sizeNew.Width = selBox.Right + 2;
-                }
-                if (sizeNew.Height < selBox.Bottom + 2)
-                {
-                    sizeNew.Height = selBox.Bottom + 2;
-                }
+                sizeNew.Width = AreaSizeMin.Width;
+            }
+            if (sizeNew.Height < AreaSizeMin.Height)
+            {
+                sizeNew.Height = AreaSizeMin.Height;
             }
 
             //size and locatiod differentiation
@@ -598,16 +614,21 @@ namespace Recipe.Editor
             Area.Size = sizeNew;
             AreaResizeButton.Location = (Point)Area.Size;
 
-            //Move VOs
-            if (vobjShift)
+            if (!bypass)
             {
-                MoveSelectedVOs(dx, dy);
+                //Move VOs
+                if (vobjShift)
+                {
+                    MoveSelectedVOs(dx, dy);
+                }
+
+                //finish
+                FinishMovingVOs();
+                selectedIObjs.Clear();
             }
 
-            //finish
             Changed = true;
-            FinishMovingVOs();
-            selectedIObjs.Clear();
+            FitTheControls();
         }
 
         public static void FinishMovingVOs()
@@ -635,11 +656,11 @@ namespace Recipe.Editor
 
         public static void CreateVisualObject(Point location)
         {
-            if (Cloning) //massive cloning
+            if (Cloning) //array cloning
             {
                 CloneVOs(location);
             }
-            else //one
+            else //one insert/clone
             {
                 CreateVO(InsertItem.Clone() as Library.Item, location);
             }
@@ -664,7 +685,8 @@ namespace Recipe.Editor
         public static void CloneBoxDraw(Point position) //Draw a rectangle
         {
             position.Offset(cloneOffset);
-            cloneRect.Location = position;
+            cloneRect = RelocationLimiterAbs(position, cloneRect, new Rectangle(0, 0, 0, 0));
+
             RetraceArea();
         }
 
@@ -756,6 +778,7 @@ namespace Recipe.Editor
             //Get new VO
             var ct = VisualObject.VisualObject.GenerateVO(item, location);
 
+            //Register IO
             if (createNew)
             {
                 //Create IO record
@@ -772,6 +795,47 @@ namespace Recipe.Editor
                 //Create VO-IO reference
                 ct.Icon.Tag = IODataBase.Last();
                 ct.Label.Tag = IODataBase.Last();
+
+                /*check area bounds*/
+                var box = GetVOBox(ct);
+
+                //shift VO
+                Point newLoc = ct.Icon.Location;
+                bool reloc = false;
+                if (box.Left < 0)
+                {
+                    newLoc.X -= box.Left;
+                    reloc = true;
+                }
+                if (box.Top < 0)
+                {
+                    newLoc.Y -= box.Top;
+                    reloc = true;
+                }
+                if (reloc)
+                {
+                    VisualObject.VisualObject.LocateVO(ct, newLoc);
+                    IODataBase.Last().ResetRelocation();
+                }
+
+                //resize the area
+                Size newSize = Area.Size;
+                bool resize = false;
+                if (box.Right > Area.Width)
+                {
+                    newSize.Width = box.Right;
+                    resize = true;
+                }
+                if (box.Bottom > Area.Height)
+                {
+                    newSize.Height = box.Bottom;
+                    resize = true;
+                }
+                if (resize)
+                {
+                    AreaResize(newSize, false, true);
+                }
+                /*END check area bounds*/
 
                 //Set an insert event flags
                 InsertItem = null;
@@ -810,8 +874,8 @@ namespace Recipe.Editor
                     //old obj pos in src - old pos of center + new pos of center
                     //x = dx + xc
                     //dx: pos relative to the center (pos in the selection), xc: new center pos
-                    X = iobjSrc.Location.X - cloneCenter.X + location.X,
-                    Y = iobjSrc.Location.Y - cloneCenter.Y + location.Y,
+                    X = iobjSrc.Location.X - cloneCenter.X + cloneRect.X - cloneOffset.X,
+                    Y = iobjSrc.Location.Y - cloneCenter.Y + cloneRect.Y - cloneOffset.Y,
                 };
 
                 //Create new IO
@@ -951,46 +1015,58 @@ namespace Recipe.Editor
                 Label label = iobj.TagLabel;
 
                 //get VO bound box
-                Point lt = new Point (0, icon.Top);
-                if (label.Left < icon.Left)
-                {
-                    lt.X = label.Left;
-                }
-                else
-                {
-                    lt.X = icon.Left;
-                }
-
-                Point rb = new Point(0, label.Bottom);
-                if (label.Right > icon.Right)
-                {
-                    rb.X = label.Right;
-                }
-                else
-                {
-                    rb.X = icon.Right;
-                }
+                var box = GetVOBox(icon, label);
 
                 //Extend the bounds
-                if (lt.X < xl || xl == -1)
+                if (box.Left < xl || xl == -1)
                 {
-                    xl = lt.X;
+                    xl = box.Left;
                 }
-                if (rb.X > xr || xr == -1)
+                if (box.Right > xr || xr == -1)
                 {
-                    xr = rb.X;
+                    xr = box.Right;
                 }
-                if (lt.Y < yt || yt == -1)
+                if (box.Top < yt || yt == -1)
                 {
-                    yt = lt.Y;
+                    yt = box.Top;
                 }
-                if (rb.Y > yb || yb == -1)
+                if (box.Bottom > yb || yb == -1)
                 {
-                    yb = rb.Y;
+                    yb = box.Bottom;
                 }
             }
 
-            return new Rectangle(xl - 2, yt - 2, xr - xl + 4, yb - yt + 4);
+            return new Rectangle(xl, yt, xr - xl, yb - yt);
+        }
+
+        private static Rectangle GetVOBox(VisualObject.Container ct)
+        {
+            return GetVOBox(ct.Icon, ct.Label);
+        }
+
+        private static Rectangle GetVOBox(PictureBox icon, Label label)
+        {
+            Point lt = new Point(0, icon.Top);
+            if (label.Left < icon.Left)
+            {
+                lt.X = label.Left;
+            }
+            else
+            {
+                lt.X = icon.Left;
+            }
+
+            Point rb = new Point(0, label.Bottom);
+            if (label.Right > icon.Right)
+            {
+                rb.X = label.Right;
+            }
+            else
+            {
+                rb.X = icon.Right;
+            }
+
+            return new Rectangle(lt.X - 2, lt.Y - 2, rb.X - lt.X + 4, rb.Y - lt.Y + 4);
         }
 
         private static void SelectBoxShow()
@@ -1021,7 +1097,7 @@ namespace Recipe.Editor
             {
                 dx -= boxBuf.Left;
             }
-            else if (boxBuf.Right > bounds.Width)
+            else if (boxBuf.Right > bounds.Width && bounds.Width > 0)
             {
                 dx -= boxBuf.Right - bounds.Width;
             }
@@ -1029,12 +1105,40 @@ namespace Recipe.Editor
             {
                 dy -= boxBuf.Top;
             }
-            else if (boxBuf.Bottom > bounds.Height)
+            else if (boxBuf.Bottom > bounds.Height && bounds.Height > 0)
             {
                 dy -= boxBuf.Bottom - bounds.Height;
             }
 
             box.Location = GetOffsetPoint(boxRefPos, dx, dy);
+
+            return box;
+        }
+
+        private static Rectangle RelocationLimiterAbs(Point locationNew, Rectangle box, Rectangle bounds)
+        {
+            //limits dx|dy (relative to boxRefPos) if the resulting box are out of the bounds
+            Rectangle boxBuf = box;
+            boxBuf.Location = locationNew;
+
+            if (boxBuf.Left < 0)
+            {
+                locationNew.X -= boxBuf.Left;
+            }
+            else if (boxBuf.Right > bounds.Width && bounds.Width > 0)
+            {
+                locationNew.X -= boxBuf.Right - bounds.Width;
+            }
+            if (boxBuf.Top < 0)
+            {
+                locationNew.Y -= boxBuf.Top;
+            }
+            else if (boxBuf.Bottom > bounds.Height && bounds.Height > 0)
+            {
+                locationNew.Y -= boxBuf.Bottom - bounds.Height;
+            }
+
+            box.Location = locationNew;
 
             return box;
         }

@@ -25,7 +25,7 @@ namespace Recipe.Editor.VisualObject
                 Size = new Size(IconSize, IconSize),
                 Image = LoadImage(item),
                 SizeMode = PictureBoxSizeMode.CenterImage,
-                BorderStyle = Editor.Configuration.VObjStyle.IconBorder,
+                BorderStyle = Editor.configuration.VObjStyle.IconBorder,
                 BackColor = DefaultColor,
                 Cursor = Cursors.Hand
             };
@@ -36,9 +36,11 @@ namespace Recipe.Editor.VisualObject
                 TextAlign = ContentAlignment.MiddleCenter,
                 AutoSize = true,
                 BackColor = DefaultColor,
-                BorderStyle = Editor.Configuration.VObjStyle.LabelBorder
+                BorderStyle = Editor.configuration.VObjStyle.LabelBorder
             };
 
+            label.Size = label.CreateGraphics().MeasureString(label.Text, label.Font).ToSize();
+            LocateLabel(icon, label);
             SetItemTypeStyle(item, label);
 
             //object event handlers
@@ -178,13 +180,24 @@ namespace Recipe.Editor.VisualObject
             LocateVO(icon, icon.Location);
         }
 
-        public static void LocateVO(PictureBox vObj, Point location)
+        public static void LocateVO(Container ct, Point location)
         {
-            vObj.Location = location;
-            Label label = (vObj.Tag as ItemObject).TagLabel;
+            ct.Icon.Location = location;
+            LocateLabel(ct.Icon, ct.Label);
+        }
+
+        public static void LocateVO(PictureBox icon, Point location)
+        {
+            icon.Location = location;
+            Label label = (icon.Tag as ItemObject).TagLabel;
+            LocateLabel(icon, label);
+        }
+
+        public static void LocateLabel(PictureBox icon, Label label)
+        {
             label.Location = new Point(
-                vObj.Left + vObj.Width / 2 - label.Width / 2,
-                vObj.Top + vObj.Height
+                icon.Left + icon.Width / 2 - label.Width / 2,
+                icon.Top + icon.Height
                 );
         }
 

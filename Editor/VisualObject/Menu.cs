@@ -109,7 +109,7 @@ namespace Recipe.Editor.VisualObject
         private static void LibraryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var item = (voSender.Tag as ItemObject).Item;
-            Editor.LibraryForm.OpenItem(item);
+            Editor.libraryForm.OpenItem(item);
         }
 
         private static void CloneToolStripMenuItem_Click(object sender, EventArgs e)

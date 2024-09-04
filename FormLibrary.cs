@@ -215,6 +215,20 @@ namespace Recipe
             treeLibDir.SelectedNode = curNode;
         }
 
+        private void SelectFirstItem()
+        {
+            foreach (TreeNode node in treeNodes)
+            {
+                var exp = node.Tag as Library.Exp;
+                if (exp.Items.Count > 0)
+                {
+                    treeLibDir.SelectedNode = node;
+                    listBoxLibItems.SelectedItem = exp.Items.First();
+                    break;
+                }
+            }
+        }
+
         private void ItemListUpdate(TreeNode node)
         {
             Library.Exp exp;
@@ -595,9 +609,8 @@ namespace Recipe
             {
                 return;
             }
-            var node = treeLibDir.SelectedNode;
             Explorer(treeLibDir.SelectedNode, !checkBoxIncSubDir.Checked);
-            SelectNode(node);
+            SelectFirstItem();
         }
 
         private void buttonItemSearchClear_Click(object sender, EventArgs e)

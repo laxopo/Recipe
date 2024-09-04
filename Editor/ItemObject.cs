@@ -45,5 +45,10 @@ namespace Recipe.Editor
             LinkOutHLs = new List<ItemObject>();
             OldID = -1;
         }
+
+        public void ResetRelocation()
+        {
+            StartLocation = Location;
+        }
     }
 }
