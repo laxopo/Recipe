@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
+using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace Recipe
 {
@@ -235,7 +236,8 @@ namespace Recipe
             }
 
             Bitmap bmp = new Bitmap(pictureBoxArea.ClientSize.Width,
-                               pictureBoxArea.ClientSize.Height);
+                pictureBoxArea.ClientSize.Height);
+
             Graphics gpx = Graphics.FromImage(bmp);
 
             gpx.Clear(pictureBoxArea.BackColor);
@@ -296,8 +298,8 @@ namespace Recipe
 
             foreach (Control ctrl in pictureBoxArea.Controls)
             {
-                var bc = new Bitmap(ctrl.ClientSize.Width, ctrl.ClientSize.Height);
-                ctrl.DrawToBitmap(bc, ctrl.ClientRectangle);
+                var bc = new Bitmap(ctrl.Width, ctrl.Height);
+                ctrl.DrawToBitmap(bc, new Rectangle(new Point(0, 0), ctrl.Size));
 
                 gpx.DrawImage(bc, ctrl.Location);
             }
