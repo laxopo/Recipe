@@ -66,9 +66,9 @@ namespace Recipe
             this.listBoxLinksInput.FormattingEnabled = true;
             this.listBoxLinksInput.Location = new System.Drawing.Point(6, 32);
             this.listBoxLinksInput.Name = "listBoxLinksInput";
+            this.listBoxLinksInput.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxLinksInput.Size = new System.Drawing.Size(120, 95);
             this.listBoxLinksInput.TabIndex = 3;
-            this.listBoxLinksInput.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listBoxLinksInput_MouseClick);
             this.listBoxLinksInput.SelectedIndexChanged += new System.EventHandler(this.listBoxLinksInput_SelectedIndexChanged);
             // 
             // listBoxLinksOutput
@@ -76,9 +76,9 @@ namespace Recipe
             this.listBoxLinksOutput.FormattingEnabled = true;
             this.listBoxLinksOutput.Location = new System.Drawing.Point(132, 32);
             this.listBoxLinksOutput.Name = "listBoxLinksOutput";
+            this.listBoxLinksOutput.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxLinksOutput.Size = new System.Drawing.Size(120, 95);
             this.listBoxLinksOutput.TabIndex = 4;
-            this.listBoxLinksOutput.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listBoxLinksOutput_MouseClick);
             this.listBoxLinksOutput.SelectedIndexChanged += new System.EventHandler(this.listBoxLinksOutput_SelectedIndexChanged);
             // 
             // groupBoxLinks

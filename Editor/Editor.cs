@@ -246,21 +246,29 @@ namespace Recipe.Editor
 
         public static void CreateLink(ItemObject beg, ItemObject end)//Linking, creates new links between iobjs
         {
-            //Find dublicate
-            if (beg.LinkOutTags.Contains(end))
+            //self-linking
+            if (beg == end)
             {
-                LinkingDisable();
                 return;
             }
 
             //Remove opposite link
+            end.LinksOut.Remove(beg.ID);
             end.LinkOutTags.Remove(beg);
+            
+            //Set an output link
+            if (!beg.LinkOutTags.Contains(end))
+            {
+                beg.LinksOut.Add(end.ID);
+                beg.LinkOutTags.Add(end);
+            }
 
-            beg.LinksOut.Add(end.ID);
-            beg.LinkOutTags.Add(end);
-
-            end.LinksIn.Add(beg.ID);
-            end.LinkInTags.Add(beg);
+            //Set an input link
+            if (!end.LinkInTags.Contains(beg))
+            {
+                end.LinksIn.Add(beg.ID);
+                end.LinkInTags.Add(beg);
+            }
         }
 
         /*Area Drawing*/

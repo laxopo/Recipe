@@ -161,16 +161,6 @@ namespace Recipe
             Editor.Editor.RetraceArea();
         }
 
-        private void listBoxLinksInput_MouseClick(object sender, MouseEventArgs e)
-        {
-            listBoxLinksOutput.SelectedItem = null;
-        }
-
-        private void listBoxLinksOutput_MouseClick(object sender, MouseEventArgs e)
-        {
-            listBoxLinksInput.SelectedItem = null;
-        }
-
         private void PropEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
