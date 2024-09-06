@@ -73,8 +73,8 @@ namespace Recipe.Editor.VisualObject
                             }
                             else
                             {
-                                Editor.SelectVO(sender, false);
                                 MouseDownLocation = Cursor.Position; //move
+                                Editor.SelectVO(sender, false);
                                 bufPos = icon.Location;
                                 moveEn = true;
                             }
