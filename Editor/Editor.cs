@@ -383,7 +383,7 @@ namespace Recipe.Editor
                                 double ix = (lbLoc.Y - yBeg) / k + xBeg;
                                 double ixi = (lbLoc.Y - yBeg) / ki + xBeg;
 
-                                if (dy < 0 && ix >= lbLoc.X && ix <= xLeft && ixi >= lbLoc.X) //label intersection
+                                if (dy < 0 && ix >= lbLoc.X && ix <= xLeft + lbSize.Height / 2 && ixi >= lbLoc.X) //label intersection
                                 {
                                     if (xBeg > lbLoc.X) //down
                                     {
@@ -398,7 +398,7 @@ namespace Recipe.Editor
                                 }
                                 else
                                 {
-                                    yEnd = Convert.ToInt32(yLeft);
+                                    yEnd = Convert.ToInt32(yLeft); //left
                                 }
                                 xEnd = Convert.ToInt32(xLeft);
                             }
@@ -410,7 +410,7 @@ namespace Recipe.Editor
                                 double ixi = (lbLoc.Y - yBeg) / ki + xBeg;
                                 int lbxRight = lbLoc.X + lbSize.Width;
 
-                                if (dy < 0 && ix <= lbxRight && ix >= xRight && ixi <= lbxRight) //label intersection
+                                if (dy < 0 && ix <= lbxRight && ix >= xRight - lbSize.Height / 2 && ixi <= lbxRight) //label intersection
                                 {
                                     if (xBeg < lbxRight) //down
                                     {
@@ -425,7 +425,7 @@ namespace Recipe.Editor
                                 }
                                 else
                                 {
-                                    yEnd = Convert.ToInt32(yRight);
+                                    yEnd = Convert.ToInt32(yRight); //right
                                 }
                                 xEnd = Convert.ToInt32(xRight);
                             }
@@ -436,7 +436,7 @@ namespace Recipe.Editor
                 }
             }
 
-            //rectangle select
+            //rectangular selection
             if (rsEnable)
             {
                 Pen dashline = new Pen(Color.Gray, 1);
@@ -445,13 +445,14 @@ namespace Recipe.Editor
                 gpx.DrawRectangle(dashline, rectSelect);
             }
 
-            //a massive cloning rectangle
+            //cloning a rectanglular selection
             if (Cloning)
             {
                 Pen pen = new Pen(Color.Gray, 1);
                 gpx.DrawRectangle(pen, cloneRect);
             }
 
+            //selection box
             if (selBoxEnable)
             {
                 Pen pen = new Pen(Color.Blue, 1);
