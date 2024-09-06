@@ -124,6 +124,12 @@ namespace Recipe.Editor
             Changed = false;
             idCount = 0;
             InsertItem = null;
+            Replacing = false;
+            rsEnable = false;
+            selBoxEnable = false;
+            linkProcess = false;
+            selectedIObjs.Clear();
+            clonedIObjs.Clear();
             IODataBase.Clear();
             Area.Controls.Clear();
             Area.Location = new Point(0, 0);
