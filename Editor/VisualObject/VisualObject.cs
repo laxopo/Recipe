@@ -54,11 +54,11 @@ namespace Recipe.Editor.VisualObject
                     case MouseButtons.Left: 
                         if (Editor.linkProcess) //complete the link
                         {
-                            Editor.CreateLinks(icon); // beg/array -> end (this icon)
+                            Editor.CreateLinks(icon, Control.ModifierKeys == Keys.Control); // beg/array -> end (this icon)
                         }
                         else
                         {
-                            if (Editor.InsertItem != null && Editor.Replacing) //insert | replace
+                            if (Editor.InsertItem != null && Editor.Replacing) //replace
                             {
                                 Editor.Replacing = false;
                                 var iobj = icon.Tag as ItemObject;
@@ -74,7 +74,7 @@ namespace Recipe.Editor.VisualObject
                             else
                             {
                                 MouseDownLocation = Cursor.Position; //move
-                                Editor.SelectVO(sender, false);
+                                Editor.SelectVO(sender, Control.ModifierKeys == Keys.Control);
                                 bufPos = icon.Location;
                                 moveEn = true;
                             }

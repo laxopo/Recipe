@@ -25,6 +25,7 @@ namespace Recipe.Editor
         public static PictureBox CurrentVObj;
         public static PictureBox LinkBegVObj;
         public static bool linkProcess;
+        public static bool linkContinuous;
 
         private static bool retraceRq = false;
         private static int idCount = 0;
@@ -219,12 +220,20 @@ namespace Recipe.Editor
         public static void LinkingDisable()
         {
             linkProcess = false;
+            linkContinuous = false;
             LinkBegVObj = null;
             DeselectVOs();
         }
 
-        public static void CreateLinks(PictureBox endVObj)
+        public static void CreateLinks(PictureBox endVObj, bool continuously)
         {
+            if (!continuously && linkContinuous)
+            {
+                LinkingDisable();
+                RetraceArea();
+                return;
+            }
+
             if (endVObj == null) //beg to end array
             {
                 ItemObject beg = LinkBegVObj.Tag as ItemObject;
@@ -246,7 +255,14 @@ namespace Recipe.Editor
 
             Changed = true;
 
-            LinkingDisable();
+            if (!continuously)
+            {
+                LinkingDisable();
+            }
+            else
+            {
+                linkContinuous = true;
+            }
             RetraceArea();
         }
 
@@ -466,37 +482,47 @@ namespace Recipe.Editor
 
         /*VObject*/
 
-        public static void SelectVO(object sender, bool reselect)
+        public static void SelectVO(object sender, bool additive)
         {
-            SelectVO((sender as PictureBox).Tag as ItemObject, reselect);
+            SelectVO((sender as PictureBox).Tag as ItemObject, additive);
         }
 
-        public static void SelectVO(ItemObject iobj, bool reselect) //HL single VO and activate it, deselect and deact other
+        public static void SelectVO(ItemObject iobj, bool additive) //HL single VO and activate it, deselect and deact other
         {
-            //Select and HL this VO
-            if (!selectedIObjs.Contains(iobj) || reselect)
+            if (!selectedIObjs.Contains(iobj))
             {
-                //unHL other VOs
-                foreach (ItemObject io in selectedIObjs)
+                if (!additive)
                 {
-                    PictureBox oth = io.TagIcon;
-                    HighLightVO(oth, false);
-                }
+                    //unHL other VOs
+                    foreach (ItemObject io in selectedIObjs)
+                    {
+                        HighLightVO(io.TagIcon, false);
+                    }
 
-                //Deselect all VOs
-                selectedIObjs.Clear();
+                    //Deselect all VOs
+                    selectedIObjs.Clear();
+                }
 
                 //Selest this VO
                 selectedIObjs.Add(iobj);
-                HighLightVO(iobj.TagIcon, true);
-
-                //activate this VO
-                CurrentVObj = iobj.TagIcon;
-                propEditor.LoadItem(false);
-
-                SelectBoxShow();
-                RetraceArea();
             }
+            
+            HighLightVO(iobj.TagIcon, true);
+
+            //activate this VO
+            if (selectedIObjs.Count > 1)
+            {
+                CurrentVObj = null;
+            }
+            else
+            {
+                CurrentVObj = iobj.TagIcon;
+            }
+                
+            propEditor.LoadItem(false);
+
+            SelectBoxShow();
+            RetraceArea();
         }
 
         public static void DeselectVOs() //unHL all VOs and deactivate
@@ -548,10 +574,13 @@ namespace Recipe.Editor
             RetraceArea();
         }
 
-        public static void RectangleSelectVOs() //HL all VO in the rectangle bounds
+        public static void RectangleSelectVOs(bool additive) //HL all VO in the rectangle bounds
         {
             //deselect previous VOs
-            DeselectVOs();
+            if (!additive)
+            {
+                DeselectVOs();
+            }
 
             //Select VOs in the select bounds
             foreach (Control vobj in Area.Controls)
@@ -563,7 +592,7 @@ namespace Recipe.Editor
                     {
                         PictureBox pb = vobj as PictureBox;
                         HighLightVO(pb, true);
-                        selectedIObjs.Add(pb.Tag as ItemObject);
+                        SelectedBufferAdd(pb.Tag as ItemObject);
                     }
                 }
             }
@@ -795,7 +824,7 @@ namespace Recipe.Editor
         public static void SelectAll()
         {
             rectSelect = Area.ClientRectangle;
-            RectangleSelectVOs();
+            RectangleSelectVOs(false);
         }
 
         /**/
@@ -1219,6 +1248,14 @@ namespace Recipe.Editor
 
             Cloning = true;
             CloneBoxDraw(center);
+        }
+
+        private static void SelectedBufferAdd(ItemObject iobj)
+        {
+            if (!selectedIObjs.Contains(iobj))
+            {
+                selectedIObjs.Add(iobj);
+            }
         }
     }
 }

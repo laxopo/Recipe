@@ -638,7 +638,8 @@ namespace Recipe
 
         private void pictureBoxArea_MouseUp(object sender, MouseEventArgs e)
         {
-            if (!Editor.Editor.linkProcess && !move && !insert)
+            bool ctrl = Control.ModifierKeys == Keys.Control;
+            if (!Editor.Editor.linkProcess && !move && !insert && !ctrl)
             {
                 Editor.Editor.DeselectVOs();
             }
@@ -656,14 +657,14 @@ namespace Recipe
                 case MouseButtons.Left: //rectSelect
                     if (rectSelEv)
                     {
-                        Editor.Editor.RectangleSelectVOs();
+                        Editor.Editor.RectangleSelectVOs(ctrl);
                         rectSel = false;
                         rectSelEv = false;
                     }
 
                     if (Editor.Editor.linkProcess) //multi linking (beg to end array)
                     {
-                        Editor.Editor.CreateLinks(null);
+                        Editor.Editor.CreateLinks(null, false);
                     }
                     else if (Editor.Editor.InsertItem != null || Editor.Editor.Cloning) //insert, clone, copy
                     {

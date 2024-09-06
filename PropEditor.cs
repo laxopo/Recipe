@@ -239,7 +239,7 @@ namespace Recipe
                 CurrentIObj.Item.Name = textBoxName.Text;
 
                 Editor.VisualObject.VisualObject.VOTextUpdate(CurrentIObj);
-                Editor.Editor.SelectVO(CurrentIObj, true);
+                Editor.Editor.SelectVO(CurrentIObj, false);
             }
         }
 
@@ -255,7 +255,7 @@ namespace Recipe
             CurrentIObj.Item.ItemType = (Library.Item.Type)comboBoxTypes.SelectedIndex;
 
             Editor.VisualObject.VisualObject.ItemTypeStyleUpdate(CurrentIObj);
-            Editor.Editor.SelectVO(CurrentIObj, true);
+            Editor.Editor.SelectVO(CurrentIObj, false);
         }
 
         private void listBoxLinksInput_SelectedIndexChanged(object sender, EventArgs e)
