@@ -26,7 +26,7 @@ namespace Recipe
 
         /**/
 
-        public void LoadItem()
+        public void LoadItem(bool reload)
         {
             bool en = Editor.Editor.CurrentVObj != null;
 
@@ -59,7 +59,7 @@ namespace Recipe
 
             var loadItem = Editor.Editor.CurrentVObj.Tag as Editor.ItemObject;
 
-            if (loadItem == CurrentIObj)
+            if (!reload && loadItem == CurrentIObj)
             {
                 return;
             }
@@ -87,8 +87,38 @@ namespace Recipe
 
         public void Unlink()
         {
-            buttonLinksSelectAll_Click(null, null);
-            buttonDeleteLinks_Click(null, null);
+            bool confirm = false;
+            if (Editor.Editor.selectedIObjs.Count > 0)
+            {
+                foreach (var iobj in Editor.Editor.selectedIObjs)
+                {
+                    if (!confirm && (iobj.LinkInTags.Count > 0 || iobj.LinkOutTags.Count > 0))
+                    {
+                        string ending;
+                        if (Editor.Editor.selectedIObjs.Count == 1)
+                        {
+                            ending = "this item?";
+                        }
+                        else
+                        {
+                            ending = "these items?";
+                        }
+
+                        if (MessageBox.Show("Remove all links related with " + ending, "Unlink",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+                        {
+                            return;
+                        }
+
+                        confirm = true;
+                    }
+
+                    DeleteLinks(iobj, true);
+                }
+
+                Editor.Editor.RetraceArea();
+                LoadItem(true);
+            }
         }
 
         /**/
@@ -107,6 +137,78 @@ namespace Recipe
             }
         }
 
+        private void DeleteLinks(Editor.ItemObject iobj, bool all)
+        {
+            //begin
+            var linksToDelete = new List<Editor.ItemObject>();
+            var listToDelete = new List<object>();
+
+            if (all)
+            {
+                linksToDelete.AddRange(iobj.LinkInTags);
+            }
+            else
+            {
+                foreach (int index in listBoxLinksInput.SelectedIndices)
+                {
+                    linksToDelete.Add(iobj.LinkInTags[index]);
+                    listToDelete.Add(listBoxLinksInput.Items[index]);
+                }
+            }
+            
+            foreach (var beg in linksToDelete)
+            {
+                beg.LinksOut.Remove(iobj.ID);
+                beg.LinkOutTags.Remove(iobj);
+                iobj.LinkInTags.Remove(beg);
+                iobj.LinksIn.Remove(beg.ID);
+
+                Editor.Editor.Changed = true;
+            }
+
+            foreach (var item in listToDelete)
+            {
+                listBoxLinksInput.Items.Remove(item);
+            }
+            iobj.LinkInHLs.Clear();
+
+
+            //end
+            linksToDelete = new List<Editor.ItemObject>();
+            listToDelete = new List<object>();
+
+            if (all)
+            {
+                linksToDelete.AddRange(iobj.LinkOutTags);
+            }
+            else
+            {
+                foreach (int index in listBoxLinksOutput.SelectedIndices)
+                {
+                    linksToDelete.Add(iobj.LinkOutTags[index]);
+                    listToDelete.Add(listBoxLinksOutput.Items[index]);
+                }
+            }
+            
+            foreach (var end in linksToDelete)
+            {
+                end.LinkInTags.Remove(iobj);
+                end.LinksIn.Remove(iobj.ID);
+                iobj.LinkOutTags.Remove(end);
+                iobj.LinksOut.Remove(end.ID);
+
+                Editor.Editor.Changed = true;
+            }
+
+            foreach (var item in listToDelete)
+            {
+                listBoxLinksOutput.Items.Remove(item);
+            }
+            iobj.LinkOutHLs.Clear();
+        }
+
+        /**/
+
         private void ListSelectAll(ListBox list, bool selection)
         {
             for (int index = 0; index < list.Items.Count; index++)
@@ -117,14 +219,14 @@ namespace Recipe
 
         /**/
 
-        private void ItemProperties_Load(object sender, EventArgs e)
+        private void PropEditor_Load(object sender, EventArgs e)
         {
             if (config.Loaded)
             {
                 Location = config.ToolPosition.PropEditor;
             }
 
-            LoadItem();
+            LoadItem(false);
 
             loaded = true;
         }
@@ -229,58 +331,7 @@ namespace Recipe
         private void buttonDeleteLinks_Click(object sender, EventArgs e)
         {
             EnableLSIC_Handlers(false);
-
-            //begin
-            var linksToDelete = new List<Editor.ItemObject>();
-            var listToDelete = new List<object>();
-            foreach (int index in listBoxLinksInput.SelectedIndices)
-            {
-                linksToDelete.Add(CurrentIObj.LinkInTags[index]);
-                listToDelete.Add(listBoxLinksInput.Items[index]);
-            }
-
-            foreach (var beg in linksToDelete)
-            {
-                beg.LinksOut.Remove(CurrentIObj.ID);
-                beg.LinkOutTags.Remove(CurrentIObj);
-                CurrentIObj.LinkInTags.Remove(beg);
-                CurrentIObj.LinksIn.Remove(beg.ID);
-
-                Editor.Editor.Changed = true;
-            }
-
-            foreach (var item in listToDelete)
-            {
-                listBoxLinksInput.Items.Remove(item);
-            }
-            CurrentIObj.LinkInHLs.Clear();
-            
-
-            //end
-            linksToDelete = new List<Editor.ItemObject>();
-            listToDelete = new List<object>();
-            foreach (int index in listBoxLinksOutput.SelectedIndices)
-            {
-                linksToDelete.Add(CurrentIObj.LinkOutTags[index]);
-                listToDelete.Add(listBoxLinksOutput.Items[index]);
-            }
-
-            foreach (var end in linksToDelete)
-            {
-                end.LinkInTags.Remove(CurrentIObj);
-                end.LinksIn.Remove(CurrentIObj.ID);
-                CurrentIObj.LinkOutTags.Remove(end);
-                CurrentIObj.LinksOut.Remove(end.ID);
-
-                Editor.Editor.Changed = true;
-            }
-
-            foreach (var item in listToDelete)
-            {
-                listBoxLinksOutput.Items.Remove(item);
-            }
-            CurrentIObj.LinkOutHLs.Clear();
-
+            DeleteLinks(CurrentIObj, false);
             EnableLSIC_Handlers(true);
             Editor.Editor.RetraceArea();
         }

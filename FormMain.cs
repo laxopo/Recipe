@@ -317,10 +317,6 @@ namespace Recipe
             pasteToolStripMenuItem.Enabled = Clipboard.ContainsData(Editor.Editor.DataFormat);
         }
 
-        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Editor.Editor.RemoveVOs();
-        }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -344,6 +340,16 @@ namespace Recipe
         private void deselectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Editor.Editor.DeselectVOs();
+        }
+
+        private void unlinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            propEditor.Unlink();
+        }
+
+        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Editor.Editor.RemoveVOs();
         }
 
         //Tools
@@ -386,10 +392,15 @@ namespace Recipe
             sb.ShowDialog();
         }
 
-        //Hotkey handler
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        //Help
+        private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            Help.ShowHelp(this, "recipe.chm");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox().ShowDialog();
         }
 
         /*Editor*/
@@ -869,16 +880,6 @@ namespace Recipe
         private void FormMain_GotFocus(object sender, EventArgs e)
         {
             Editor.Editor.RetraceArea();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new AboutBox().ShowDialog();
-        }
-
-        private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Help.ShowHelp(this, "recipe.chm");
         }
 
         /**/

@@ -104,15 +104,7 @@ namespace Recipe.Editor.VisualObject
 
         private static void UnlinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var iobj = voSender.Tag as ItemObject;
-            if (iobj.LinkInTags.Count > 0 || iobj.LinkOutTags.Count > 0)
-            {
-                if (MessageBox.Show("Remove all links related with this item?", "Unlink", 
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
-                {
-                    Editor.propEditor.Unlink();
-                }
-            }
+            Editor.propEditor.Unlink();
         }
 
         private static void PropsToolStripMenuItem_Click(object sender, EventArgs e)

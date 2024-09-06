@@ -202,7 +202,7 @@ namespace Recipe
             this.ShowInTaskbar = false;
             this.Text = "Properties Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PropEditor_FormClosing);
-            this.Load += new System.EventHandler(this.ItemProperties_Load);
+            this.Load += new System.EventHandler(this.PropEditor_Load);
             this.Move += new System.EventHandler(this.PropEditor_Move);
             this.groupBoxLinks.ResumeLayout(false);
             this.groupBoxLinks.PerformLayout();

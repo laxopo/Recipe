@@ -485,7 +485,7 @@ namespace Recipe.Editor
 
                 //activate this VO
                 CurrentVObj = iobj.TagIcon;
-                propEditor.LoadItem();
+                propEditor.LoadItem(false);
 
                 SelectBoxShow();
                 RetraceArea();
@@ -505,7 +505,7 @@ namespace Recipe.Editor
 
             //Deactivate VO
             CurrentVObj = null;
-            propEditor.LoadItem();
+            propEditor.LoadItem(false);
 
             SelectBoxHide();
         }

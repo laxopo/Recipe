@@ -67,6 +67,7 @@ namespace Recipe
             this.vScrollBarEditor = new System.Windows.Forms.VScrollBar();
             this.toolTipBAreaResz = new System.Windows.Forms.ToolTip(this.components);
             this.saveFileDialogSnapshot = new System.Windows.Forms.SaveFileDialog();
+            this.unlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArea)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.panelEditor.SuspendLayout();
@@ -164,6 +165,7 @@ namespace Recipe
             this.pasteToolStripMenuItem,
             this.selectAllToolStripMenuItem,
             this.deselectToolStripMenuItem,
+            this.unlinkToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
@@ -174,7 +176,7 @@ namespace Recipe
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
@@ -182,7 +184,7 @@ namespace Recipe
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem1_Click);
             // 
@@ -190,7 +192,7 @@ namespace Recipe
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
@@ -198,7 +200,7 @@ namespace Recipe
             // 
             this.deselectToolStripMenuItem.Name = "deselectToolStripMenuItem";
             this.deselectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.deselectToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.deselectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deselectToolStripMenuItem.Text = "Deselect";
             this.deselectToolStripMenuItem.Click += new System.EventHandler(this.deselectToolStripMenuItem_Click);
             // 
@@ -206,7 +208,7 @@ namespace Recipe
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem1_Click);
             // 
@@ -222,14 +224,14 @@ namespace Recipe
             // itemPropertiesToolStripMenuItem
             // 
             this.itemPropertiesToolStripMenuItem.Name = "itemPropertiesToolStripMenuItem";
-            this.itemPropertiesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.itemPropertiesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.itemPropertiesToolStripMenuItem.Text = "Properties Editor";
             this.itemPropertiesToolStripMenuItem.Click += new System.EventHandler(this.itemPropertiesToolStripMenuItem_Click);
             // 
             // libraryToolStripMenuItem1
             // 
             this.libraryToolStripMenuItem1.Name = "libraryToolStripMenuItem1";
-            this.libraryToolStripMenuItem1.Size = new System.Drawing.Size(161, 22);
+            this.libraryToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.libraryToolStripMenuItem1.Text = "Library";
             this.libraryToolStripMenuItem1.Click += new System.EventHandler(this.libraryToolStripMenuItem1_Click);
             // 
@@ -280,14 +282,14 @@ namespace Recipe
             // 
             this.showHelpToolStripMenuItem.Name = "showHelpToolStripMenuItem";
             this.showHelpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.showHelpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showHelpToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.showHelpToolStripMenuItem.Text = "Show help";
             this.showHelpToolStripMenuItem.Click += new System.EventHandler(this.showHelpToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -384,6 +386,14 @@ namespace Recipe
     "f|WMF|*.wmf";
             this.saveFileDialogSnapshot.Title = "Save The Snapshot As";
             // 
+            // unlinkToolStripMenuItem
+            // 
+            this.unlinkToolStripMenuItem.Name = "unlinkToolStripMenuItem";
+            this.unlinkToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
+            this.unlinkToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.unlinkToolStripMenuItem.Text = "Unlink";
+            this.unlinkToolStripMenuItem.Click += new System.EventHandler(this.unlinkToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AllowDrop = true;
@@ -454,6 +464,7 @@ namespace Recipe
         private System.Windows.Forms.ToolStripMenuItem deselectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unlinkToolStripMenuItem;
     }
 }
 
