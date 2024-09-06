@@ -386,13 +386,6 @@ namespace Recipe
             sb.ShowDialog();
         }
 
-        //About
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AboutBox about = new AboutBox();
-            about.ShowDialog();
-        }
-
         //Hotkey handler
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -876,6 +869,16 @@ namespace Recipe
         private void FormMain_GotFocus(object sender, EventArgs e)
         {
             Editor.Editor.RetraceArea();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox().ShowDialog();
+        }
+
+        private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Help.ShowHelp(this, "recipe.chm");
         }
 
         /**/

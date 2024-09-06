@@ -52,6 +52,8 @@ namespace Recipe
             this.resizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.appToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hotkeyHandlerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelEditor = new System.Windows.Forms.Panel();
@@ -94,7 +96,7 @@ namespace Recipe
             this.editToolStripMenuItem,
             this.libraryToolStripMenuItem,
             this.sheetToolStripMenuItem,
-            this.aboutToolStripMenuItem,
+            this.helpToolStripMenuItem,
             this.hotkeyHandlerToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -245,7 +247,7 @@ namespace Recipe
             // 
             this.resizeToolStripMenuItem.Name = "resizeToolStripMenuItem";
             this.resizeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.resizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resizeToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.resizeToolStripMenuItem.Text = "Resize";
             this.resizeToolStripMenuItem.Click += new System.EventHandler(this.resizeToolStripMenuItem_Click);
             // 
@@ -253,7 +255,7 @@ namespace Recipe
             // 
             this.fitToolStripMenuItem.Name = "fitToolStripMenuItem";
             this.fitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.fitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fitToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.fitToolStripMenuItem.Text = "Fit";
             this.fitToolStripMenuItem.Click += new System.EventHandler(this.fitToolStripMenuItem_Click);
             // 
@@ -261,15 +263,31 @@ namespace Recipe
             // 
             this.appToolStripMenuItem.Name = "appToolStripMenuItem";
             this.appToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.appToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.appToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.appToolStripMenuItem.Text = "Appearance";
             this.appToolStripMenuItem.Click += new System.EventHandler(this.appToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showHelpToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // showHelpToolStripMenuItem
+            // 
+            this.showHelpToolStripMenuItem.Name = "showHelpToolStripMenuItem";
+            this.showHelpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.showHelpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showHelpToolStripMenuItem.Text = "Show help";
+            this.showHelpToolStripMenuItem.Click += new System.EventHandler(this.showHelpToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -422,7 +440,7 @@ namespace Recipe
         private System.Windows.Forms.ToolStripMenuItem itemPropertiesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportImageToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialogSnapshot;
         private System.Windows.Forms.ToolStripMenuItem fitToolStripMenuItem;
@@ -434,6 +452,8 @@ namespace Recipe
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deselectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

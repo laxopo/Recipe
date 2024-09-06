@@ -49,9 +49,19 @@ namespace Recipe
         private void Timer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             bool contain = false;
-            form.Invoke(new MethodInvoker(delegate () {
-                contain = form.ClientRectangle.Contains(form.PointToClient(Control.MousePosition));
-            }));
+            
+            try
+            {
+                form.Invoke(new MethodInvoker(delegate () {
+                    contain = form.ClientRectangle.Contains(form.PointToClient(Control.MousePosition));
+                }));
+            }
+            catch
+            {
+                timer.Stop();
+                return;
+            }
+            
 
             if (contain)
             {
