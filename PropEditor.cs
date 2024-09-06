@@ -70,7 +70,7 @@ namespace Recipe
 
             textBoxName.Text = CurrentIObj.Item.Name;
 
-            comboBoxTypes.Text = Enum.GetName(typeof(Library.Item.Type), CurrentIObj.Item.ItemType);
+            comboBoxTypes_SetValue(CurrentIObj.Item.ItemType);
 
             listBoxLinksInput.Items.Clear();
             foreach (var link in CurrentIObj.LinkInTags)
@@ -240,6 +240,13 @@ namespace Recipe
                 Editor.VisualObject.VisualObject.VOTextUpdate(CurrentIObj);
                 Editor.Editor.SelectVO(CurrentIObj, true);
             }
+        }
+
+        private void comboBoxTypes_SetValue(Library.Item.Type type)
+        {
+            comboBoxTypes.SelectedIndexChanged -= new EventHandler(comboBoxTypes_SelectedIndexChanged);
+            comboBoxTypes.Text = Enum.GetName(typeof(Library.Item.Type), type);
+            comboBoxTypes.SelectedIndexChanged += new EventHandler(comboBoxTypes_SelectedIndexChanged);
         }
 
         private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
