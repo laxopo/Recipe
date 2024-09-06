@@ -182,7 +182,6 @@ namespace Recipe
             this.comboBoxTypes.Name = "comboBoxTypes";
             this.comboBoxTypes.Size = new System.Drawing.Size(127, 21);
             this.comboBoxTypes.TabIndex = 8;
-            this.comboBoxTypes.Text = "Default";
             this.comboBoxTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxTypes_SelectedIndexChanged);
             // 
             // PropEditor

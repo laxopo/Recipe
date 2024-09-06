@@ -51,6 +51,7 @@ namespace Recipe
                     listBoxLinksOutput.SelectedItem = null;
                     listBoxLinksInput.Items.Clear();
                     listBoxLinksOutput.Items.Clear();
+                    comboBoxTypes_SetValue((Library.Item.Type)(-1));
                     CurrentIObj = null;
                 }
 
