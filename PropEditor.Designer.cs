@@ -34,7 +34,9 @@ namespace Recipe
             this.listBoxLinksInput = new System.Windows.Forms.ListBox();
             this.listBoxLinksOutput = new System.Windows.Forms.ListBox();
             this.groupBoxLinks = new System.Windows.Forms.GroupBox();
-            this.buttonDeleteLink = new System.Windows.Forms.Button();
+            this.buttonLinksDeselectAll = new System.Windows.Forms.Button();
+            this.buttonLinksSelectAll = new System.Windows.Forms.Button();
+            this.buttonDeleteLinks = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxOpa = new System.Windows.Forms.CheckBox();
@@ -70,6 +72,7 @@ namespace Recipe
             this.listBoxLinksInput.Size = new System.Drawing.Size(120, 95);
             this.listBoxLinksInput.TabIndex = 3;
             this.listBoxLinksInput.SelectedIndexChanged += new System.EventHandler(this.listBoxLinksInput_SelectedIndexChanged);
+            this.listBoxLinksInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBoxLinksInput_KeyDown);
             // 
             // listBoxLinksOutput
             // 
@@ -80,10 +83,13 @@ namespace Recipe
             this.listBoxLinksOutput.Size = new System.Drawing.Size(120, 95);
             this.listBoxLinksOutput.TabIndex = 4;
             this.listBoxLinksOutput.SelectedIndexChanged += new System.EventHandler(this.listBoxLinksOutput_SelectedIndexChanged);
+            this.listBoxLinksOutput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBoxLinksOutput_KeyDown);
             // 
             // groupBoxLinks
             // 
-            this.groupBoxLinks.Controls.Add(this.buttonDeleteLink);
+            this.groupBoxLinks.Controls.Add(this.buttonLinksDeselectAll);
+            this.groupBoxLinks.Controls.Add(this.buttonLinksSelectAll);
+            this.groupBoxLinks.Controls.Add(this.buttonDeleteLinks);
             this.groupBoxLinks.Controls.Add(this.label3);
             this.groupBoxLinks.Controls.Add(this.label2);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksInput);
@@ -95,15 +101,35 @@ namespace Recipe
             this.groupBoxLinks.TabStop = false;
             this.groupBoxLinks.Text = "Links";
             // 
-            // buttonDeleteLink
+            // buttonLinksDeselectAll
             // 
-            this.buttonDeleteLink.Location = new System.Drawing.Point(6, 133);
-            this.buttonDeleteLink.Name = "buttonDeleteLink";
-            this.buttonDeleteLink.Size = new System.Drawing.Size(75, 23);
-            this.buttonDeleteLink.TabIndex = 6;
-            this.buttonDeleteLink.Text = "Delete";
-            this.buttonDeleteLink.UseVisualStyleBackColor = true;
-            this.buttonDeleteLink.Click += new System.EventHandler(this.buttonDeleteLink_Click);
+            this.buttonLinksDeselectAll.Location = new System.Drawing.Point(177, 133);
+            this.buttonLinksDeselectAll.Name = "buttonLinksDeselectAll";
+            this.buttonLinksDeselectAll.Size = new System.Drawing.Size(75, 23);
+            this.buttonLinksDeselectAll.TabIndex = 9;
+            this.buttonLinksDeselectAll.Text = "Deselect All";
+            this.buttonLinksDeselectAll.UseVisualStyleBackColor = true;
+            this.buttonLinksDeselectAll.Click += new System.EventHandler(this.buttonLinksDeselectAll_Click);
+            // 
+            // buttonLinksSelectAll
+            // 
+            this.buttonLinksSelectAll.Location = new System.Drawing.Point(92, 133);
+            this.buttonLinksSelectAll.Name = "buttonLinksSelectAll";
+            this.buttonLinksSelectAll.Size = new System.Drawing.Size(75, 23);
+            this.buttonLinksSelectAll.TabIndex = 8;
+            this.buttonLinksSelectAll.Text = "Select All";
+            this.buttonLinksSelectAll.UseVisualStyleBackColor = true;
+            this.buttonLinksSelectAll.Click += new System.EventHandler(this.buttonLinksSelectAll_Click);
+            // 
+            // buttonDeleteLinks
+            // 
+            this.buttonDeleteLinks.Location = new System.Drawing.Point(6, 133);
+            this.buttonDeleteLinks.Name = "buttonDeleteLinks";
+            this.buttonDeleteLinks.Size = new System.Drawing.Size(75, 23);
+            this.buttonDeleteLinks.TabIndex = 6;
+            this.buttonDeleteLinks.Text = "Delete";
+            this.buttonDeleteLinks.UseVisualStyleBackColor = true;
+            this.buttonDeleteLinks.Click += new System.EventHandler(this.buttonDeleteLinks_Click);
             // 
             // label3
             // 
@@ -192,11 +218,13 @@ namespace Recipe
         private System.Windows.Forms.ListBox listBoxLinksInput;
         private System.Windows.Forms.ListBox listBoxLinksOutput;
         private System.Windows.Forms.GroupBox groupBoxLinks;
-        private System.Windows.Forms.Button buttonDeleteLink;
+        private System.Windows.Forms.Button buttonDeleteLinks;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBoxOpa;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox comboBoxTypes;
+        private System.Windows.Forms.Button buttonLinksDeselectAll;
+        private System.Windows.Forms.Button buttonLinksSelectAll;
     }
 }

@@ -85,6 +85,36 @@ namespace Recipe
             }
         }
 
+        public void Unlink()
+        {
+            buttonLinksSelectAll_Click(null, null);
+            buttonDeleteLinks_Click(null, null);
+        }
+
+        /**/
+
+        private void EnableLSIC_Handlers(bool enable)
+        {
+            if (enable)
+            {
+                listBoxLinksInput.SelectedIndexChanged += new EventHandler(listBoxLinksInput_SelectedIndexChanged);
+                listBoxLinksOutput.SelectedIndexChanged += new EventHandler(listBoxLinksOutput_SelectedIndexChanged);
+            }
+            else
+            {
+                listBoxLinksInput.SelectedIndexChanged -= new EventHandler(listBoxLinksInput_SelectedIndexChanged);
+                listBoxLinksOutput.SelectedIndexChanged -= new EventHandler(listBoxLinksOutput_SelectedIndexChanged);
+            }
+        }
+
+        private void ListSelectAll(ListBox list, bool selection)
+        {
+            for (int index = 0; index < list.Items.Count; index++)
+            {
+                list.SetSelected(index, selection);
+            }
+        }
+
         /**/
 
         private void ItemProperties_Load(object sender, EventArgs e)
@@ -118,47 +148,68 @@ namespace Recipe
             Editor.Editor.SelectVO(CurrentIObj, true);
         }
 
-        int indexIn = -1, indexOut = -1;
         private void listBoxLinksInput_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int index = listBoxLinksInput.SelectedIndex;
-            if (indexIn == index)
-            {
-                indexIn = -1;
-                index = -1;
-                listBoxLinksInput.SelectedItem = null;
-            }
-
-            indexIn = index;
-
+            //HL selected links
             CurrentIObj.LinkInHLs.Clear();
-            if (index != -1)
+            foreach (int index in listBoxLinksInput.SelectedIndices)
             {
-                Editor.ItemObject link = CurrentIObj.LinkInTags[indexIn];
+                Editor.ItemObject link = CurrentIObj.LinkInTags[index];
                 CurrentIObj.LinkInHLs.Add(link);
             }
             Editor.Editor.RetraceArea();
         }
 
+        private void listBoxLinksInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                e.SuppressKeyPress = true;
+                EnableLSIC_Handlers(false);
+                if (e.KeyCode == Keys.A)
+                {
+                    ListSelectAll(listBoxLinksInput, true);
+                    listBoxLinksInput_SelectedIndexChanged(null, null);
+                }
+                else if (e.KeyCode == Keys.D)
+                {
+                    ListSelectAll(listBoxLinksInput, false);
+                    listBoxLinksInput_SelectedIndexChanged(null, null);
+                }
+                EnableLSIC_Handlers(true);
+            }
+        }
+
         private void listBoxLinksOutput_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int index = listBoxLinksOutput.SelectedIndex;
-            if (indexOut == index)
-            {
-                indexOut = -1;
-                index = -1;
-                listBoxLinksOutput.SelectedItem = null;
-            }
-
-            indexOut = index;
-
             CurrentIObj.LinkOutHLs.Clear();
-            if (indexOut != -1)
+
+            foreach (int index in listBoxLinksOutput.SelectedIndices)
             {
                 Editor.ItemObject link = CurrentIObj.LinkOutTags[index];
                 CurrentIObj.LinkOutHLs.Add(link);
             }
             Editor.Editor.RetraceArea();
+        }
+
+        private void listBoxLinksOutput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                e.SuppressKeyPress = true;
+                EnableLSIC_Handlers(false);
+                if (e.KeyCode == Keys.A)
+                {
+                    ListSelectAll(listBoxLinksOutput, true);
+                    listBoxLinksOutput_SelectedIndexChanged(null, null);
+                }
+                else if (e.KeyCode == Keys.D)
+                {
+                    ListSelectAll(listBoxLinksOutput, false);
+                    listBoxLinksOutput_SelectedIndexChanged(null, null);
+                }
+                EnableLSIC_Handlers(true);
+            }
         }
 
         private void PropEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -175,43 +226,83 @@ namespace Recipe
             }    
         }
 
-        private void buttonDeleteLink_Click(object sender, EventArgs e)
+        private void buttonDeleteLinks_Click(object sender, EventArgs e)
         {
-            int index = listBoxLinksInput.SelectedIndex;
-            if (index != -1)
+            EnableLSIC_Handlers(false);
+
+            //begin
+            var linksToDelete = new List<Editor.ItemObject>();
+            var listToDelete = new List<object>();
+            foreach (int index in listBoxLinksInput.SelectedIndices)
             {
-                CurrentIObj.LinkInHLs.Clear();
+                linksToDelete.Add(CurrentIObj.LinkInTags[index]);
+                listToDelete.Add(listBoxLinksInput.Items[index]);
+            }
 
-                Editor.ItemObject beg = CurrentIObj.LinkInTags[index];
-
+            foreach (var beg in linksToDelete)
+            {
                 beg.LinksOut.Remove(CurrentIObj.ID);
                 beg.LinkOutTags.Remove(CurrentIObj);
                 CurrentIObj.LinkInTags.Remove(beg);
                 CurrentIObj.LinksIn.Remove(beg.ID);
 
-                listBoxLinksInput.Items.RemoveAt(index);
-
                 Editor.Editor.Changed = true;
             }
 
-            index = listBoxLinksOutput.SelectedIndex;
-            if (index != -1)
+            foreach (var item in listToDelete)
             {
-                CurrentIObj.LinkOutHLs.Clear();
+                listBoxLinksInput.Items.Remove(item);
+            }
+            CurrentIObj.LinkInHLs.Clear();
+            
 
-                Editor.ItemObject end = CurrentIObj.LinkOutTags[index];
+            //end
+            linksToDelete = new List<Editor.ItemObject>();
+            listToDelete = new List<object>();
+            foreach (int index in listBoxLinksOutput.SelectedIndices)
+            {
+                linksToDelete.Add(CurrentIObj.LinkOutTags[index]);
+                listToDelete.Add(listBoxLinksOutput.Items[index]);
+            }
 
+            foreach (var end in linksToDelete)
+            {
                 end.LinkInTags.Remove(CurrentIObj);
                 end.LinksIn.Remove(CurrentIObj.ID);
                 CurrentIObj.LinkOutTags.Remove(end);
                 CurrentIObj.LinksOut.Remove(end.ID);
 
-                listBoxLinksOutput.Items.RemoveAt(index);
-
                 Editor.Editor.Changed = true;
             }
 
+            foreach (var item in listToDelete)
+            {
+                listBoxLinksOutput.Items.Remove(item);
+            }
+            CurrentIObj.LinkOutHLs.Clear();
+
+            EnableLSIC_Handlers(true);
             Editor.Editor.RetraceArea();
+        }
+
+        private void buttonLinksSelectAll_Click(object sender, EventArgs e)
+        {
+            EnableLSIC_Handlers(false);
+            ListSelectAll(listBoxLinksInput, true);
+            ListSelectAll(listBoxLinksOutput, true);
+            EnableLSIC_Handlers(true);
+            listBoxLinksInput_SelectedIndexChanged(null, null);
+            listBoxLinksOutput_SelectedIndexChanged(null, null);
+        }
+
+        private void buttonLinksDeselectAll_Click(object sender, EventArgs e)
+        {
+            EnableLSIC_Handlers(false);
+            ListSelectAll(listBoxLinksInput, false);
+            ListSelectAll(listBoxLinksOutput, false);
+            EnableLSIC_Handlers(true);
+            listBoxLinksInput_SelectedIndexChanged(null, null);
+            listBoxLinksOutput_SelectedIndexChanged(null, null);
         }
     }
 }

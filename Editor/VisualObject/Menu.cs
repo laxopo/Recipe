@@ -18,6 +18,7 @@ namespace Recipe.Editor.VisualObject
                 {
                     init = true;
                     link.Click += new EventHandler(LinkToolStripMenuItem_Click);
+                    unlink.Click += new EventHandler(UnlinkToolStripMenuItem_Click);
                     props.Click += new EventHandler(PropsToolStripMenuItem_Click);
                     library.Click += new EventHandler(LibraryToolStripMenuItem_Click);
                     clone.Click += new EventHandler(CloneToolStripMenuItem_Click);
@@ -29,6 +30,7 @@ namespace Recipe.Editor.VisualObject
                     Name = "contextMenuStripVObj",
                     Items = {
                         link,
+                        unlink,
                         props,
                         library,
                         clone,
@@ -42,7 +44,6 @@ namespace Recipe.Editor.VisualObject
         public static void ShowMenu(PictureBox sender, Point location)
         {
             bool en = Editor.CurrentVObj != null;
-            //link.Enabled = en;
             library.Enabled = en;
             voSender = sender;
 
@@ -54,43 +55,43 @@ namespace Recipe.Editor.VisualObject
         private static ToolStripMenuItem link = new ToolStripMenuItem()
         {
             Name = "linkToolStripMenuItem",
-            Size = new Size(103, 22),
             Text = "Link",
             Font = new Font("Segoe UI", 9F, FontStyle.Bold)
+        };
+
+        private static ToolStripMenuItem unlink = new ToolStripMenuItem()
+        {
+            Name = "unlinkToolStripMenuItem",
+            Text = "Unlink",
         };
 
         private static ToolStripMenuItem props = new ToolStripMenuItem()
         {
             Name = "propsToolStripMenuItem",
-            Size = new Size(103, 22),
             Text = "Properties"
         };
 
         private static ToolStripMenuItem library = new ToolStripMenuItem()
         {
             Name = "libraryToolStripMenuItem",
-            Size = new Size(103, 22),
             Text = "Show In Library"
         };
 
         private static ToolStripMenuItem clone = new ToolStripMenuItem()
         {
             Name = "cloneToolStripMenuItem",
-            Size = new Size(103, 22),
             Text = "Clone"
         };
 
         private static ToolStripMenuItem copy = new ToolStripMenuItem()
         {
             Name = "copyToolStripMenuItem",
-            Size = new Size(103, 22),
             Text = "Copy"
         };
 
         private static ToolStripMenuItem delete = new ToolStripMenuItem()
         {
             Name = "deleteToolStripMenuItem",
-            Size = new Size(103, 22),
             Text = "Delete",
         };
 
@@ -99,6 +100,19 @@ namespace Recipe.Editor.VisualObject
         private static void LinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Editor.LinkingEnable(voSender);
+        }
+
+        private static void UnlinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var iobj = voSender.Tag as ItemObject;
+            if (iobj.LinkInTags.Count > 0 || iobj.LinkOutTags.Count > 0)
+            {
+                if (MessageBox.Show("Remove all links related with this item?", "Unlink", 
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                {
+                    Editor.propEditor.Unlink();
+                }
+            }
         }
 
         private static void PropsToolStripMenuItem_Click(object sender, EventArgs e)
