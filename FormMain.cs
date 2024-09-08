@@ -19,6 +19,7 @@ namespace Recipe
         private static Config config;
         private static FormLibrary formLibrary;
         private static PropEditor propEditor;
+        private static FormCalculator FormCalculator;
 
         private static FormatTable graphicsExport = new FormatTable( new List<FormatTable.Coll>()
         {
@@ -46,6 +47,10 @@ namespace Recipe
             propEditor = new PropEditor(config)
             {
                 Owner = this
+            };
+            FormCalculator = new FormCalculator()
+            {
+                Owner = this,
             };
 
             Editor.Editor.Initialize(this, formLibrary, propEditor, panelEditor, config, FitTheControls);
@@ -881,6 +886,11 @@ namespace Recipe
         private void FormMain_GotFocus(object sender, EventArgs e)
         {
             Editor.Editor.RetraceArea();
+        }
+
+        private void calculatorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormCalculator.Show();
         }
 
         /**/

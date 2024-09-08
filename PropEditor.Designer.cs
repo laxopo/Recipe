@@ -42,6 +42,10 @@ namespace Recipe
             this.checkBoxOpa = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.comboBoxTypes = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBoxQtyIn = new System.Windows.Forms.TextBox();
+            this.textBoxQtyOut = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBoxLinks.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,6 +66,7 @@ namespace Recipe
             this.textBoxName.Size = new System.Drawing.Size(127, 20);
             this.textBoxName.TabIndex = 1;
             this.textBoxName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxName_KeyDown);
+            this.textBoxName.Leave += new System.EventHandler(this.textBoxName_Leave);
             // 
             // listBoxLinksInput
             // 
@@ -94,7 +99,7 @@ namespace Recipe
             this.groupBoxLinks.Controls.Add(this.label2);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksInput);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksOutput);
-            this.groupBoxLinks.Location = new System.Drawing.Point(12, 59);
+            this.groupBoxLinks.Location = new System.Drawing.Point(12, 85);
             this.groupBoxLinks.Name = "groupBoxLinks";
             this.groupBoxLinks.Size = new System.Drawing.Size(261, 164);
             this.groupBoxLinks.TabIndex = 5;
@@ -184,11 +189,54 @@ namespace Recipe
             this.comboBoxTypes.TabIndex = 8;
             this.comboBoxTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxTypes_SelectedIndexChanged);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 62);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(61, 13);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Quantity In:";
+            // 
+            // textBoxQtyIn
+            // 
+            this.textBoxQtyIn.Location = new System.Drawing.Point(76, 59);
+            this.textBoxQtyIn.MaxLength = 9;
+            this.textBoxQtyIn.Name = "textBoxQtyIn";
+            this.textBoxQtyIn.Size = new System.Drawing.Size(62, 20);
+            this.textBoxQtyIn.TabIndex = 10;
+            this.textBoxQtyIn.EnabledChanged += new System.EventHandler(this.textBoxQtyIn_EnabledChanged);
+            this.textBoxQtyIn.TextChanged += new System.EventHandler(this.textBoxQtyIn_TextChanged);
+            this.textBoxQtyIn.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxQtyIn_KeyPress);
+            // 
+            // textBoxQtyOut
+            // 
+            this.textBoxQtyOut.Location = new System.Drawing.Point(213, 59);
+            this.textBoxQtyOut.MaxLength = 9;
+            this.textBoxQtyOut.Name = "textBoxQtyOut";
+            this.textBoxQtyOut.Size = new System.Drawing.Size(62, 20);
+            this.textBoxQtyOut.TabIndex = 11;
+            this.textBoxQtyOut.TextChanged += new System.EventHandler(this.textBoxQtyOut_TextChanged);
+            this.textBoxQtyOut.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxQtyOut_KeyPress);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(180, 62);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(27, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Out:";
+            // 
             // PropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(286, 232);
+            this.ClientSize = new System.Drawing.Size(286, 257);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.textBoxQtyOut);
+            this.Controls.Add(this.textBoxQtyIn);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.comboBoxTypes);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.checkBoxOpa);
@@ -225,5 +273,9 @@ namespace Recipe
         private System.Windows.Forms.ComboBox comboBoxTypes;
         private System.Windows.Forms.Button buttonLinksDeselectAll;
         private System.Windows.Forms.Button buttonLinksSelectAll;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBoxQtyIn;
+        private System.Windows.Forms.TextBox textBoxQtyOut;
+        private System.Windows.Forms.Label label6;
     }
 }

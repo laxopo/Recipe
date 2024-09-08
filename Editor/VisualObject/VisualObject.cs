@@ -16,7 +16,7 @@ namespace Recipe.Editor.VisualObject
 
         private static Point MouseDownLocation;
 
-        public static Container GenerateVO(Library.Item item, Point location)
+        public static Container GenerateVO(Library.Item item, Point location, bool interactive)
         {
             //object declaration
             PictureBox icon = new PictureBox() {
@@ -166,10 +166,13 @@ namespace Recipe.Editor.VisualObject
                 iobj.Location = icon.Location;
             }
 
-            icon.MouseDown += new MouseEventHandler(VOMouseDown);
-            icon.MouseMove += new MouseEventHandler(VOMouseMove);
-            icon.MouseUp += new MouseEventHandler(VOMouseUp);
-            icon.Move += new EventHandler(VOMove);
+            if (interactive)
+            {
+                icon.MouseDown += new MouseEventHandler(VOMouseDown);
+                icon.MouseMove += new MouseEventHandler(VOMouseMove);
+                icon.MouseUp += new MouseEventHandler(VOMouseUp);
+                icon.Move += new EventHandler(VOMove);
+            }
 
             return new Container(icon, label);
         }

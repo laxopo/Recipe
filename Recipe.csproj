@@ -59,6 +59,18 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Calculator\Calculator.cs" />
+    <Compile Include="Calculator\Mech.cs" />
+    <Compile Include="Calculator\Message.cs" />
+    <Compile Include="Calculator\Resource.cs" />
+    <Compile Include="Calculator\Tree.cs" />
+    <Compile Include="Calculator\VisualObject.cs" />
+    <Compile Include="FormCalculator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCalculator.Designer.cs">
+      <DependentUpon>FormCalculator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Config.cs" />
     <Compile Include="Editor\Clip.cs" />
     <Compile Include="Editor\Format.cs" />
@@ -126,6 +138,9 @@
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormCalculator.resx">
+      <DependentUpon>FormCalculator.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormLibraryImport.resx">
       <DependentUpon>FormLibraryImport.cs</DependentUpon>
     </EmbeddedResource>
@@ -178,5 +193,6 @@
     <Content Include="History.txt" />
     <Content Include="pumpkin_pie.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -24,13 +24,6 @@ namespace Recipe
             opacity = new FormOpacity(this, checkBoxOpa);
         }
 
-        private enum LinkType
-        {
-            Input,
-            Output,
-            Both
-        }
-
         /**/
 
         public void LoadItem(bool reload)
@@ -54,6 +47,7 @@ namespace Recipe
                 if (CurrentIObj != null)
                 {
                     textBoxName.Text = "";
+                    TextBoxQtyUpdate(false);
                     listBoxLinksInput.SelectedItem = null;
                     listBoxLinksOutput.SelectedItem = null;
                     listBoxLinksInput.Items.Clear();
@@ -77,6 +71,7 @@ namespace Recipe
             CurrentIObj = loadItem;
 
             textBoxName.Text = CurrentIObj.Item.Name;
+            TextBoxQtyUpdate(true);
 
             comboBoxTypes_SetValue(CurrentIObj.Item.ItemType);
 
@@ -121,11 +116,19 @@ namespace Recipe
                         confirm = true;
                     }
 
-                    DeleteLinks(iobj, true, LinkType.Both);
+                    DeleteLinks(iobj, true, Editor.ItemObject.LinkType.Both);
                 }
 
                 Editor.Editor.RetraceArea();
                 LoadItem(true);
+            }
+        }
+
+        private void TypingFilterInteger(KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
             }
         }
 
@@ -145,13 +148,27 @@ namespace Recipe
             }
         }
 
-        private void DeleteLinks(Editor.ItemObject iobj, bool all, LinkType lists)
+        private void EnableTBTC_Hanlders(bool enable)
+        {
+            if (enable)
+            {
+                textBoxQtyIn.TextChanged += new EventHandler(textBoxQtyIn_TextChanged);
+                textBoxQtyOut.TextChanged += new EventHandler(textBoxQtyOut_TextChanged);
+            }
+            else
+            {
+                textBoxQtyIn.TextChanged -= new EventHandler(textBoxQtyIn_TextChanged);
+                textBoxQtyOut.TextChanged -= new EventHandler(textBoxQtyOut_TextChanged);
+            }
+        }
+
+        private void DeleteLinks(Editor.ItemObject iobj, bool all, Editor.ItemObject.LinkType lists)
         {
             var linksToDelete = new List<Editor.ItemObject>();
             var listToDelete = new List<object>();
 
             //begin
-            if (lists == LinkType.Input || lists == LinkType.Both)
+            if (lists == Editor.ItemObject.LinkType.Input || lists == Editor.ItemObject.LinkType.Both)
             {
                 if (all)
                 {
@@ -183,10 +200,8 @@ namespace Recipe
                 iobj.LinkInHLs.Clear();
             }
             
-
-
             //end
-            if (lists == LinkType.Output || lists == LinkType.Both)
+            if (lists == Editor.ItemObject.LinkType.Output || lists == Editor.ItemObject.LinkType.Both)
             {
                 linksToDelete = new List<Editor.ItemObject>();
                 listToDelete = new List<object>();
@@ -251,11 +266,16 @@ namespace Recipe
         {
             if (e.KeyCode == Keys.Enter)
             {
-                CurrentIObj.Item.Name = textBoxName.Text;
-
-                Editor.VisualObject.VisualObject.VOTextUpdate(CurrentIObj);
-                Editor.Editor.SelectVO(CurrentIObj, false);
+                textBoxName_Leave(null, null);
             }
+        }
+
+        private void textBoxName_Leave(object sender, EventArgs e)
+        {
+            CurrentIObj.Item.Name = textBoxName.Text;
+
+            Editor.VisualObject.VisualObject.VOTextUpdate(CurrentIObj);
+            Editor.Editor.SelectVO(CurrentIObj, false);
         }
 
         private void comboBoxTypes_SetValue(Library.Item.Type type)
@@ -267,10 +287,37 @@ namespace Recipe
 
         private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentIObj.Item.ItemType = (Library.Item.Type)comboBoxTypes.SelectedIndex;
+            var type = (Library.Item.Type)comboBoxTypes.SelectedIndex;
+            if (type == CurrentIObj.Item.ItemType)
+            {
+                return;
+            }
+
+            if (type == Library.Item.Type.Fluid)
+            {
+                CurrentIObj.QuantityIn *= 1000;
+                CurrentIObj.QuantityOut *= 1000;
+            }
+            else if (CurrentIObj.Item.ItemType == Library.Item.Type.Fluid)
+            {
+                CurrentIObj.QuantityIn /= 1000;
+                if (CurrentIObj.QuantityIn < 1)
+                {
+                    CurrentIObj.QuantityIn = 1;
+                }
+                
+                CurrentIObj.QuantityOut /= 1000;
+                if (CurrentIObj.QuantityOut < 1)
+                {
+                    CurrentIObj.QuantityOut = 1;
+                }
+            }
+
+            CurrentIObj.Item.ItemType = type;
+
+            TextBoxQtyUpdate(true);
 
             Editor.VisualObject.VisualObject.ItemTypeStyleUpdate(CurrentIObj);
-            Editor.Editor.SelectVO(CurrentIObj, false);
         }
 
         private void listBoxLinksInput_SelectedIndexChanged(object sender, EventArgs e)
@@ -306,7 +353,7 @@ namespace Recipe
             else if (e.KeyCode == Keys.Delete)
             {
                 EnableLSIC_Handlers(false);
-                DeleteLinks(CurrentIObj, false, LinkType.Input);
+                DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Input);
                 listBoxLinksInput_SelectedIndexChanged(null, null);
                 EnableLSIC_Handlers(true);
                 Editor.Editor.RetraceArea();
@@ -346,7 +393,7 @@ namespace Recipe
             else if (e.KeyCode == Keys.Delete)
             {
                 EnableLSIC_Handlers(false);
-                DeleteLinks(CurrentIObj, false, LinkType.Output);
+                DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Output);
                 listBoxLinksInput_SelectedIndexChanged(null, null);
                 EnableLSIC_Handlers(true);
                 Editor.Editor.RetraceArea();
@@ -370,7 +417,7 @@ namespace Recipe
         private void buttonDeleteLinks_Click(object sender, EventArgs e)
         {
             EnableLSIC_Handlers(false);
-            DeleteLinks(CurrentIObj, false, LinkType.Both);
+            DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Both);
             EnableLSIC_Handlers(true);
             Editor.Editor.RetraceArea();
         }
@@ -393,6 +440,61 @@ namespace Recipe
             EnableLSIC_Handlers(true);
             listBoxLinksInput_SelectedIndexChanged(null, null);
             listBoxLinksOutput_SelectedIndexChanged(null, null);
+        }
+
+        private void textBoxQtyIn_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            TypingFilterInteger(e);
+        }
+
+        private void textBoxQtyIn_TextChanged(object sender, EventArgs e)
+        {
+            if (textBoxQtyIn.Text.Length == 0)
+            {
+                return;
+            }
+
+            CurrentIObj.QuantityIn = Convert.ToInt32(textBoxQtyIn.Text);
+        }
+
+        private void textBoxQtyOut_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            TypingFilterInteger(e);
+        }
+
+        private void textBoxQtyOut_TextChanged(object sender, EventArgs e)
+        {
+            if (textBoxQtyOut.Text.Length == 0)
+            {
+                return;
+            }
+
+            CurrentIObj.QuantityOut = Convert.ToInt32(textBoxQtyOut.Text);
+        }
+
+        private void TextBoxQtyUpdate(bool enable)
+        {
+            EnableTBTC_Hanlders(false);
+            if (CurrentIObj.Item.ItemType == Library.Item.Type.Mechanism || !enable)
+            {
+                textBoxQtyIn.Text = "";
+                textBoxQtyIn.Enabled = false;
+                textBoxQtyOut.Text = "";
+                textBoxQtyOut.Enabled = false;
+            }
+            else
+            {
+                textBoxQtyIn.Text = CurrentIObj.QuantityIn.ToString();
+                textBoxQtyIn.Enabled = true;
+                textBoxQtyOut.Text = CurrentIObj.QuantityOut.ToString();
+                textBoxQtyOut.Enabled = true;
+            }
+            EnableTBTC_Hanlders(true);
+        }
+
+        private void textBoxQtyIn_EnabledChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

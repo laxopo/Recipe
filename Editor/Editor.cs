@@ -842,7 +842,7 @@ namespace Recipe.Editor
         private static void CreateVO(Library.Item item, Point location, bool createNew, ItemObject source)
         {
             //Get new VO
-            var ct = VisualObject.VisualObject.GenerateVO(item, location);
+            var ct = VisualObject.VisualObject.GenerateVO(item, location, true);
 
             //Register IO
             if (createNew)

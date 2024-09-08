@@ -13,6 +13,10 @@ namespace Recipe.Editor
 
         public Library.Item Item { get; set; }
 
+        public int QuantityIn { get; set; }
+
+        public int QuantityOut { get; set; }
+
         public List<int> LinksIn { get; set; }
         
         public List<int> LinksOut { get; set; }
@@ -33,6 +37,8 @@ namespace Recipe.Editor
         public PictureBox TagIcon { get; set; }
         [JsonIgnore]
         public Label TagLabel { get; set; }
+        [JsonIgnore]
+        public Calculator.Tree Tree { get; set; }
 
 
         public ItemObject()
@@ -44,6 +50,15 @@ namespace Recipe.Editor
             LinkInHLs = new List<ItemObject>();
             LinkOutHLs = new List<ItemObject>();
             OldID = -1;
+            QuantityIn = 1;
+            QuantityOut = 1;
+        }
+
+        public enum LinkType
+        {
+            Input,
+            Output,
+            Both
         }
 
         public void ResetRelocation()

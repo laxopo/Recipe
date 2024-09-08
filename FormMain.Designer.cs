@@ -44,6 +44,7 @@ namespace Recipe
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deselectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.libraryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,7 +68,7 @@ namespace Recipe
             this.vScrollBarEditor = new System.Windows.Forms.VScrollBar();
             this.toolTipBAreaResz = new System.Windows.Forms.ToolTip(this.components);
             this.saveFileDialogSnapshot = new System.Windows.Forms.SaveFileDialog();
-            this.unlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxArea)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.panelEditor.SuspendLayout();
@@ -176,7 +177,7 @@ namespace Recipe
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
@@ -184,7 +185,7 @@ namespace Recipe
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem1_Click);
             // 
@@ -192,7 +193,7 @@ namespace Recipe
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
@@ -200,15 +201,23 @@ namespace Recipe
             // 
             this.deselectToolStripMenuItem.Name = "deselectToolStripMenuItem";
             this.deselectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.deselectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deselectToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.deselectToolStripMenuItem.Text = "Deselect";
             this.deselectToolStripMenuItem.Click += new System.EventHandler(this.deselectToolStripMenuItem_Click);
+            // 
+            // unlinkToolStripMenuItem
+            // 
+            this.unlinkToolStripMenuItem.Name = "unlinkToolStripMenuItem";
+            this.unlinkToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
+            this.unlinkToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.unlinkToolStripMenuItem.Text = "Unlink";
+            this.unlinkToolStripMenuItem.Click += new System.EventHandler(this.unlinkToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem1_Click);
             // 
@@ -216,7 +225,8 @@ namespace Recipe
             // 
             this.libraryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.itemPropertiesToolStripMenuItem,
-            this.libraryToolStripMenuItem1});
+            this.libraryToolStripMenuItem1,
+            this.calculatorToolStripMenuItem});
             this.libraryToolStripMenuItem.Name = "libraryToolStripMenuItem";
             this.libraryToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.libraryToolStripMenuItem.Text = "Tools";
@@ -386,13 +396,12 @@ namespace Recipe
     "f|WMF|*.wmf";
             this.saveFileDialogSnapshot.Title = "Save The Snapshot As";
             // 
-            // unlinkToolStripMenuItem
+            // calculatorToolStripMenuItem
             // 
-            this.unlinkToolStripMenuItem.Name = "unlinkToolStripMenuItem";
-            this.unlinkToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-            this.unlinkToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.unlinkToolStripMenuItem.Text = "Unlink";
-            this.unlinkToolStripMenuItem.Click += new System.EventHandler(this.unlinkToolStripMenuItem_Click);
+            this.calculatorToolStripMenuItem.Name = "calculatorToolStripMenuItem";
+            this.calculatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.calculatorToolStripMenuItem.Text = "Calculator";
+            this.calculatorToolStripMenuItem.Click += new System.EventHandler(this.calculatorToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -465,6 +474,7 @@ namespace Recipe
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem unlinkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem calculatorToolStripMenuItem;
     }
 }
 
