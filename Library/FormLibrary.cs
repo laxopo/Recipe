@@ -275,7 +275,7 @@ namespace Recipe
         {
             pictureBoxItemIcon.Image = null;
             selectedItem = null;
-            Editor.EEngine.InsertItem = null;
+            Editor.Engine.InsertItem = null;
             listBoxLibItems.SelectedIndex = -1;
         }
 
@@ -407,7 +407,7 @@ namespace Recipe
                 return;
             }
 
-            Editor.EEngine.InsertItem = null;
+            Editor.Engine.InsertItem = null;
             var exp = listBoxLibItems.Tag as Library.Exp;
             selectedItem = exp.Items[listBoxLibItems.SelectedIndex];
             ItemPreview();
@@ -425,14 +425,14 @@ namespace Recipe
 
         private void buttonItemInsert_Click(object sender, EventArgs e)
         {
-            Editor.EEngine.Replacing = false;
-            Editor.EEngine.InsertItem = selectedItem;
+            Editor.Engine.Replacing = false;
+            Editor.Engine.InsertItem = selectedItem;
         }
 
         private void buttonReplace_Click(object sender, EventArgs e)
         {
-            Editor.EEngine.Replacing = true;
-            Editor.EEngine.InsertItem = selectedItem;
+            Editor.Engine.Replacing = true;
+            Editor.Engine.InsertItem = selectedItem;
         }
 
         private void buttonRename_Click(object sender, EventArgs e)
@@ -472,7 +472,7 @@ namespace Recipe
                     var path = Path.Combine(Routine.Directories.Library, selectedItem.IconPath);
 
                     //check if the item is used in the current project
-                    if (Editor.EEngine.IODataBase.Find(x => x.Item.IconPath == selectedItem.IconPath) != null)
+                    if (Editor.Engine.IODataBase.Find(x => x.Item.IconPath == selectedItem.IconPath) != null)
                     {
                         if (MessageBox.Show("This item is used in the project. Remove it from the library?", 
                             "Item Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
@@ -520,7 +520,7 @@ namespace Recipe
                         foreach (var file in files)
                         {
                             var item = Library.Directory.TrimPath(file);
-                            if (Editor.EEngine.IODataBase.Find(x => x.Item.IconPath == item) != null)
+                            if (Editor.Engine.IODataBase.Find(x => x.Item.IconPath == item) != null)
                             {
                                 if (MessageBox.Show("This directory contains the items used in the project. " +
                                     "Continue deleting?", "Directory Delete", 

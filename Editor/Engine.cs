@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Recipe.Editor
 {
-    public static class EEngine
+    public static class Engine
     {
         private const string FileFormat = "Recipe project file";
         private const string FileVersion = "1.4";
@@ -110,7 +110,7 @@ namespace Recipe.Editor
             }
 
             mainForm = formMain;
-            EEngine.propEditor = propEditor;
+            Engine.propEditor = propEditor;
             defCaption = formMain.Text;
             configuration = config;
             libraryForm = formLibrary;

@@ -27,8 +27,8 @@ namespace Recipe
         {
             int w = 0, h = 0;
             string inv = "Invalid input";
-            Size min = Editor.EEngine.AreaSizeMin;
-            Size max = Editor.EEngine.AreaSizeMax;
+            Size min = Editor.Engine.AreaSizeMin;
+            Size max = Editor.Engine.AreaSizeMax;
 
             try
             {

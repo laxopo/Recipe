@@ -79,8 +79,8 @@ namespace Recipe.Calculator
 
             void Icon_Click(object sender, EventArgs e)
             {
-                Editor.EEngine.DeselectVOs();
-                Editor.EEngine.SelectVO(Resource.ItemObject, false);
+                Editor.Engine.DeselectVOs();
+                Editor.Engine.SelectVO(Resource.ItemObject, false);
             }
 
             void Quantity_KeyPress(object sender, KeyPressEventArgs e)

@@ -77,7 +77,7 @@
     <Compile Include="Editor\VisualObject\Container.cs" />
     <Compile Include="Editor\VisualObject\Constructor.cs" />
     <Compile Include="Editor\VisualObject\Menu.cs" />
-    <Compile Include="Editor\EEngine.cs" />
+    <Compile Include="Editor\Engine.cs" />
     <Compile Include="Editor\ItemObject.cs" />
     <Compile Include="Library\FormLibraryImport.cs">
       <SubType>Form</SubType>

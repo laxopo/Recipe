@@ -42,7 +42,7 @@ namespace Recipe
 
         public void LoadItem(bool reload)
         {
-            bool en = Editor.EEngine.CurrentVObj != null;
+            bool en = Editor.Engine.CurrentVObj != null;
 
             //Enabling
             foreach (Control ctrl in Controls)
@@ -74,7 +74,7 @@ namespace Recipe
                 return;
             }
 
-            var loadItem = Editor.EEngine.CurrentVObj.Tag as Editor.ItemObject;
+            var loadItem = Editor.Engine.CurrentVObj.Tag as Editor.ItemObject;
 
             if (!reload && loadItem == CurrentIObj)
             {
@@ -107,14 +107,14 @@ namespace Recipe
         public void Unlink()
         {
             bool confirm = false;
-            if (Editor.EEngine.selectedIObjs.Count > 0)
+            if (Editor.Engine.selectedIObjs.Count > 0)
             {
-                foreach (var iobj in Editor.EEngine.selectedIObjs)
+                foreach (var iobj in Editor.Engine.selectedIObjs)
                 {
                     if (!confirm && (iobj.LinkInTags.Count > 0 || iobj.LinkOutTags.Count > 0))
                     {
                         string ending;
-                        if (Editor.EEngine.selectedIObjs.Count == 1)
+                        if (Editor.Engine.selectedIObjs.Count == 1)
                         {
                             ending = "this item?";
                         }
@@ -135,7 +135,7 @@ namespace Recipe
                     DeleteLinks(iobj, true, Editor.ItemObject.LinkType.Both);
                 }
 
-                Editor.EEngine.RetraceArea();
+                Editor.Engine.RetraceArea();
                 LoadItem(true);
             }
         }
@@ -188,7 +188,7 @@ namespace Recipe
             CurrentIObj.Item.Name = textBoxName.Text;
 
             Editor.VisualObject.Constructor.VOTextUpdate(CurrentIObj);
-            Editor.EEngine.SelectVO(CurrentIObj, false);
+            Editor.Engine.SelectVO(CurrentIObj, false);
         }
 
         private void comboBoxTypes_SetValue(Library.Item.Type type)
@@ -278,7 +278,7 @@ namespace Recipe
                     iobj.LinkInTags.Remove(beg);
                     iobj.LinksIn.Remove(beg.ID);
 
-                    Editor.EEngine.Changed = true;
+                    Editor.Engine.Changed = true;
                 }
 
                 foreach (var item in listToDelete)
@@ -314,7 +314,7 @@ namespace Recipe
                     iobj.LinkOutTags.Remove(end);
                     iobj.LinksOut.Remove(end.ID);
 
-                    Editor.EEngine.Changed = true;
+                    Editor.Engine.Changed = true;
                 }
 
                 foreach (var item in listToDelete)
@@ -345,7 +345,7 @@ namespace Recipe
                 Editor.ItemObject link = CurrentIObj.LinkInTags[index];
                 CurrentIObj.LinkInHLs.Add(link);
             }
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void listBoxLinksInput_KeyDown(object sender, KeyEventArgs e)
@@ -372,7 +372,7 @@ namespace Recipe
                 DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Input);
                 listBoxLinksInput_SelectedIndexChanged(null, null);
                 EnableLSIC_Handlers(true);
-                Editor.EEngine.RetraceArea();
+                Editor.Engine.RetraceArea();
             }
         }
 
@@ -385,7 +385,7 @@ namespace Recipe
                 Editor.ItemObject link = CurrentIObj.LinkOutTags[index];
                 CurrentIObj.LinkOutHLs.Add(link);
             }
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void listBoxLinksOutput_KeyDown(object sender, KeyEventArgs e)
@@ -412,7 +412,7 @@ namespace Recipe
                 DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Output);
                 listBoxLinksInput_SelectedIndexChanged(null, null);
                 EnableLSIC_Handlers(true);
-                Editor.EEngine.RetraceArea();
+                Editor.Engine.RetraceArea();
             }
         }
 
@@ -421,7 +421,7 @@ namespace Recipe
             EnableLSIC_Handlers(false);
             DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Both);
             EnableLSIC_Handlers(true);
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void buttonLinksSelectAll_Click(object sender, EventArgs e)
@@ -459,7 +459,7 @@ namespace Recipe
 
             if (property != src)
             {
-                Editor.EEngine.Changed = true;
+                Editor.Engine.Changed = true;
             }
 
             return src;
@@ -670,7 +670,7 @@ namespace Recipe
                     if (CurrentIObj.External != ext)
                     {
                         CurrentIObj.External = ext;
-                        Editor.EEngine.Changed = true;
+                        Editor.Engine.Changed = true;
                         return;
                     }
                 }

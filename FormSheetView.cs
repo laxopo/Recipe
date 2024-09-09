@@ -74,7 +74,7 @@ namespace Recipe
         {
             Area.ImageLocation = null;
             labelPath.Text = "";
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void buttonApply_Click(object sender, EventArgs e)
@@ -85,7 +85,7 @@ namespace Recipe
         private void comboBoxLayout_SelectedIndexChanged(object sender, EventArgs e)
         {
             Area.SizeMode = modeOption[comboBoxLayout.SelectedIndex];
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void SheetView_Load(object sender, EventArgs e)

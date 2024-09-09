@@ -53,7 +53,7 @@ namespace Recipe
                 Owner = this,
             };
 
-            Editor.EEngine.Initialize(this, formLibrary, propEditor, panelEditor, config, FitTheControls);
+            Editor.Engine.Initialize(this, formLibrary, propEditor, panelEditor, config, FitTheControls);
 
             FitTheControls();
 
@@ -65,7 +65,7 @@ namespace Recipe
             FormSheetResize rsz = new FormSheetResize(pictureBoxArea.Size);
             if (rsz.ShowDialog() == DialogResult.OK)
             {
-                Editor.EEngine.AreaResize(rsz.newSize, rsz.shift, false);
+                Editor.Engine.AreaResize(rsz.newSize, rsz.shift, false);
             }
         }
 
@@ -110,13 +110,13 @@ namespace Recipe
         private bool UnsavedFile(string caption)
         {
             DialogResult dr = DialogResult.OK;
-            if (Editor.EEngine.Changed)
+            if (Editor.Engine.Changed)
             {
                 string text = " is changed. Do you want to save it?";
 
-                if (Editor.EEngine.FilePath != null)
+                if (Editor.Engine.FilePath != null)
                 {
-                    text = "File \"" + Editor.EEngine.FilePath + "\"" + text;
+                    text = "File \"" + Editor.Engine.FilePath + "\"" + text;
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace Recipe
             {
                 case DialogResult.Yes:
                     saveToolStripMenuItem_Click(null, null);
-                    if (Editor.EEngine.Changed)
+                    if (Editor.Engine.Changed)
                     {
                         return false;
                     }
@@ -152,7 +152,7 @@ namespace Recipe
                 return;
             }
 
-            Editor.EEngine.NewSheet();
+            Editor.Engine.NewSheet();
             saveFileDialogProj.FileName = "";
             AreaSizeUpdate();
             FitTheControls();
@@ -165,9 +165,9 @@ namespace Recipe
                 return;
             }
 
-            if (Editor.EEngine.FilePath != "")
+            if (Editor.Engine.FilePath != "")
             {
-                openFileDialogProj.FileName = Path.GetDirectoryName(Editor.EEngine.FilePath);
+                openFileDialogProj.FileName = Path.GetDirectoryName(Editor.Engine.FilePath);
             }
             else
             {
@@ -176,7 +176,7 @@ namespace Recipe
 
             if (openFileDialogProj.ShowDialog() == DialogResult.OK)
             {
-                Editor.EEngine.LoadSheet(openFileDialogProj.FileName);
+                Editor.Engine.LoadSheet(openFileDialogProj.FileName);
             }
             AreaSizeUpdate();
             FitTheControls();
@@ -184,13 +184,13 @@ namespace Recipe
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Editor.EEngine.Changed)
+            if (Editor.Engine.Changed)
             {
-                if (Editor.EEngine.FilePath != null)
+                if (Editor.Engine.FilePath != null)
                 {
-                    if (File.Exists(Editor.EEngine.FilePath))
+                    if (File.Exists(Editor.Engine.FilePath))
                     {
-                        if (new FileInfo(Editor.EEngine.FilePath).IsReadOnly)
+                        if (new FileInfo(Editor.Engine.FilePath).IsReadOnly)
                         {
                             if (MessageBox.Show("This file is read only. Do you want to save it with the other name or path?",
                                 "Saving", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
@@ -200,10 +200,10 @@ namespace Recipe
 
                             saveAsToolStripMenuItem_Click(null, null);
                         }
-                        File.Delete(Editor.EEngine.FilePath);
+                        File.Delete(Editor.Engine.FilePath);
                     }
 
-                    Editor.EEngine.SaveSheet(Editor.EEngine.FilePath);
+                    Editor.Engine.SaveSheet(Editor.Engine.FilePath);
                 }
                 else
                 {
@@ -214,20 +214,20 @@ namespace Recipe
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialogProj.InitialDirectory = Path.GetDirectoryName(Editor.EEngine.FilePath);
-            saveFileDialogProj.FileName = Editor.EEngine.FilePath;
+            saveFileDialogProj.InitialDirectory = Path.GetDirectoryName(Editor.Engine.FilePath);
+            saveFileDialogProj.FileName = Editor.Engine.FilePath;
             if (saveFileDialogProj.ShowDialog() == DialogResult.OK)
             {
-                Editor.EEngine.SaveSheet(saveFileDialogProj.FileName);
+                Editor.Engine.SaveSheet(saveFileDialogProj.FileName);
             }
         }
 
         private void exportImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Editor.EEngine.FilePath != null)
+            if (Editor.Engine.FilePath != null)
             {
-                saveFileDialogSnapshot.InitialDirectory = Path.GetDirectoryName(Editor.EEngine.FilePath);
-                saveFileDialogSnapshot.FileName = Path.GetFileNameWithoutExtension(Editor.EEngine.FilePath);
+                saveFileDialogSnapshot.InitialDirectory = Path.GetDirectoryName(Editor.Engine.FilePath);
+                saveFileDialogSnapshot.FileName = Path.GetFileNameWithoutExtension(Editor.Engine.FilePath);
             }
             else
             {
@@ -298,8 +298,8 @@ namespace Recipe
             }
             
 
-            Editor.EEngine.Tracing(gpx, true);
-            Editor.EEngine.DeselectVOs();
+            Editor.Engine.Tracing(gpx, true);
+            Editor.Engine.DeselectVOs();
 
             foreach (Control ctrl in pictureBoxArea.Controls)
             {
@@ -312,25 +312,25 @@ namespace Recipe
             bmp.Save(saveFileDialogSnapshot.FileName, 
                 graphicsExport.GetImageFormat(saveFileDialogSnapshot.FilterIndex));
 
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         //Edit
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            copyToolStripMenuItem.Enabled = Editor.EEngine.selectedIObjs.Count > 0;
-            pasteToolStripMenuItem.Enabled = Clipboard.ContainsData(Editor.EEngine.DataFormat);
+            copyToolStripMenuItem.Enabled = Editor.Engine.selectedIObjs.Count > 0;
+            pasteToolStripMenuItem.Enabled = Clipboard.ContainsData(Editor.Engine.DataFormat);
         }
 
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.EEngine.Copy();
+            Editor.Engine.Copy();
         }
 
         private void pasteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (Editor.EEngine.Paste(cursorPos))
+            if (Editor.Engine.Paste(cursorPos))
             {
                 insert = true;
                 pictureBoxArea.Cursor = GetCursor();
@@ -339,12 +339,12 @@ namespace Recipe
 
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.EEngine.SelectAll();
+            Editor.Engine.SelectAll();
         }
 
         private void deselectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.EEngine.DeselectVOs();
+            Editor.Engine.DeselectVOs();
         }
 
         private void unlinkToolStripMenuItem_Click(object sender, EventArgs e)
@@ -354,7 +354,7 @@ namespace Recipe
 
         private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Editor.EEngine.RemoveVOs();
+            Editor.Engine.RemoveVOs();
         }
 
         //Tools
@@ -378,16 +378,16 @@ namespace Recipe
 
         private void fitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Editor.EEngine.IODataBase.Count == 0)
+            if (Editor.Engine.IODataBase.Count == 0)
             {
-                Editor.EEngine.AreaResize(Editor.EEngine.AreaSizeDef, true, false);
+                Editor.Engine.AreaResize(Editor.Engine.AreaSizeDef, true, false);
                 return;
             }
 
             if (MessageBox.Show("Sheet will fit to the object array.", "Sheet Resize",
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
             {
-                Editor.EEngine.AreaResize(new Size(0, 0), true, false);
+                Editor.Engine.AreaResize(new Size(0, 0), true, false);
             }
         }
 
@@ -499,7 +499,7 @@ namespace Recipe
             pictureBoxArea.Top = rszPos.Y - pictureBoxArea.Height;
 
             ScrollBarsUpdate();
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void AreaSizeUpdate()
@@ -571,7 +571,7 @@ namespace Recipe
         private void pictureBoxArea_MouseEnter(object sender, EventArgs e)
         {
             //Cursor style
-            if (Editor.EEngine.InsertItem != null || Editor.EEngine.Cloning)
+            if (Editor.Engine.InsertItem != null || Editor.Engine.Cloning)
             {
                 insert = true;
                 pictureBoxArea.Cursor = GetCursor();
@@ -619,7 +619,7 @@ namespace Recipe
                         if (dx > 5 || dy > 5)
                         {
                             rectSelEv = true;
-                            Editor.EEngine.RectangleSelectDraw(mouseDown, e.Location);
+                            Editor.Engine.RectangleSelectDraw(mouseDown, e.Location);
                         }
                     }
                         
@@ -633,9 +633,9 @@ namespace Recipe
 
                 case MouseButtons.None: //clone massive
                     cursorPos = e.Location;
-                    if (insert && Editor.EEngine.Cloning)
+                    if (insert && Editor.Engine.Cloning)
                     {
-                        Editor.EEngine.CloneBoxDraw(e.Location);
+                        Editor.Engine.CloneBoxDraw(e.Location);
                     }
                     break;
             }
@@ -644,15 +644,15 @@ namespace Recipe
         private void pictureBoxArea_MouseUp(object sender, MouseEventArgs e)
         {
             bool ctrl = Control.ModifierKeys == Keys.Control;
-            if (!Editor.EEngine.linkProcess && !move && !insert && !ctrl)
+            if (!Editor.Engine.linkProcess && !move && !insert && !ctrl)
             {
-                Editor.EEngine.DeselectVOs();
+                Editor.Engine.DeselectVOs();
             }
 
-            if (Editor.EEngine.Replacing)
+            if (Editor.Engine.Replacing)
             {
-                Editor.EEngine.Replacing = false;
-                Editor.EEngine.InsertItem = null;
+                Editor.Engine.Replacing = false;
+                Editor.Engine.InsertItem = null;
                 insert = false;
                 pictureBoxArea.Cursor = GetCursor();
             }
@@ -662,24 +662,24 @@ namespace Recipe
                 case MouseButtons.Left: //rectSelect
                     if (rectSelEv)
                     {
-                        Editor.EEngine.RectangleSelectVOs(ctrl);
+                        Editor.Engine.RectangleSelectVOs(ctrl);
                         rectSel = false;
                         rectSelEv = false;
                     }
 
-                    if (Editor.EEngine.linkProcess) //multi linking (beg to end array)
+                    if (Editor.Engine.linkProcess) //multi linking (beg to end array)
                     {
-                        Editor.EEngine.CreateLinks(null, false);
+                        Editor.Engine.CreateLinks(null, false);
                     }
-                    else if (Editor.EEngine.InsertItem != null || Editor.EEngine.Cloning) //insert, clone, copy
+                    else if (Editor.Engine.InsertItem != null || Editor.Engine.Cloning) //insert, clone, copy
                     {
-                        if (Editor.EEngine.Replacing)
+                        if (Editor.Engine.Replacing)
                         {
-                            Editor.EEngine.Replacing = false;
+                            Editor.Engine.Replacing = false;
                         }
                         else
                         {
-                            Editor.EEngine.CreateVisualObject(e.Location);
+                            Editor.Engine.CreateVisualObject(e.Location);
                         }
                         insert = false;
                         pictureBoxArea.Cursor = GetCursor();
@@ -692,14 +692,14 @@ namespace Recipe
                     break;
 
                 case MouseButtons.Right:
-                    if (Editor.EEngine.linkProcess) //Cancel linking
+                    if (Editor.Engine.linkProcess) //Cancel linking
                     {
-                        Editor.EEngine.LinkingDisable();
+                        Editor.Engine.LinkingDisable();
                     }
-                    else if (Editor.EEngine.InsertItem != null || Editor.EEngine.Cloning) //Cancel inserting
+                    else if (Editor.Engine.InsertItem != null || Editor.Engine.Cloning) //Cancel inserting
                     {
-                        Editor.EEngine.InsertItem = null;
-                        Editor.EEngine.CloneVOsFinish();
+                        Editor.Engine.InsertItem = null;
+                        Editor.Engine.CloneVOsFinish();
                         insert = false;
                         pictureBoxArea.Cursor = GetCursor();
                     }
@@ -725,14 +725,14 @@ namespace Recipe
         {
             pictureBoxArea.Left = -hScrollBarEditor.Value;
             buttonAreaResize.Left = pictureBoxArea.Left + pictureBoxArea.Width;
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void vScrollBarEditor_Scroll(object sender, ScrollEventArgs e)
         {
             pictureBoxArea.Top = -vScrollBarEditor.Value;
             buttonAreaResize.Top = pictureBoxArea.Top + pictureBoxArea.Height;
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         //Resize Area button
@@ -756,13 +756,13 @@ namespace Recipe
                 Point pos = Routine.Limiter(
                     new Point(startPos.X + dx, startPos.Y + dy),
                     pictureBoxArea.Location,
-                    Editor.EEngine.AreaSizeMin,
-                    Editor.EEngine.AreaSizeMax
+                    Editor.Engine.AreaSizeMin,
+                    Editor.Engine.AreaSizeMax
                     );
 
                 buttonAreaResize.Location = pos;
 
-                Editor.EEngine.Changed = true;
+                Editor.Engine.Changed = true;
 
                 AreaSizeUpdate();
             }
@@ -770,24 +770,24 @@ namespace Recipe
 
         private void buttonAreaResize_MouseUp(object sender, MouseEventArgs e)
         {
-            Editor.EEngine.AreaResize(pictureBoxArea.Size, false, false); //limit a new size
+            Editor.Engine.AreaResize(pictureBoxArea.Size, false, false); //limit a new size
         }
 
         //Area update
         private void pictureBoxArea_Paint(object sender, PaintEventArgs e)
         {
-            Editor.EEngine.Tracing(e.Graphics, false);
+            Editor.Engine.Tracing(e.Graphics, false);
         }
 
         private void pictureBoxArea_LoadCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         //Editor context menu
         private void contextMenuStripEditor_Opening(object sender, CancelEventArgs e)
         {
-            bool en = Clipboard.ContainsData(Editor.EEngine.DataFormat);
+            bool en = Clipboard.ContainsData(Editor.Engine.DataFormat);
             pasteToolStripMenuEditor.Enabled = en;
         }
 
@@ -799,7 +799,7 @@ namespace Recipe
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.EEngine.Paste(cursorPos);
+            Editor.Engine.Paste(cursorPos);
         }
 
         /*Form*/
@@ -817,8 +817,8 @@ namespace Recipe
             {
                 if (File.Exists(args[1]))
                 {
-                    Editor.EEngine.LoadSheet(args[1]);
-                    if (Editor.EEngine.FilePath == null)
+                    Editor.Engine.LoadSheet(args[1]);
+                    if (Editor.Engine.FilePath == null)
                     {
                         Close();
                     }
@@ -855,7 +855,7 @@ namespace Recipe
             }
 
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            Editor.EEngine.LoadSheet(files[0]);
+            Editor.Engine.LoadSheet(files[0]);
 
             AreaSizeUpdate();
             FitTheControls();
@@ -874,18 +874,18 @@ namespace Recipe
                 WindowState == FormWindowState.Normal) && minimized)
             {
                 minimized = false;
-                Editor.EEngine.RetraceArea();
+                Editor.Engine.RetraceArea();
             }
         }
 
         private void FormMain_ResizeEnd(object sender, EventArgs e)
         {
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void FormMain_GotFocus(object sender, EventArgs e)
         {
-            Editor.EEngine.RetraceArea();
+            Editor.Engine.RetraceArea();
         }
 
         private void calculatorToolStripMenuItem_Click(object sender, EventArgs e)

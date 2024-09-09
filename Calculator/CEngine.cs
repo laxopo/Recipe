@@ -12,7 +12,7 @@ namespace Recipe.Calculator
     {
         public static void ScanTrees(List<Tree> trees)
         {
-            Editor.EEngine.IODataBase.ForEach(x => x.Tree = null);
+            Editor.Engine.IODataBase.ForEach(x => x.Tree = null);
             var done = new List<Editor.ItemObject>();
             var path = new List<Editor.ItemObject>();
             Tree tree = null;
@@ -104,7 +104,7 @@ namespace Recipe.Calculator
             }
 
             //build the trees
-            foreach (var iobj in Editor.EEngine.IODataBase)
+            foreach (var iobj in Editor.Engine.IODataBase)
             {
                 if (done.Contains(iobj))
                 {
