@@ -25,5 +25,20 @@ namespace Recipe.Library
         {
             return MemberwiseClone();
         }
+
+        public string GetUnits()
+        {
+            switch (ItemType)
+            {
+                case Type.Fluid:
+                    return "mB";
+
+                case Type.Mechanism:
+                    return "";
+
+                default:
+                    return "pcs";
+            }
+        }
     }
 }

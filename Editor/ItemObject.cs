@@ -7,15 +7,19 @@ namespace Recipe.Editor
 {
     public class ItemObject
     {
+        public Library.Item Item { get; set; }
+
         public Point Location { get; set; }
 
         public int ID { get; set; }
 
-        public Library.Item Item { get; set; }
-
         public int QuantityIn { get; set; }
 
         public int QuantityOut { get; set; }
+
+        public int Injected { get; set; }
+
+        public ExternalType External { get; set; } 
 
         public List<int> LinksIn { get; set; }
         
@@ -59,6 +63,13 @@ namespace Recipe.Editor
             Input,
             Output,
             Both
+        }
+
+        public enum ExternalType
+        {
+            Auto,
+            Input,
+            Output
         }
 
         public void ResetRelocation()

@@ -12,7 +12,7 @@ namespace Recipe.Editor
     public static class Editor
     {
         private const string FileFormat = "Recipe project file";
-        private const string FileVersion = "1.0";
+        private const string FileVersion = "1.4";
         public const string DataFormat = "RECIPE_DATA";
 
         public static Size AreaSizeMin = new Size(200, 200);

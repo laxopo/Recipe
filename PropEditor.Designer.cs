@@ -46,7 +46,16 @@ namespace Recipe
             this.textBoxQtyIn = new System.Windows.Forms.TextBox();
             this.textBoxQtyOut = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.groupBoxQuantity = new System.Windows.Forms.GroupBox();
+            this.textBoxInjected = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.groupBoxExternal = new System.Windows.Forms.GroupBox();
+            this.radioButtonAuto = new System.Windows.Forms.RadioButton();
+            this.radioButtonInput = new System.Windows.Forms.RadioButton();
+            this.radioButtonOutput = new System.Windows.Forms.RadioButton();
             this.groupBoxLinks.SuspendLayout();
+            this.groupBoxQuantity.SuspendLayout();
+            this.groupBoxExternal.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -99,16 +108,16 @@ namespace Recipe
             this.groupBoxLinks.Controls.Add(this.label2);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksInput);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksOutput);
-            this.groupBoxLinks.Location = new System.Drawing.Point(12, 85);
+            this.groupBoxLinks.Location = new System.Drawing.Point(12, 168);
             this.groupBoxLinks.Name = "groupBoxLinks";
-            this.groupBoxLinks.Size = new System.Drawing.Size(261, 164);
+            this.groupBoxLinks.Size = new System.Drawing.Size(262, 164);
             this.groupBoxLinks.TabIndex = 5;
             this.groupBoxLinks.TabStop = false;
             this.groupBoxLinks.Text = "Links";
             // 
             // buttonLinksDeselectAll
             // 
-            this.buttonLinksDeselectAll.Location = new System.Drawing.Point(177, 133);
+            this.buttonLinksDeselectAll.Location = new System.Drawing.Point(92, 133);
             this.buttonLinksDeselectAll.Name = "buttonLinksDeselectAll";
             this.buttonLinksDeselectAll.Size = new System.Drawing.Size(75, 23);
             this.buttonLinksDeselectAll.TabIndex = 9;
@@ -118,7 +127,7 @@ namespace Recipe
             // 
             // buttonLinksSelectAll
             // 
-            this.buttonLinksSelectAll.Location = new System.Drawing.Point(92, 133);
+            this.buttonLinksSelectAll.Location = new System.Drawing.Point(6, 133);
             this.buttonLinksSelectAll.Name = "buttonLinksSelectAll";
             this.buttonLinksSelectAll.Size = new System.Drawing.Size(75, 23);
             this.buttonLinksSelectAll.TabIndex = 8;
@@ -128,7 +137,7 @@ namespace Recipe
             // 
             // buttonDeleteLinks
             // 
-            this.buttonDeleteLinks.Location = new System.Drawing.Point(6, 133);
+            this.buttonDeleteLinks.Location = new System.Drawing.Point(177, 133);
             this.buttonDeleteLinks.Name = "buttonDeleteLinks";
             this.buttonDeleteLinks.Size = new System.Drawing.Size(75, 23);
             this.buttonDeleteLinks.TabIndex = 6;
@@ -192,29 +201,28 @@ namespace Recipe
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 62);
+            this.label5.Location = new System.Drawing.Point(6, 22);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(61, 13);
+            this.label5.Size = new System.Drawing.Size(19, 13);
             this.label5.TabIndex = 9;
-            this.label5.Text = "Quantity In:";
+            this.label5.Text = "In:";
             // 
             // textBoxQtyIn
             // 
-            this.textBoxQtyIn.Location = new System.Drawing.Point(76, 59);
+            this.textBoxQtyIn.Location = new System.Drawing.Point(60, 19);
             this.textBoxQtyIn.MaxLength = 9;
             this.textBoxQtyIn.Name = "textBoxQtyIn";
-            this.textBoxQtyIn.Size = new System.Drawing.Size(62, 20);
+            this.textBoxQtyIn.Size = new System.Drawing.Size(66, 20);
             this.textBoxQtyIn.TabIndex = 10;
-            this.textBoxQtyIn.EnabledChanged += new System.EventHandler(this.textBoxQtyIn_EnabledChanged);
             this.textBoxQtyIn.TextChanged += new System.EventHandler(this.textBoxQtyIn_TextChanged);
             this.textBoxQtyIn.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxQtyIn_KeyPress);
             // 
             // textBoxQtyOut
             // 
-            this.textBoxQtyOut.Location = new System.Drawing.Point(213, 59);
+            this.textBoxQtyOut.Location = new System.Drawing.Point(60, 45);
             this.textBoxQtyOut.MaxLength = 9;
             this.textBoxQtyOut.Name = "textBoxQtyOut";
-            this.textBoxQtyOut.Size = new System.Drawing.Size(62, 20);
+            this.textBoxQtyOut.Size = new System.Drawing.Size(66, 20);
             this.textBoxQtyOut.TabIndex = 11;
             this.textBoxQtyOut.TextChanged += new System.EventHandler(this.textBoxQtyOut_TextChanged);
             this.textBoxQtyOut.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxQtyOut_KeyPress);
@@ -222,21 +230,102 @@ namespace Recipe
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(180, 62);
+            this.label6.Location = new System.Drawing.Point(6, 48);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(27, 13);
             this.label6.TabIndex = 12;
             this.label6.Text = "Out:";
             // 
+            // groupBoxQuantity
+            // 
+            this.groupBoxQuantity.Controls.Add(this.textBoxInjected);
+            this.groupBoxQuantity.Controls.Add(this.label7);
+            this.groupBoxQuantity.Controls.Add(this.label5);
+            this.groupBoxQuantity.Controls.Add(this.textBoxQtyOut);
+            this.groupBoxQuantity.Controls.Add(this.label6);
+            this.groupBoxQuantity.Controls.Add(this.textBoxQtyIn);
+            this.groupBoxQuantity.Enabled = false;
+            this.groupBoxQuantity.Location = new System.Drawing.Point(12, 59);
+            this.groupBoxQuantity.Name = "groupBoxQuantity";
+            this.groupBoxQuantity.Size = new System.Drawing.Size(136, 103);
+            this.groupBoxQuantity.TabIndex = 13;
+            this.groupBoxQuantity.TabStop = false;
+            this.groupBoxQuantity.Text = "Quantity";
+            // 
+            // textBoxInjected
+            // 
+            this.textBoxInjected.Location = new System.Drawing.Point(60, 71);
+            this.textBoxInjected.MaxLength = 9;
+            this.textBoxInjected.Name = "textBoxInjected";
+            this.textBoxInjected.Size = new System.Drawing.Size(66, 20);
+            this.textBoxInjected.TabIndex = 14;
+            this.textBoxInjected.TextChanged += new System.EventHandler(this.textBoxInjected_TextChanged);
+            this.textBoxInjected.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxInjected_KeyPress);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 74);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(48, 13);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Injected:";
+            // 
+            // groupBoxExternal
+            // 
+            this.groupBoxExternal.Controls.Add(this.radioButtonOutput);
+            this.groupBoxExternal.Controls.Add(this.radioButtonInput);
+            this.groupBoxExternal.Controls.Add(this.radioButtonAuto);
+            this.groupBoxExternal.Enabled = false;
+            this.groupBoxExternal.Location = new System.Drawing.Point(154, 59);
+            this.groupBoxExternal.Name = "groupBoxExternal";
+            this.groupBoxExternal.Size = new System.Drawing.Size(120, 103);
+            this.groupBoxExternal.TabIndex = 14;
+            this.groupBoxExternal.TabStop = false;
+            this.groupBoxExternal.Text = "External";
+            // 
+            // radioButtonAuto
+            // 
+            this.radioButtonAuto.AutoSize = true;
+            this.radioButtonAuto.Location = new System.Drawing.Point(9, 72);
+            this.radioButtonAuto.Name = "radioButtonAuto";
+            this.radioButtonAuto.Size = new System.Drawing.Size(47, 17);
+            this.radioButtonAuto.TabIndex = 0;
+            this.radioButtonAuto.Text = "Auto";
+            this.radioButtonAuto.UseVisualStyleBackColor = true;
+            this.radioButtonAuto.CheckedChanged += new System.EventHandler(this.radioButtonAuto_CheckedChanged);
+            // 
+            // radioButtonInput
+            // 
+            this.radioButtonInput.AutoSize = true;
+            this.radioButtonInput.Location = new System.Drawing.Point(9, 46);
+            this.radioButtonInput.Name = "radioButtonInput";
+            this.radioButtonInput.Size = new System.Drawing.Size(49, 17);
+            this.radioButtonInput.TabIndex = 1;
+            this.radioButtonInput.Text = "Input";
+            this.radioButtonInput.UseVisualStyleBackColor = true;
+            this.radioButtonInput.CheckedChanged += new System.EventHandler(this.radioButtonInput_CheckedChanged);
+            this.radioButtonInput.EnabledChanged += new System.EventHandler(this.radioButtonInput_EnabledChanged);
+            // 
+            // radioButtonOutput
+            // 
+            this.radioButtonOutput.AutoSize = true;
+            this.radioButtonOutput.Location = new System.Drawing.Point(9, 20);
+            this.radioButtonOutput.Name = "radioButtonOutput";
+            this.radioButtonOutput.Size = new System.Drawing.Size(57, 17);
+            this.radioButtonOutput.TabIndex = 2;
+            this.radioButtonOutput.Text = "Output";
+            this.radioButtonOutput.UseVisualStyleBackColor = true;
+            this.radioButtonOutput.CheckedChanged += new System.EventHandler(this.radioButtonOutput_CheckedChanged);
+            this.radioButtonOutput.EnabledChanged += new System.EventHandler(this.radioButtonOutput_EnabledChanged);
+            // 
             // PropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(286, 257);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBoxQtyOut);
-            this.Controls.Add(this.textBoxQtyIn);
-            this.Controls.Add(this.label5);
+            this.ClientSize = new System.Drawing.Size(286, 342);
+            this.Controls.Add(this.groupBoxExternal);
+            this.Controls.Add(this.groupBoxQuantity);
             this.Controls.Add(this.comboBoxTypes);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.checkBoxOpa);
@@ -253,6 +342,10 @@ namespace Recipe
             this.Move += new System.EventHandler(this.PropEditor_Move);
             this.groupBoxLinks.ResumeLayout(false);
             this.groupBoxLinks.PerformLayout();
+            this.groupBoxQuantity.ResumeLayout(false);
+            this.groupBoxQuantity.PerformLayout();
+            this.groupBoxExternal.ResumeLayout(false);
+            this.groupBoxExternal.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,5 +370,12 @@ namespace Recipe
         private System.Windows.Forms.TextBox textBoxQtyIn;
         private System.Windows.Forms.TextBox textBoxQtyOut;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.GroupBox groupBoxQuantity;
+        private System.Windows.Forms.TextBox textBoxInjected;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.GroupBox groupBoxExternal;
+        private System.Windows.Forms.RadioButton radioButtonOutput;
+        private System.Windows.Forms.RadioButton radioButtonInput;
+        private System.Windows.Forms.RadioButton radioButtonAuto;
     }
 }
