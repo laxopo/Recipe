@@ -1,7 +1,7 @@
 ﻿
 namespace Recipe
 {
-    partial class SheetView
+    partial class FormSheetView
     {
         /// <summary>
         /// Required designer variable.

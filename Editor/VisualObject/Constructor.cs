@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Recipe.Editor.VisualObject
 {
-    public static class VisualObject
+    public static class Constructor
     {
         public const int IconSize = 32;
         public const string IconName = "voIcon";
@@ -25,7 +25,7 @@ namespace Recipe.Editor.VisualObject
                 Size = new Size(IconSize, IconSize),
                 Image = LoadImage(item),
                 SizeMode = PictureBoxSizeMode.CenterImage,
-                BorderStyle = Editor.configuration.VObjStyle.IconBorder,
+                BorderStyle = EEngine.configuration.VObjStyle.IconBorder,
                 BackColor = DefaultColor,
                 Cursor = Cursors.Hand
             };
@@ -36,7 +36,7 @@ namespace Recipe.Editor.VisualObject
                 TextAlign = ContentAlignment.MiddleCenter,
                 AutoSize = true,
                 BackColor = DefaultColor,
-                BorderStyle = Editor.configuration.VObjStyle.LabelBorder
+                BorderStyle = EEngine.configuration.VObjStyle.LabelBorder
             };
 
             label.Size = label.CreateGraphics().MeasureString(label.Text, label.Font).ToSize();
@@ -52,29 +52,29 @@ namespace Recipe.Editor.VisualObject
                 switch (e.Button)
                 {
                     case MouseButtons.Left: 
-                        if (Editor.linkProcess) //complete the link
+                        if (EEngine.linkProcess) //complete the link
                         {
-                            Editor.CreateLinks(icon, Control.ModifierKeys == Keys.Control); // beg/array -> end (this icon)
+                            EEngine.CreateLinks(icon, Control.ModifierKeys == Keys.Control); // beg/array -> end (this icon)
                         }
                         else
                         {
-                            if (Editor.InsertItem != null && Editor.Replacing) //replace
+                            if (EEngine.InsertItem != null && EEngine.Replacing) //replace
                             {
-                                Editor.Replacing = false;
+                                EEngine.Replacing = false;
                                 var iobj = icon.Tag as ItemObject;
-                                iobj.Item = Editor.InsertItem.Clone() as Library.Item;
+                                iobj.Item = EEngine.InsertItem.Clone() as Library.Item;
                                 icon.Image = LoadImage(iobj.Item);
                                 icon.Cursor = Cursors.Hand;
                                 label.Text = iobj.Item.Name;
                                 LabelPosUpdate(label);
-                                Editor.InsertItem = null;
-                                Editor.Changed = true;
-                                Editor.DeselectVOs();
+                                EEngine.InsertItem = null;
+                                EEngine.Changed = true;
+                                EEngine.DeselectVOs();
                             }
                             else
                             {
                                 MouseDownLocation = Cursor.Position; //move
-                                Editor.SelectVO(sender, Control.ModifierKeys == Keys.Control);
+                                EEngine.SelectVO(sender, Control.ModifierKeys == Keys.Control);
                                 bufPos = icon.Location;
                                 moveEn = true;
                             }
@@ -84,9 +84,9 @@ namespace Recipe.Editor.VisualObject
                         break;
 
                     case MouseButtons.Right: 
-                        if (!Editor.linkProcess) //context menu
+                        if (!EEngine.linkProcess) //context menu
                         {
-                            Editor.SelectVO(sender, false);
+                            EEngine.SelectVO(sender, false);
                             Menu.ShowMenu(sender as PictureBox, Cursor.Position);
                         }
                         break;
@@ -100,7 +100,7 @@ namespace Recipe.Editor.VisualObject
                 switch (e.Button)
                 {
                     case MouseButtons.Left: 
-                        if (!Editor.linkProcess && moveEn) //move obj
+                        if (!EEngine.linkProcess && moveEn) //move obj
                         {
                             int dx, dy;
                             dx = Cursor.Position.X - MouseDownLocation.X;  //get cursor location
@@ -129,14 +129,14 @@ namespace Recipe.Editor.VisualObject
                                     pos.Y = bufPos.Y + dy;
                                 }
 
-                                Editor.MoveSelectedVOs(dx, dy);
+                                EEngine.MoveSelectedVOs(dx, dy);
                             }
-                            Editor.RetraceArea();
+                            EEngine.RetraceArea();
                         }
                         break;
 
                     case MouseButtons.None:
-                        if (Editor.InsertItem != null && Editor.Replacing)
+                        if (EEngine.InsertItem != null && EEngine.Replacing)
                         {
                             icon.Cursor = Cursors.Cross;
                         }
@@ -153,8 +153,8 @@ namespace Recipe.Editor.VisualObject
                 if (move)
                 {
                     move = false;
-                    Editor.Changed = true;
-                    Editor.FinishMovingVOs();
+                    EEngine.Changed = true;
+                    EEngine.FinishMovingVOs();
                 }
                 
                 moveEn = false;
@@ -208,7 +208,7 @@ namespace Recipe.Editor.VisualObject
         {
             SetItemTypeStyle(iobj.Item, iobj.TagLabel);
             LabelPosUpdate(iobj.TagLabel);
-            Editor.Changed = true;
+            EEngine.Changed = true;
         }
 
         public static void VOTextUpdate(ItemObject iobj)
@@ -216,7 +216,7 @@ namespace Recipe.Editor.VisualObject
             var label = iobj.TagLabel;
             label.Text = iobj.Item.Name;
             LabelPosUpdate(label);
-            Editor.Changed = true;
+            EEngine.Changed = true;
         }
 
         /**/

@@ -29,7 +29,7 @@ namespace Recipe
         private object lastCtrl;
         private int sOffset;
         private int sHeight;
-        private FormOpacity opacity; //autonomic form opacity handler
+        private OpacityForm opacity; //autonomic form opacity handler
 
         public FormLibrary(Config config)
         {
@@ -37,7 +37,7 @@ namespace Recipe
             this.config = config;
             sOffset = groupBoxSearch.Top - listBoxLibItems.Bottom;
             sHeight = ClientRectangle.Height - groupBoxSearch.Top;
-            opacity = new FormOpacity(this, checkBoxOpa);
+            opacity = new OpacityForm(this, checkBoxOpa);
         }
 
         public void OpenItem(Library.Item item)
@@ -275,7 +275,7 @@ namespace Recipe
         {
             pictureBoxItemIcon.Image = null;
             selectedItem = null;
-            Editor.Editor.InsertItem = null;
+            Editor.EEngine.InsertItem = null;
             listBoxLibItems.SelectedIndex = -1;
         }
 
@@ -407,7 +407,7 @@ namespace Recipe
                 return;
             }
 
-            Editor.Editor.InsertItem = null;
+            Editor.EEngine.InsertItem = null;
             var exp = listBoxLibItems.Tag as Library.Exp;
             selectedItem = exp.Items[listBoxLibItems.SelectedIndex];
             ItemPreview();
@@ -425,14 +425,14 @@ namespace Recipe
 
         private void buttonItemInsert_Click(object sender, EventArgs e)
         {
-            Editor.Editor.Replacing = false;
-            Editor.Editor.InsertItem = selectedItem;
+            Editor.EEngine.Replacing = false;
+            Editor.EEngine.InsertItem = selectedItem;
         }
 
         private void buttonReplace_Click(object sender, EventArgs e)
         {
-            Editor.Editor.Replacing = true;
-            Editor.Editor.InsertItem = selectedItem;
+            Editor.EEngine.Replacing = true;
+            Editor.EEngine.InsertItem = selectedItem;
         }
 
         private void buttonRename_Click(object sender, EventArgs e)
@@ -472,7 +472,7 @@ namespace Recipe
                     var path = Path.Combine(Routine.Directories.Library, selectedItem.IconPath);
 
                     //check if the item is used in the current project
-                    if (Editor.Editor.IODataBase.Find(x => x.Item.IconPath == selectedItem.IconPath) != null)
+                    if (Editor.EEngine.IODataBase.Find(x => x.Item.IconPath == selectedItem.IconPath) != null)
                     {
                         if (MessageBox.Show("This item is used in the project. Remove it from the library?", 
                             "Item Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
@@ -520,7 +520,7 @@ namespace Recipe
                         foreach (var file in files)
                         {
                             var item = Library.Directory.TrimPath(file);
-                            if (Editor.Editor.IODataBase.Find(x => x.Item.IconPath == item) != null)
+                            if (Editor.EEngine.IODataBase.Find(x => x.Item.IconPath == item) != null)
                             {
                                 if (MessageBox.Show("This directory contains the items used in the project. " +
                                     "Continue deleting?", "Directory Delete", 

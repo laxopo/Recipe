@@ -1,7 +1,7 @@
 ﻿
 namespace Recipe
 {
-    partial class AboutBox
+    partial class FormAboutBox
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@ namespace Recipe
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAboutBox));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.labelProductName = new System.Windows.Forms.Label();

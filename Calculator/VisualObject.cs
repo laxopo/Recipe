@@ -26,7 +26,7 @@ namespace Recipe.Calculator
             };
 
             //Create controls
-            var ct = Editor.VisualObject.VisualObject.GenerateVO(res.ItemObject.Item, new Point(0, 0), false);
+            var ct = Editor.VisualObject.Constructor.GenerateVO(res.ItemObject.Item, new Point(0, 0), false);
 
             var quantity = new TextBox() { 
                 Name = voQuantity,
@@ -79,8 +79,8 @@ namespace Recipe.Calculator
 
             void Icon_Click(object sender, EventArgs e)
             {
-                Editor.Editor.DeselectVOs();
-                Editor.Editor.SelectVO(Resource.ItemObject, false);
+                Editor.EEngine.DeselectVOs();
+                Editor.EEngine.SelectVO(Resource.ItemObject, false);
             }
 
             void Quantity_KeyPress(object sender, KeyPressEventArgs e)

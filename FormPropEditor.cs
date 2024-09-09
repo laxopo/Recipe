@@ -10,21 +10,21 @@ using System.Windows.Forms;
 
 namespace Recipe
 {
-    public partial class PropEditor : Form
+    public partial class FormPropEditor : Form
     {
         private Editor.ItemObject CurrentIObj;
         private Config config;
         private bool loaded = false;
-        private readonly FormOpacity opacity;
+        private readonly OpacityForm opacity;
         private string gBoxQtyText;
 
         private List<Control> enableManual = new List<Control>();
 
-        public PropEditor(Config config)
+        public FormPropEditor(Config config)
         {
             InitializeComponent();
             this.config = config;
-            opacity = new FormOpacity(this, checkBoxOpa);
+            opacity = new OpacityForm(this, checkBoxOpa);
             gBoxQtyText = groupBoxQuantity.Text;
 
             radioButtonAuto.Tag = Editor.ItemObject.ExternalType.Auto;
@@ -42,7 +42,7 @@ namespace Recipe
 
         public void LoadItem(bool reload)
         {
-            bool en = Editor.Editor.CurrentVObj != null;
+            bool en = Editor.EEngine.CurrentVObj != null;
 
             //Enabling
             foreach (Control ctrl in Controls)
@@ -74,7 +74,7 @@ namespace Recipe
                 return;
             }
 
-            var loadItem = Editor.Editor.CurrentVObj.Tag as Editor.ItemObject;
+            var loadItem = Editor.EEngine.CurrentVObj.Tag as Editor.ItemObject;
 
             if (!reload && loadItem == CurrentIObj)
             {
@@ -107,14 +107,14 @@ namespace Recipe
         public void Unlink()
         {
             bool confirm = false;
-            if (Editor.Editor.selectedIObjs.Count > 0)
+            if (Editor.EEngine.selectedIObjs.Count > 0)
             {
-                foreach (var iobj in Editor.Editor.selectedIObjs)
+                foreach (var iobj in Editor.EEngine.selectedIObjs)
                 {
                     if (!confirm && (iobj.LinkInTags.Count > 0 || iobj.LinkOutTags.Count > 0))
                     {
                         string ending;
-                        if (Editor.Editor.selectedIObjs.Count == 1)
+                        if (Editor.EEngine.selectedIObjs.Count == 1)
                         {
                             ending = "this item?";
                         }
@@ -135,7 +135,7 @@ namespace Recipe
                     DeleteLinks(iobj, true, Editor.ItemObject.LinkType.Both);
                 }
 
-                Editor.Editor.RetraceArea();
+                Editor.EEngine.RetraceArea();
                 LoadItem(true);
             }
         }
@@ -187,8 +187,8 @@ namespace Recipe
 
             CurrentIObj.Item.Name = textBoxName.Text;
 
-            Editor.VisualObject.VisualObject.VOTextUpdate(CurrentIObj);
-            Editor.Editor.SelectVO(CurrentIObj, false);
+            Editor.VisualObject.Constructor.VOTextUpdate(CurrentIObj);
+            Editor.EEngine.SelectVO(CurrentIObj, false);
         }
 
         private void comboBoxTypes_SetValue(Library.Item.Type type)
@@ -231,7 +231,7 @@ namespace Recipe
             GBoxQuantityUpdate(true);
             GBoxExternalUpdate(true);
 
-            Editor.VisualObject.VisualObject.ItemTypeStyleUpdate(CurrentIObj);
+            Editor.VisualObject.Constructor.ItemTypeStyleUpdate(CurrentIObj);
         }
 
         /*Links*/
@@ -278,7 +278,7 @@ namespace Recipe
                     iobj.LinkInTags.Remove(beg);
                     iobj.LinksIn.Remove(beg.ID);
 
-                    Editor.Editor.Changed = true;
+                    Editor.EEngine.Changed = true;
                 }
 
                 foreach (var item in listToDelete)
@@ -314,7 +314,7 @@ namespace Recipe
                     iobj.LinkOutTags.Remove(end);
                     iobj.LinksOut.Remove(end.ID);
 
-                    Editor.Editor.Changed = true;
+                    Editor.EEngine.Changed = true;
                 }
 
                 foreach (var item in listToDelete)
@@ -345,7 +345,7 @@ namespace Recipe
                 Editor.ItemObject link = CurrentIObj.LinkInTags[index];
                 CurrentIObj.LinkInHLs.Add(link);
             }
-            Editor.Editor.RetraceArea();
+            Editor.EEngine.RetraceArea();
         }
 
         private void listBoxLinksInput_KeyDown(object sender, KeyEventArgs e)
@@ -372,7 +372,7 @@ namespace Recipe
                 DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Input);
                 listBoxLinksInput_SelectedIndexChanged(null, null);
                 EnableLSIC_Handlers(true);
-                Editor.Editor.RetraceArea();
+                Editor.EEngine.RetraceArea();
             }
         }
 
@@ -385,7 +385,7 @@ namespace Recipe
                 Editor.ItemObject link = CurrentIObj.LinkOutTags[index];
                 CurrentIObj.LinkOutHLs.Add(link);
             }
-            Editor.Editor.RetraceArea();
+            Editor.EEngine.RetraceArea();
         }
 
         private void listBoxLinksOutput_KeyDown(object sender, KeyEventArgs e)
@@ -412,7 +412,7 @@ namespace Recipe
                 DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Output);
                 listBoxLinksInput_SelectedIndexChanged(null, null);
                 EnableLSIC_Handlers(true);
-                Editor.Editor.RetraceArea();
+                Editor.EEngine.RetraceArea();
             }
         }
 
@@ -421,7 +421,7 @@ namespace Recipe
             EnableLSIC_Handlers(false);
             DeleteLinks(CurrentIObj, false, Editor.ItemObject.LinkType.Both);
             EnableLSIC_Handlers(true);
-            Editor.Editor.RetraceArea();
+            Editor.EEngine.RetraceArea();
         }
 
         private void buttonLinksSelectAll_Click(object sender, EventArgs e)
@@ -459,7 +459,7 @@ namespace Recipe
 
             if (property != src)
             {
-                Editor.Editor.Changed = true;
+                Editor.EEngine.Changed = true;
             }
 
             return src;
@@ -670,7 +670,7 @@ namespace Recipe
                     if (CurrentIObj.External != ext)
                     {
                         CurrentIObj.External = ext;
-                        Editor.Editor.Changed = true;
+                        Editor.EEngine.Changed = true;
                         return;
                     }
                 }

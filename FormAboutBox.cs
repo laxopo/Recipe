@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace Recipe
 {
-    partial class AboutBox : Form
+    partial class FormAboutBox : Form
     {
-        public AboutBox()
+        public FormAboutBox()
         {
             InitializeComponent();
             this.Text = String.Format("About {0}", AssemblyTitle);

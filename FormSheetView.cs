@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Recipe
 {
-    public partial class SheetView : Form
+    public partial class FormSheetView : Form
     {
-        public SheetView(PictureBox area, Config config)
+        public FormSheetView(PictureBox area, Config config)
         {
             InitializeComponent();
             Area = area;
@@ -74,7 +74,7 @@ namespace Recipe
         {
             Area.ImageLocation = null;
             labelPath.Text = "";
-            Editor.Editor.RetraceArea();
+            Editor.EEngine.RetraceArea();
         }
 
         private void buttonApply_Click(object sender, EventArgs e)
@@ -85,7 +85,7 @@ namespace Recipe
         private void comboBoxLayout_SelectedIndexChanged(object sender, EventArgs e)
         {
             Area.SizeMode = modeOption[comboBoxLayout.SelectedIndex];
-            Editor.Editor.RetraceArea();
+            Editor.EEngine.RetraceArea();
         }
 
         private void SheetView_Load(object sender, EventArgs e)
@@ -103,7 +103,7 @@ namespace Recipe
 
                 foreach (Control control in Area.Controls)
                 {
-                    if (control.Name == Editor.VisualObject.VisualObject.IconName)
+                    if (control.Name == Editor.VisualObject.Constructor.IconName)
                     {
                         (control as PictureBox).BorderStyle = config.VObjStyle.IconBorder;
                     }
@@ -119,7 +119,7 @@ namespace Recipe
 
                 foreach (Control control in Area.Controls)
                 {
-                    if (control.Name == Editor.VisualObject.VisualObject.LabelName)
+                    if (control.Name == Editor.VisualObject.Constructor.LabelName)
                     {
                         (control as Label).BorderStyle = config.VObjStyle.LabelBorder;
                     }

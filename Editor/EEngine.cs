@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Recipe.Editor
 {
-    public static class Editor
+    public static class EEngine
     {
         private const string FileFormat = "Recipe project file";
         private const string FileVersion = "1.4";
@@ -51,7 +51,7 @@ namespace Recipe.Editor
 
         private static Form mainForm;
         private static Action FitTheControls;
-        public static PropEditor propEditor;
+        public static FormPropEditor propEditor;
         public static Config configuration;
         public static FormLibrary libraryForm;
         public static PictureBox Area;
@@ -88,7 +88,7 @@ namespace Recipe.Editor
 
         /**/
 
-        public static void Initialize(Form formMain, FormLibrary formLibrary, PropEditor propEditor, 
+        public static void Initialize(Form formMain, FormLibrary formLibrary, FormPropEditor propEditor, 
             Panel editorWindow, Config config, Action ctrlFit)
         {
             foreach (Control ctrl in editorWindow.Controls)
@@ -110,7 +110,7 @@ namespace Recipe.Editor
             }
 
             mainForm = formMain;
-            Editor.propEditor = propEditor;
+            EEngine.propEditor = propEditor;
             defCaption = formMain.Text;
             configuration = config;
             libraryForm = formLibrary;
@@ -350,7 +350,7 @@ namespace Recipe.Editor
                     lbSize.Width += 4;
 
                     //Get size offset
-                    int iconSize = VisualObject.VisualObject.IconSize;
+                    int iconSize = VisualObject.Constructor.IconSize;
                     int offset = iconSize / 2;
 
                     //Get center
@@ -585,7 +585,7 @@ namespace Recipe.Editor
             //Select VOs in the select bounds
             foreach (Control vobj in Area.Controls)
             {
-                if (vobj.Name == VisualObject.VisualObject.IconName)
+                if (vobj.Name == VisualObject.Constructor.IconName)
                 {
                     Point voRB = new Point(vobj.Right, vobj.Bottom);
                     if (rectSelect.Contains(vobj.Location) || rectSelect.Contains(voRB))
@@ -617,7 +617,7 @@ namespace Recipe.Editor
                 var rf = iobj.StartLocation;
                 var pos = new Point(rf.X + dx, rf.Y + dy);
 
-                VisualObject.VisualObject.LocateVO(icon, pos);
+                VisualObject.Constructor.LocateVO(icon, pos);
 
                 icon.BringToFront();
                 (icon.Tag as ItemObject).TagLabel.BringToFront();
@@ -842,7 +842,7 @@ namespace Recipe.Editor
         private static void CreateVO(Library.Item item, Point location, bool createNew, ItemObject source)
         {
             //Get new VO
-            var ct = VisualObject.VisualObject.GenerateVO(item, location, true);
+            var ct = VisualObject.Constructor.GenerateVO(item, location, true);
 
             //Register IO
             if (createNew)
@@ -880,7 +880,7 @@ namespace Recipe.Editor
                 }
                 if (reloc)
                 {
-                    VisualObject.VisualObject.LocateVO(ct, newLoc);
+                    VisualObject.Constructor.LocateVO(ct, newLoc);
                     IODataBase.Last().ResetRelocation();
                 }
 
@@ -924,7 +924,7 @@ namespace Recipe.Editor
                 ct.Icon, 
                 ct.Label
             });
-            VisualObject.VisualObject.LabelPosUpdate(ct.Label);
+            VisualObject.Constructor.LabelPosUpdate(ct.Label);
         }
 
         private static void CloneVOs(Point location)
@@ -992,11 +992,11 @@ namespace Recipe.Editor
             Label label = (vobj.Tag as ItemObject).TagLabel;
             if (highLight)
             {
-                label.BackColor = VisualObject.VisualObject.HighlightColor;
+                label.BackColor = VisualObject.Constructor.HighlightColor;
             }
             else
             {
-                label.BackColor = VisualObject.VisualObject.DefaultColor;
+                label.BackColor = VisualObject.Constructor.DefaultColor;
             }
         }
 

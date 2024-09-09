@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Recipe
 {
-    public partial class SheetResize : Form
+    public partial class FormSheetResize : Form
     {
-        public SheetResize(Size size)
+        public FormSheetResize(Size size)
         {
             InitializeComponent();
             textBoxWidth.Text = size.Width.ToString();
@@ -27,8 +27,8 @@ namespace Recipe
         {
             int w = 0, h = 0;
             string inv = "Invalid input";
-            Size min = Editor.Editor.AreaSizeMin;
-            Size max = Editor.Editor.AreaSizeMax;
+            Size min = Editor.EEngine.AreaSizeMin;
+            Size max = Editor.EEngine.AreaSizeMax;
 
             try
             {

@@ -28,7 +28,7 @@ namespace Recipe
             trees.Clear();
 
             //scan for trees
-            Calculator.Calculator.ScanTrees(trees);
+            Calculator.CEngine.ScanTrees(trees);
 
             //add trees to list
             trees.ForEach(x => listBoxTrees.Items.Add(x.Name));
@@ -43,7 +43,7 @@ namespace Recipe
 
             var tree = trees[listBoxTrees.SelectedIndex];
 
-            visualObjects = Calculator.Calculator.GenerateVOs(tree, groupBoxInput, groupBoxOutput);
+            visualObjects = Calculator.CEngine.GenerateVOs(tree, groupBoxInput, groupBoxOutput);
 
         }
 
@@ -51,7 +51,7 @@ namespace Recipe
         {
             var tree = trees[listBoxTrees.SelectedIndex];
 
-            Calculator.Calculator.Calculate(tree);
+            Calculator.CEngine.Calculate(tree);
 
             visualObjects.ForEach(x => x.UpdateVO());
         }

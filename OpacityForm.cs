@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Recipe
 {
-    public class FormOpacity
+    public class OpacityForm
     {
         private Form form;
         private CheckBox checkEnable;
@@ -13,7 +13,7 @@ namespace Recipe
         private const double interval = 16.7;
         private const double timSec = 1000 / interval;
 
-        public FormOpacity(Form form, CheckBox enable)
+        public OpacityForm(Form form, CheckBox enable)
         {
             this.form = form;
             form.MouseEnter += new EventHandler(Form_MouseEnter);

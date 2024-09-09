@@ -1,7 +1,7 @@
 ﻿
 namespace Recipe
 {
-    partial class PropEditor
+    partial class FormPropEditor
     {
         /// <summary>
         /// Required designer variable.

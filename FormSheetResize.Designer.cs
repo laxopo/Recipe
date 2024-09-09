@@ -1,7 +1,7 @@
 ﻿
 namespace Recipe
 {
-    partial class SheetResize
+    partial class FormSheetResize
     {
         /// <summary>
         /// Required designer variable.

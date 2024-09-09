@@ -53,36 +53,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AboutBox.cs">
+    <Compile Include="FormAboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AboutBox.Designer.cs">
-      <DependentUpon>AboutBox.cs</DependentUpon>
+    <Compile Include="FormAboutBox.Designer.cs">
+      <DependentUpon>FormAboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Calculator\Calculator.cs" />
+    <Compile Include="Calculator\CEngine.cs" />
     <Compile Include="Calculator\Mech.cs" />
     <Compile Include="Calculator\Message.cs" />
     <Compile Include="Calculator\Resource.cs" />
     <Compile Include="Calculator\Tree.cs" />
     <Compile Include="Calculator\VisualObject.cs" />
-    <Compile Include="FormCalculator.cs">
+    <Compile Include="Calculator\FormCalculator.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormCalculator.Designer.cs">
+    <Compile Include="Calculator\FormCalculator.Designer.cs">
       <DependentUpon>FormCalculator.cs</DependentUpon>
     </Compile>
     <Compile Include="Config.cs" />
     <Compile Include="Editor\Clip.cs" />
     <Compile Include="Editor\Format.cs" />
     <Compile Include="Editor\VisualObject\Container.cs" />
-    <Compile Include="Editor\VisualObject\VisualObject.cs" />
+    <Compile Include="Editor\VisualObject\Constructor.cs" />
     <Compile Include="Editor\VisualObject\Menu.cs" />
-    <Compile Include="Editor\Editor.cs" />
+    <Compile Include="Editor\EEngine.cs" />
     <Compile Include="Editor\ItemObject.cs" />
-    <Compile Include="FormLibraryImport.cs">
+    <Compile Include="Library\FormLibraryImport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormLibraryImport.Designer.cs">
+    <Compile Include="Library\FormLibraryImport.Designer.cs">
       <DependentUpon>FormLibraryImport.cs</DependentUpon>
     </Compile>
     <Compile Include="FormMain.cs">
@@ -91,73 +91,73 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormLibrary.cs">
+    <Compile Include="Library\FormLibrary.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormLibrary.Designer.cs">
+    <Compile Include="Library\FormLibrary.Designer.cs">
       <DependentUpon>FormLibrary.cs</DependentUpon>
     </Compile>
     <Compile Include="FormatTable.cs" />
-    <Compile Include="FormOpacity.cs" />
-    <Compile Include="FormRename.cs">
+    <Compile Include="OpacityForm.cs" />
+    <Compile Include="Library\FormRename.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormRename.Designer.cs">
+    <Compile Include="Library\FormRename.Designer.cs">
       <DependentUpon>FormRename.cs</DependentUpon>
     </Compile>
-    <Compile Include="ImportProgress.cs">
+    <Compile Include="Library\ImportProgress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ImportProgress.Designer.cs">
+    <Compile Include="Library\ImportProgress.Designer.cs">
       <DependentUpon>ImportProgress.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\Exp.cs" />
-    <Compile Include="PropEditor.cs">
+    <Compile Include="FormPropEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PropEditor.Designer.cs">
-      <DependentUpon>PropEditor.cs</DependentUpon>
+    <Compile Include="FormPropEditor.Designer.cs">
+      <DependentUpon>FormPropEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="SheetResize.cs">
+    <Compile Include="FormSheetResize.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SheetResize.Designer.cs">
-      <DependentUpon>SheetResize.cs</DependentUpon>
+    <Compile Include="FormSheetResize.Designer.cs">
+      <DependentUpon>FormSheetResize.cs</DependentUpon>
     </Compile>
     <Compile Include="Routine.cs" />
     <Compile Include="Library\Directory.cs" />
     <Compile Include="Library\Item.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SheetView.cs">
+    <Compile Include="FormSheetView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SheetView.Designer.cs">
-      <DependentUpon>SheetView.cs</DependentUpon>
+    <Compile Include="FormSheetView.Designer.cs">
+      <DependentUpon>FormSheetView.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AboutBox.resx">
-      <DependentUpon>AboutBox.cs</DependentUpon>
+    <EmbeddedResource Include="FormAboutBox.resx">
+      <DependentUpon>FormAboutBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormCalculator.resx">
+    <EmbeddedResource Include="Calculator\FormCalculator.resx">
       <DependentUpon>FormCalculator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormLibraryImport.resx">
+    <EmbeddedResource Include="Library\FormLibraryImport.resx">
       <DependentUpon>FormLibraryImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormLibrary.resx">
+    <EmbeddedResource Include="Library\FormLibrary.resx">
       <DependentUpon>FormLibrary.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormRename.resx">
+    <EmbeddedResource Include="Library\FormRename.resx">
       <DependentUpon>FormRename.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ImportProgress.resx">
+    <EmbeddedResource Include="Library\ImportProgress.resx">
       <DependentUpon>ImportProgress.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PropEditor.resx">
-      <DependentUpon>PropEditor.cs</DependentUpon>
+    <EmbeddedResource Include="FormPropEditor.resx">
+      <DependentUpon>FormPropEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -169,11 +169,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SheetView.resx">
-      <DependentUpon>SheetView.cs</DependentUpon>
+    <EmbeddedResource Include="FormSheetView.resx">
+      <DependentUpon>FormSheetView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SheetResize.resx">
-      <DependentUpon>SheetResize.cs</DependentUpon>
+    <EmbeddedResource Include="FormSheetResize.resx">
+      <DependentUpon>FormSheetResize.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

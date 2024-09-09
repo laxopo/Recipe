@@ -8,11 +8,11 @@ using System.Drawing;
 
 namespace Recipe.Calculator
 {
-    public static class Calculator
+    public static class CEngine
     {
         public static void ScanTrees(List<Tree> trees)
         {
-            Editor.Editor.IODataBase.ForEach(x => x.Tree = null);
+            Editor.EEngine.IODataBase.ForEach(x => x.Tree = null);
             var done = new List<Editor.ItemObject>();
             var path = new List<Editor.ItemObject>();
             Tree tree = null;
@@ -104,7 +104,7 @@ namespace Recipe.Calculator
             }
 
             //build the trees
-            foreach (var iobj in Editor.Editor.IODataBase)
+            foreach (var iobj in Editor.EEngine.IODataBase)
             {
                 if (done.Contains(iobj))
                 {

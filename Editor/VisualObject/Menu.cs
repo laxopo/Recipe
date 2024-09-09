@@ -43,7 +43,7 @@ namespace Recipe.Editor.VisualObject
 
         public static void ShowMenu(PictureBox sender, Point location)
         {
-            bool en = Editor.CurrentVObj != null;
+            bool en = EEngine.CurrentVObj != null;
             library.Enabled = en;
             voSender = sender;
 
@@ -99,45 +99,45 @@ namespace Recipe.Editor.VisualObject
 
         private static void LinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.LinkingEnable(voSender);
+            EEngine.LinkingEnable(voSender);
         }
 
         private static void UnlinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.propEditor.Unlink();
+            EEngine.propEditor.Unlink();
         }
 
         private static void PropsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.propEditor.Show();
+            EEngine.propEditor.Show();
         }
 
         private static void LibraryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var item = (voSender.Tag as ItemObject).Item;
-            Editor.libraryForm.OpenItem(item);
+            EEngine.libraryForm.OpenItem(item);
         }
 
         private static void CloneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Editor.CurrentVObj != null) //one vo (same as item inserting)
+            if (EEngine.CurrentVObj != null) //one vo (same as item inserting)
             {
-                Editor.InsertItem = (Editor.CurrentVObj.Tag as ItemObject).Item;
+                EEngine.InsertItem = (EEngine.CurrentVObj.Tag as ItemObject).Item;
             }
             else //a massive cloning
             {
-                Editor.CloneVOsStart(voSender.Location);
+                EEngine.CloneVOsStart(voSender.Location);
             }
         }
 
         private static void CopyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.Copy();
+            EEngine.Copy();
         }
 
         private static void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Editor.RemoveVOs();
+            EEngine.RemoveVOs();
         }
     }
 }
