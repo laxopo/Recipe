@@ -10,7 +10,67 @@ namespace Recipe.Calculator
 {
     public static class CEngine
     {
-        public static void ScanTrees(List<Tree> trees)
+        public static List<Tree> Forest = new List<Tree>();
+        public static List<VisualObject> VisualObjects = new List<VisualObject>();
+
+        private static Action FormUpdate;
+        private static Action FormClear;
+        private static bool isActual = false;
+
+        public static bool IsActual
+        {
+            get
+            {
+                return isActual;
+            }
+            set
+            {
+                if (value == isActual)
+                {
+                    return;
+                }
+
+                if (value)
+                {
+                    Update();
+                }
+                else
+                {
+                    Clear();
+                }
+
+                isActual = value;
+            }
+        }
+
+        public static void Initialize(Action clear, Action update)
+        {
+            FormUpdate = update;
+            FormClear = clear;
+        }
+
+        public static void Clear()
+        {
+            FormClear();
+            Forest.Clear();
+            VisualObjects.Clear();
+        }
+
+        public static void Update()
+        {
+            if (isActual)
+            {
+                return;
+            }
+
+            FormClear();
+            ScanTrees(Forest);
+            FormUpdate();
+            isActual = true;
+        }
+
+
+        public static void ScanTrees(List<Tree> forest)
         {
             Editor.Engine.IODataBase.ForEach(x => x.Tree = null);
             var done = new List<Editor.ItemObject>();
@@ -19,7 +79,7 @@ namespace Recipe.Calculator
 
             void NodeExp(Editor.ItemObject iobj)
             {
-                var IIO = iobj.ID; //test
+                var IOBJ = iobj.ID; //test
 
                 //path level-down
                 path.Add(iobj);
@@ -27,7 +87,6 @@ namespace Recipe.Calculator
                 //read all outputs
                 foreach (var linkOut in iobj.LinkOutTags)
                 {
-                    var LNK = linkOut.ID; //test
                     //if the iobj is scanned or the path is looped
                     if (done.Contains(linkOut) || path.Contains(linkOut))
                     {
@@ -51,9 +110,9 @@ namespace Recipe.Calculator
                     //create a new tree
                     tree = new Tree()
                     {
-                        Name = trees.Count.ToString()
+                        Name = forest.Count.ToString()
                     };
-                    trees.Add(tree);
+                    forest.Add(tree);
                 }
 
                 bool unlinked = false;
@@ -67,14 +126,14 @@ namespace Recipe.Calculator
                     else
                     {
                         //mark it as output
-                        res.IsOutput = true;
+                        res.IOType = Resource.IO.Output;
                         tree.Outputs.Add(res);
                     }
                 }
                 else if (iobj.LinkInTags.Count == 0)
                 {
                     //mark it as input
-                    res.IsInput = true;
+                    res.IOType = Resource.IO.Input;
                     tree.Inputs.Add(res);
                 }
                 else
@@ -111,11 +170,10 @@ namespace Recipe.Calculator
                     continue;
                 }
 
-                var EIO = iobj.ID; //test
                 NodeExp(iobj);
             }
 
-            foreach (var tr in trees)
+            foreach (var tr in forest)
             {
                 //generate tree names
                 if (tr.Outputs.Count > 0)
@@ -128,25 +186,154 @@ namespace Recipe.Calculator
                 if (result.Fault)
                 {
                     MessageBox.Show(result.Text, "Failed to link", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    trees.Clear();
+                    forest.Clear();
                     return;
+                }
+
+                //find intemediate i/o or const
+                tr.Inputs.ForEach(x => x.Quantity = 1);
+                Trace(tr);
+
+                var rmInters = new List<Resource>();
+                foreach (var inter in tr.Intermediates)
+                {
+                    if (inter.Quantity >= 0 && inter.Insufficient)
+                    {
+                        inter.IOType = Resource.IO.Constant;
+                        tr.Constants.Add(inter.Clone() as Resource);
+                    }
+
+                    if (inter.Quantity < 0)
+                    {
+                        inter.IOType = Resource.IO.Input;
+                        tr.Inputs.Add(inter);
+                        rmInters.Add(inter);
+                    }
+                    else if (inter.Quantity > 0)
+                    {
+                        inter.IOType = Resource.IO.Output;
+                        tr.Outputs.Add(inter);
+                        rmInters.Add(inter);
+                    }
+                }
+
+                //remove all relocated resources in itermediate bank
+                rmInters.ForEach(x => tr.Intermediates.Remove(x));
+
+                //normalize coeffs
+                double k = -1;
+                foreach (var output in tr.Outputs)
+                {
+                    if (k == -1 || k > output.Quantity)
+                    {
+                        k = output.Quantity;
+                    }
+                }
+
+                k = 1 / k;
+
+                //Generate equation
+                tr.Equation = new Equation();
+                tr.Outputs.ForEach(y => tr.Equation.Outputs.Add(
+                    new Argument(y, y.Quantity * k)));
+                tr.Inputs.ForEach(x => tr.Equation.Inputs.Add(
+                    new Argument(x, k)));
+
+                //
+                tr.Inputs.ForEach(x => x.Quantity = tr.Equation.Inputs.Find(y => y.Resource == x).Coefficient);
+                tr.Outputs.ForEach(x => x.Quantity = tr.Equation.Outputs.Find(y => y.Resource == x).Coefficient);
+            }
+        }
+
+        public static void GenerateVOs(Tree tree, Control areaInputs, Control areaOutputs)
+        {
+            VisualObjects = new List<VisualObject>();
+
+            areaInputs.Controls.Clear();
+            areaOutputs.Controls.Clear();
+
+            Gen(tree.Resources(Tree.Bank.InputConstant), areaInputs);
+            Gen(tree.Outputs, areaOutputs);
+
+            void Gen(List<Resource> source, Control container)
+            {
+                container.Height = 0;
+                int x = 0, y = 0, h = 0;
+
+                foreach (var res in source)
+                {
+                    var vo = new VisualObject(res);
+                    VisualObjects.Add(vo);
+
+                    if (h < vo.Container.Height)
+                    {
+                        h = vo.Container.Height;
+                    }
+
+                    if (x + vo.Container.Width > container.Width)
+                    {
+                        //new line
+                        x = 0;
+                        y += h + 10;
+
+                    }
+
+                    vo.Container.Location = new Point(x, y);
+
+                    if (container.Height < vo.Container.Bottom)
+                    {
+                        container.Height = vo.Container.Bottom;
+                    }
+
+                    container.Controls.Add(vo.Container);
+
+                    x += vo.Container.Width + 10;
                 }
             }
         }
 
         public static void Calculate(Tree tree)
         {
+            tree.Outputs.ForEach(x => x.Quantity = 0);
+            tree.Inputs.ForEach(x => x.Quantity = x.Given);
+
+            tree.Equation.Calculate();
+
+            VisualObjects.ForEach(x => x.UpdateVO());
+        }
+
+        /**/
+
+        private static void Trace(Tree tree)
+        {
             var done = new List<Resource>();
             var path = new List<Mech>();
 
             tree.Outputs.ForEach(x => x.Quantity = 0);
 
-            void Calc(Resource res)
+            foreach (var inter in tree.Intermediates)
+            {
+                if (inter.IOType != Resource.IO.Constant)
+                {
+                    inter.Quantity = inter.ItemObject.Injected;
+                }
+            }
+
+            void TraceNodes(Resource res)
             {
                 var RES = res.ItemObject.ID; //test
+                var RES_Q = res.Quantity;
+
+                if (done.Contains(res))
+                {
+                    return;
+                }
 
                 //assign this res as done
                 done.Add(res);
+
+                //update the quantity
+                res.Quantity += res.ItemObject.Injected;
 
                 //res is an output
                 if (tree.Outputs.Contains(res))
@@ -166,7 +353,8 @@ namespace Recipe.Calculator
                 }
 
                 //calc productivity coefficient
-                int k = res.Quantity / res.ItemObject.QuantityOut;
+                double k = res.Quantity / res.ItemObject.QuantityOut;
+                mech.Coefficient = k;
 
                 //take an aliquot amount of all inputs
                 foreach (var resIn in mech.Inputs)
@@ -179,14 +367,14 @@ namespace Recipe.Calculator
                 //produce an aliquot amount of the output and put it to the next mech
                 foreach (var resOut in mech.Outputs)
                 {
-                    var RESOUT = resOut.ItemObject.ID; //test
+                    var RESOUT = resOut.ItemObject.ID;
                     if (done.Contains(resOut))
                     {
                         continue;
                     }
 
                     resOut.Quantity += resOut.ItemObject.QuantityIn * k;
-                    Calc(resOut);
+                    TraceNodes(resOut);
                 }
 
                 //mech is done
@@ -200,50 +388,9 @@ namespace Recipe.Calculator
                     continue;
                 }
 
-                Calc(res);
+                TraceNodes(res);
             }
         }
-
-        public static List<VisualObject> GenerateVOs(Tree tree, GroupBox areaInputs, GroupBox areaOutputs)
-        {
-            List<VisualObject> list = new List<VisualObject>();
-
-            void Gen(List<Resource> source, GroupBox container)
-            {
-                int x = 10, y = 15, h = 0;
-
-                foreach (var res in source)
-                {
-                    var vo = new VisualObject(res);
-                    list.Add(vo);
-
-                    if (x + vo.Container.Width > container.Width - 10)
-                    {
-                        x = 10;
-                        y += h + 10;
-                    }
-
-                    vo.Container.Location = new Point(x, y);
-                    container.Controls.Add(vo.Container);
-
-                    if (h < vo.Container.Height)
-                    {
-                        h = vo.Container.Height;
-                    }
-
-                    x += vo.Container.Width + 10;
-                }
-            }
-
-            areaInputs.Controls.Clear();
-            areaOutputs.Controls.Clear();
-            Gen(tree.Inputs, areaInputs);
-            Gen(tree.Outputs, areaOutputs);
-
-            return list;
-        }
-
-        /**/
 
         private static Message GenerateLinks(Tree tree)
         {

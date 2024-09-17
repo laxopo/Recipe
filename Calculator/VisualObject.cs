@@ -28,19 +28,35 @@ namespace Recipe.Calculator
             //Create controls
             var ct = Editor.VisualObject.Constructor.GenerateVO(res.ItemObject.Item, new Point(0, 0), false);
 
+            if ((Resource.IOType == Resource.IO.Input &&
+                Resource.ItemObject.External == Editor.ItemObject.ExternalType.Input) ||
+                (Resource.IOType == Resource.IO.Output &&
+                Resource.ItemObject.External == Editor.ItemObject.ExternalType.Output))
+            {
+                ct.Label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            }
+
             var quantity = new TextBox() { 
                 Name = voQuantity,
                 Top = ct.Label.Bottom + 1,
                 Width = 62,
                 TextAlign = HorizontalAlignment.Center,
-                MaxLength = 9
+                Text = Resource.Quantity.ToString(),
+                MaxLength = 9,
+                Enabled = res.IOType != Resource.IO.Constant
             };
+
+            var noteText = "";
+            if (res.IOType == Resource.IO.Constant)
+            {
+                noteText = "Constant";
+            }
 
             var note = new Label() { 
                 Name = voNote,
                 Top = quantity.Bottom + 1,
-                TextAlign = ContentAlignment.MiddleCenter,
-                AutoSize = true
+                AutoSize = true,
+                Text = noteText
             };
 
             ct.Icon.Click += new EventHandler(Icon_Click);
@@ -95,7 +111,7 @@ namespace Recipe.Calculator
             {
                 if (quantity.Text != "")
                 {
-                    Resource.Quantity = Convert.ToInt32(quantity.Text);
+                    Resource.Given = Convert.ToInt32(quantity.Text);
                 }
             }
 
@@ -108,19 +124,21 @@ namespace Recipe.Calculator
 
         public void UpdateVO()
         {
-            if (Resource.IsInput)
+            switch (Resource.IOType)
             {
-                var text = "";
-                if (Resource.Quantity != 0)
-                {
-                    text = "Res: " + Resource.Quantity;
-                }
+                case Resource.IO.Input:
+                    var text = "";
+                    if (Resource.Quantity != 0)
+                    {
+                        text = "Res: " + Resource.Quantity;
+                    }
 
-                GetControl(voNote).Text = text;
-            }
-            else
-            {
-                GetControl(voQuantity).Text = Resource.Quantity.ToString();
+                    GetControl(voNote).Text = text;
+                    break;
+
+                case Resource.IO.Output:
+                    GetControl(voQuantity).Text = Resource.Quantity.ToString();
+                    break;
             }
         }
 

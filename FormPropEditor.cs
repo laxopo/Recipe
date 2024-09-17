@@ -180,7 +180,7 @@ namespace Recipe
 
         private void textBoxName_Leave(object sender, EventArgs e)
         {
-            if (CurrentIObj.Item.Name == textBoxName.Text)
+            if (CurrentIObj == null || CurrentIObj.Item.Name == textBoxName.Text)
             {
                 return;
             }
@@ -279,6 +279,7 @@ namespace Recipe
                     iobj.LinksIn.Remove(beg.ID);
 
                     Editor.Engine.Changed = true;
+                    Calculator.CEngine.IsActual = false;
                 }
 
                 foreach (var item in listToDelete)
@@ -315,6 +316,7 @@ namespace Recipe
                     iobj.LinksOut.Remove(end.ID);
 
                     Editor.Engine.Changed = true;
+                    Calculator.CEngine.IsActual = false;
                 }
 
                 foreach (var item in listToDelete)
@@ -460,6 +462,7 @@ namespace Recipe
             if (property != src)
             {
                 Editor.Engine.Changed = true;
+                Calculator.CEngine.IsActual = false;
             }
 
             return src;
@@ -550,7 +553,7 @@ namespace Recipe
                 return;
             }
 
-            CurrentIObj.QuantityIn = IObjQtyUpdate(textBoxQtyIn, CurrentIObj.QuantityIn);
+            CurrentIObj.QuantityIn = IObjQtyUpdate(textBoxQtyIn, (int)CurrentIObj.QuantityIn);
         }
 
         private void textBoxQtyOut_KeyPress(object sender, KeyPressEventArgs e)
@@ -565,7 +568,7 @@ namespace Recipe
                 return;
             }
 
-            CurrentIObj.QuantityOut = IObjQtyUpdate(textBoxQtyOut, CurrentIObj.QuantityOut);
+            CurrentIObj.QuantityOut = IObjQtyUpdate(textBoxQtyOut, (int)CurrentIObj.QuantityOut);
         }
 
         private void textBoxInjected_KeyPress(object sender, KeyPressEventArgs e)
@@ -636,7 +639,9 @@ namespace Recipe
             if (!rb.Enabled && rb.Checked)
             {
                 rb.Checked = false;
+                radioButtonAuto.CheckedChanged -= new EventHandler(radioButtonAuto_CheckedChanged);
                 radioButtonAuto.Checked = true;
+                radioButtonAuto.CheckedChanged += new EventHandler(radioButtonAuto_CheckedChanged);
             }
         }
 
@@ -671,6 +676,7 @@ namespace Recipe
                     {
                         CurrentIObj.External = ext;
                         Editor.Engine.Changed = true;
+                        Calculator.CEngine.IsActual = false;
                         return;
                     }
                 }

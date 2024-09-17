@@ -11,6 +11,7 @@ namespace Recipe.Calculator
         public Editor.ItemObject ItemObject { get; set; }
         public List<Resource> Inputs { get; set; }
         public List<Resource> Outputs { get; set; }
+        public double Coefficient { get; set; }
 
         public Mech(Editor.ItemObject iobj)
         {

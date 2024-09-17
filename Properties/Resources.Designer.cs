@@ -61,11 +61,38 @@ namespace Recipe.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is a history..
+        ///   Looks up a localized string similar to v1.4 : ?:
+        ///Add Calculator
+        ///Add Help
+        ///Add quantity parameters in Properies Editor
+        ///Add object unlink
+        ///Add link multi-operations in the Properties Editor
+        ///Upd Editor v.1.4
+        ///Fix multi-linking
+        ///Fix false change of the sheet when the item type in not default
+        ///Fix object moving delay after dragging
+        ///Fix not full reset after create or opening the file
+        ///Fix drawing of link arrow
+        ///
+        ///v.1.3 : 04.09.2024:
+        ///Add multi-linking
+        ///Fix sheet fitting
+        ///Fix location limiting during inserting or cloning objects
+        ///Fix area retracin [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string History {
             get {
                 return ResourceManager.GetString("History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon pumpkin_pie {
+            get {
+                object obj = ResourceManager.GetObject("pumpkin_pie", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

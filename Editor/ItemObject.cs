@@ -13,9 +13,9 @@ namespace Recipe.Editor
 
         public int ID { get; set; }
 
-        public int QuantityIn { get; set; }
+        public double QuantityIn { get; set; }
 
-        public int QuantityOut { get; set; }
+        public double QuantityOut { get; set; }
 
         public int Injected { get; set; }
 

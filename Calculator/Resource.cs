@@ -6,19 +6,32 @@ using System.Threading.Tasks;
 
 namespace Recipe.Calculator
 {
-    public class Resource
+    public class Resource : ICloneable
     {
         public Editor.ItemObject ItemObject { get; set; }
         public Mech LinkMechIn { get; set; }
         public Mech LinkMechOut { get; set; }
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
+        public int Given { get; set; }
         public bool Insufficient { get; set; }
-        public bool IsInput { get; set; }
-        public bool IsOutput { get; set; }
+        public IO IOType { get; set; }
 
         public Resource(Editor.ItemObject iobj)
         {
             ItemObject = iobj;
+        }
+
+        public enum IO
+        {
+            None,
+            Input,
+            Output,
+            Constant
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }

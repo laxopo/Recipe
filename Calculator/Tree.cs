@@ -11,14 +11,17 @@ namespace Recipe.Calculator
         public string Name { get; set; }
         public List<Resource> Inputs { get; set; }
         public List<Resource> Outputs { get; set; }
-        public List<Resource> Intermediates { get; set; } //?
+        public List<Resource> Constants { get; set; }
+        public List<Resource> Intermediates { get; set; }
         public List<Mech> Mechanisms { get; set; }
+        public Equation Equation { get; set; }
 
         public Tree()
         {
             Inputs = new List<Resource>();
             Outputs = new List<Resource>();
             Intermediates = new List<Resource>();
+            Constants = new List<Resource>();
             Mechanisms = new List<Mech>();
         }
 
@@ -27,7 +30,8 @@ namespace Recipe.Calculator
             All,
             InputOutput,
             InputIntermediate,
-            OutputIntermediate
+            OutputIntermediate,
+            InputConstant,
         }
 
         public List<Resource> Resources(Bank bank)
@@ -40,6 +44,7 @@ namespace Recipe.Calculator
                     list.AddRange(Inputs);
                     list.AddRange(Outputs);
                     list.AddRange(Intermediates);
+                    list.AddRange(Constants);
                     break;
 
                 case Bank.InputOutput:
@@ -55,6 +60,11 @@ namespace Recipe.Calculator
                 case Bank.OutputIntermediate:
                     list.AddRange(Outputs);
                     list.AddRange(Intermediates);
+                    break;
+
+                case Bank.InputConstant:
+                    list.AddRange(Inputs);
+                    list.AddRange(Constants);
                     break;
             }
 

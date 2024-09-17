@@ -36,7 +36,7 @@ namespace Recipe
         public FormMain()
         {
             InitializeComponent();
-            this.GotFocus += new EventHandler(FormMain_GotFocus);
+            GotFocus += new EventHandler(FormMain_GotFocus);
 
             config = Config.Load(Routine.Files.Config);
 
@@ -48,10 +48,7 @@ namespace Recipe
             {
                 Owner = this
             };
-            FormCalculator = new FormCalculator()
-            {
-                Owner = this,
-            };
+            FormCalculator = new FormCalculator();
 
             Editor.Engine.Initialize(this, formLibrary, propEditor, panelEditor, config, FitTheControls);
 

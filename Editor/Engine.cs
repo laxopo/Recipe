@@ -123,6 +123,7 @@ namespace Recipe.Editor
         {
             FilePath = null;
             Changed = false;
+            Calculator.CEngine.IsActual = false;
             idCount = 0;
             InsertItem = null;
             Replacing = false;
@@ -254,6 +255,7 @@ namespace Recipe.Editor
             }
 
             Changed = true;
+            Calculator.CEngine.IsActual = false;
 
             if (!continuously)
             {
@@ -782,6 +784,7 @@ namespace Recipe.Editor
                 Area.Controls.Remove(delIObj.TagLabel);
                 IODataBase.Remove(delIObj);
                 Changed = true;
+                Calculator.CEngine.IsActual = false;
             }
 
             selectedIObjs.Clear();
@@ -906,6 +909,7 @@ namespace Recipe.Editor
                 //Set an insert event flags
                 InsertItem = null;
                 Changed = true;
+                Calculator.CEngine.IsActual = false;
             }
             else
             {

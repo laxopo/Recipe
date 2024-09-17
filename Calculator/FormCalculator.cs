@@ -15,23 +15,28 @@ namespace Recipe
         public FormCalculator()
         {
             InitializeComponent();
+            Calculator.CEngine.Initialize(ClearData, UpdateData);
         }
 
-        private List<Calculator.Tree> trees = new List<Calculator.Tree>();
-        private List<Calculator.VisualObject> visualObjects = new List<Calculator.VisualObject>();
-
-
-        private void buttonGenerate_Click(object sender, EventArgs e)
+        private void ClearData()
         {
             //clear records
             listBoxTrees.Items.Clear();
-            trees.Clear();
+            panelInputsContainer.Controls.Clear();
+            panelOutputsContainer.Controls.Clear();
+            panelInputsContainer.Top = 0;
+            panelOutputsContainer.Top = 0;
+        }
 
-            //scan for trees
-            Calculator.CEngine.ScanTrees(trees);
-
+        private void UpdateData()
+        {
             //add trees to list
-            trees.ForEach(x => listBoxTrees.Items.Add(x.Name));
+            Calculator.CEngine.Forest.ForEach(x => listBoxTrees.Items.Add(x.Name));
+        }
+
+        private void FormCalculator_MouseEnter(object sender, EventArgs e)
+        {
+            Calculator.CEngine.Update();
         }
 
         private void listBoxTrees_SelectedIndexChanged(object sender, EventArgs e)
@@ -41,19 +46,73 @@ namespace Recipe
                 return;
             }
 
-            var tree = trees[listBoxTrees.SelectedIndex];
+            var tree = Calculator.CEngine.Forest[listBoxTrees.SelectedIndex];
 
-            visualObjects = Calculator.CEngine.GenerateVOs(tree, groupBoxInput, groupBoxOutput);
+            Calculator.CEngine.GenerateVOs(tree, panelInputsContainer, panelOutputsContainer);
 
+            ContainerFit(groupBoxInput);
+            ContainerFit(groupBoxOutput);
         }
 
         private void buttonCalculate_Click(object sender, EventArgs e)
         {
-            var tree = trees[listBoxTrees.SelectedIndex];
+            if (listBoxTrees.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            var tree = Calculator.CEngine.Forest[listBoxTrees.SelectedIndex];
 
             Calculator.CEngine.Calculate(tree);
+        }
 
-            visualObjects.ForEach(x => x.UpdateVO());
+        private void ContainerFit(Control groupBox)
+        {
+            VScrollBar scrollBar = null;
+            Panel container = null;
+            Panel window = null;
+
+            foreach (Control ctrl in groupBox.Controls)
+            {
+                if (ctrl.Name.Contains("Window"))
+                {
+                    window = ctrl as Panel;
+
+                    foreach (Control ctr in window.Controls)
+                    {
+                        if(ctr.Name.Contains("Container"))
+                        {
+                            container = ctr as Panel;
+                        }
+                    }
+                }
+                else if (ctrl.Name.Contains("vScroll"))
+                {
+                    scrollBar = ctrl as VScrollBar;
+                }
+            }
+
+            int lc = scrollBar.LargeChange;
+            scrollBar.Minimum = window.Height;
+
+            if (container.Height < window.Height)
+            {
+                vScrollBarInputs.Enabled = false;
+                return;
+            }
+
+            scrollBar.Enabled = true;
+            scrollBar.Maximum = container.Height + lc;
+        }
+
+        private void vScrollBarInputs_Scroll(object sender, ScrollEventArgs e)
+        {
+            panelInputsContainer.Top = vScrollBarInputs.Minimum - vScrollBarInputs.Value;
+        }
+
+        private void vScrollBarOutputs_Scroll(object sender, ScrollEventArgs e)
+        {
+            panelOutputsContainer.Top = vScrollBarOutputs.Minimum - vScrollBarOutputs.Value;
         }
     }
 }

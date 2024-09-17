@@ -53,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculator\Argument.cs" />
+    <Compile Include="Calculator\Equation.cs" />
     <Compile Include="FormAboutBox.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -46,6 +46,7 @@ namespace Recipe.Editor.VisualObject
             //object event handlers
             bool moveEn = false;
             Point bufPos = new Point(0, 0);
+            bool move = false;
 
             void VOMouseDown(object sender, MouseEventArgs e)
             {
@@ -70,6 +71,7 @@ namespace Recipe.Editor.VisualObject
                                 Engine.InsertItem = null;
                                 Engine.Changed = true;
                                 Engine.DeselectVOs();
+                                Calculator.CEngine.IsActual = false;
                             }
                             else
                             {
@@ -92,8 +94,6 @@ namespace Recipe.Editor.VisualObject
                         break;
                 }
             }
-
-            bool move = false;
 
             void VOMouseMove(object sender, MouseEventArgs e)
             {
@@ -166,12 +166,18 @@ namespace Recipe.Editor.VisualObject
                 iobj.Location = icon.Location;
             }
 
+            void VODoubleClick(object sender, EventArgs e)
+            {
+                Engine.propEditor.Show();
+            }
+
             if (interactive)
             {
                 icon.MouseDown += new MouseEventHandler(VOMouseDown);
                 icon.MouseMove += new MouseEventHandler(VOMouseMove);
                 icon.MouseUp += new MouseEventHandler(VOMouseUp);
                 icon.Move += new EventHandler(VOMove);
+                icon.DoubleClick += new EventHandler(VODoubleClick);
             }
 
             return new Container(icon, label);
@@ -209,6 +215,7 @@ namespace Recipe.Editor.VisualObject
             SetItemTypeStyle(iobj.Item, iobj.TagLabel);
             LabelPosUpdate(iobj.TagLabel);
             Engine.Changed = true;
+            Calculator.CEngine.IsActual = false;
         }
 
         public static void VOTextUpdate(ItemObject iobj)
@@ -217,6 +224,7 @@ namespace Recipe.Editor.VisualObject
             label.Text = iobj.Item.Name;
             LabelPosUpdate(label);
             Engine.Changed = true;
+            Calculator.CEngine.IsActual = false;
         }
 
         /**/
