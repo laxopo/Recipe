@@ -27,9 +27,9 @@ namespace Recipe
             opacity = new OpacityForm(this, checkBoxOpa);
             gBoxQtyText = groupBoxQuantity.Text;
 
-            radioButtonAuto.Tag = Editor.ItemObject.ExternalType.Auto;
-            radioButtonInput.Tag = Editor.ItemObject.ExternalType.Input;
-            radioButtonOutput.Tag = Editor.ItemObject.ExternalType.Output;
+            radioButtonAuto.Tag = Editor.ItemObject.Type.Auto;
+            radioButtonInput.Tag = Editor.ItemObject.Type.Input;
+            radioButtonOutput.Tag = Editor.ItemObject.Type.Output;
 
             enableManual = new List<Control>() {
                 checkBoxOpa,
@@ -67,7 +67,7 @@ namespace Recipe
                     listBoxLinksOutput.SelectedItem = null;
                     listBoxLinksInput.Items.Clear();
                     listBoxLinksOutput.Items.Clear();
-                    comboBoxTypes_SetValue((Library.Item.Type)(-1));
+                    comboBoxTypes_SetValue((Library.Item.ItemType)(-1));
                     CurrentIObj = null;
                 }
 
@@ -89,7 +89,7 @@ namespace Recipe
             GBoxQuantityUpdate(true);
             GBoxExternalUpdate(true);
 
-            comboBoxTypes_SetValue(CurrentIObj.Item.ItemType);
+            comboBoxTypes_SetValue(CurrentIObj.Item.Type);
 
             listBoxLinksInput.Items.Clear();
             foreach (var link in CurrentIObj.LinkInTags)
@@ -191,27 +191,27 @@ namespace Recipe
             Editor.Engine.SelectVO(CurrentIObj, false);
         }
 
-        private void comboBoxTypes_SetValue(Library.Item.Type type)
+        private void comboBoxTypes_SetValue(Library.Item.ItemType type)
         {
             comboBoxTypes.SelectedIndexChanged -= new EventHandler(comboBoxTypes_SelectedIndexChanged);
-            comboBoxTypes.Text = Enum.GetName(typeof(Library.Item.Type), type);
+            comboBoxTypes.Text = Enum.GetName(typeof(Library.Item.ItemType), type);
             comboBoxTypes.SelectedIndexChanged += new EventHandler(comboBoxTypes_SelectedIndexChanged);
         }
 
         private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var type = (Library.Item.Type)comboBoxTypes.SelectedIndex;
-            if (type == CurrentIObj.Item.ItemType)
+            var type = (Library.Item.ItemType)comboBoxTypes.SelectedIndex;
+            if (type == CurrentIObj.Item.Type)
             {
                 return;
             }
 
-            if (type == Library.Item.Type.Fluid)
+            if (type == Library.Item.ItemType.Fluid)
             {
                 CurrentIObj.QuantityIn *= 1000;
                 CurrentIObj.QuantityOut *= 1000;
             }
-            else if (CurrentIObj.Item.ItemType == Library.Item.Type.Fluid)
+            else if (CurrentIObj.Item.Type == Library.Item.ItemType.Fluid)
             {
                 CurrentIObj.QuantityIn /= 1000;
                 if (CurrentIObj.QuantityIn < 1)
@@ -226,7 +226,7 @@ namespace Recipe
                 }
             }
 
-            CurrentIObj.Item.ItemType = type;
+            CurrentIObj.Item.Type = type;
 
             GBoxQuantityUpdate(true);
             GBoxExternalUpdate(true);
@@ -505,7 +505,6 @@ namespace Recipe
                     textBoxQtyOut.Enabled = true;
                     textBoxInjected.Enabled = true;
                     textBoxQtyOut.Text = CurrentIObj.QuantityOut.ToString();
-                    textBoxInjected.Text = CurrentIObj.Injected.ToString();
                 }
                 else
                 {
@@ -536,7 +535,7 @@ namespace Recipe
                 }
             }
 
-            bool en = enable && CurrentIObj.Item.ItemType != Library.Item.Type.Mechanism;
+            bool en = enable && CurrentIObj.Item.Type != Library.Item.ItemType.Mechanism;
             groupBoxQuantity.Enabled = en;
             TextBoxQtyUpdate(en);
         }
@@ -582,30 +581,28 @@ namespace Recipe
             {
                 return;
             }
-
-            CurrentIObj.Injected = IObjQtyUpdate(textBoxInjected, CurrentIObj.Injected);
         }
 
         /*External Access*/
 
         private void GBoxExternalUpdate(bool enable)
         {
-            if (CurrentIObj.Item.ItemType != Library.Item.Type.Mechanism && enable)
+            if (CurrentIObj.Item.Type != Library.Item.ItemType.Mechanism && enable)
             {
                 groupBoxExternal.Enabled = enable;
                 radioButtonAuto.Enabled = enable;
 
-                switch (CurrentIObj.External)
+                switch (CurrentIObj.IOType)
                 {
-                    case Editor.ItemObject.ExternalType.Auto:
+                    case Editor.ItemObject.Type.Auto:
                         radioButtonAuto.Checked = true;
                         break;
 
-                    case Editor.ItemObject.ExternalType.Input:
+                    case Editor.ItemObject.Type.Input:
                         radioButtonInput.Checked = true;
                         break;
 
-                    case Editor.ItemObject.ExternalType.Output:
+                    case Editor.ItemObject.Type.Output:
                         radioButtonOutput.Checked = true;
                         break;
                 }
@@ -671,10 +668,10 @@ namespace Recipe
             {
                 if (ctrl.Checked)
                 {
-                    var ext = (Editor.ItemObject.ExternalType)ctrl.Tag;
-                    if (CurrentIObj.External != ext)
+                    var ext = (Editor.ItemObject.Type)ctrl.Tag;
+                    if (CurrentIObj.IOType != ext)
                     {
-                        CurrentIObj.External = ext;
+                        CurrentIObj.IOType = ext;
                         Editor.Engine.Changed = true;
                         Calculator.CEngine.IsActual = false;
                         return;

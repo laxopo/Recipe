@@ -11,9 +11,9 @@ namespace Recipe.Library
     {
         public string Name { get; set; }
         public string IconPath { get; set; }
-        public Type ItemType { get; set; }
+        public ItemType Type { get; set; }
         
-        public enum Type
+        public enum ItemType
         {
             Default,
             Mechanism,
@@ -28,12 +28,12 @@ namespace Recipe.Library
 
         public string GetUnits()
         {
-            switch (ItemType)
+            switch (Type)
             {
-                case Type.Fluid:
+                case ItemType.Fluid:
                     return "mB";
 
-                case Type.Mechanism:
+                case ItemType.Mechanism:
                     return "";
 
                 default:

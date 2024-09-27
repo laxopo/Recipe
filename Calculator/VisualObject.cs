@@ -28,10 +28,10 @@ namespace Recipe.Calculator
             //Create controls
             var ct = Editor.VisualObject.Constructor.GenerateVO(res.ItemObject.Item, new Point(0, 0), false);
 
-            if ((Resource.IOType == Resource.IO.Input &&
-                Resource.ItemObject.External == Editor.ItemObject.ExternalType.Input) ||
-                (Resource.IOType == Resource.IO.Output &&
-                Resource.ItemObject.External == Editor.ItemObject.ExternalType.Output))
+            if ((Resource.IOType == Resource.Type.Input &&
+                Resource.ItemObject.IOType == Editor.ItemObject.Type.Input) ||
+                (Resource.IOType == Resource.Type.Output &&
+                Resource.ItemObject.IOType == Editor.ItemObject.Type.Output))
             {
                 ct.Label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
             }
@@ -41,13 +41,13 @@ namespace Recipe.Calculator
                 Top = ct.Label.Bottom + 1,
                 Width = 62,
                 TextAlign = HorizontalAlignment.Center,
-                Text = Resource.Quantity.ToString(),
+                Text = Resource.Amount.ToString(),
                 MaxLength = 9,
-                Enabled = res.IOType != Resource.IO.Constant
+                Enabled = res.IOType != Resource.Type.Constant
             };
 
             var noteText = "";
-            if (res.IOType == Resource.IO.Constant)
+            if (res.IOType == Resource.Type.Constant)
             {
                 noteText = "Constant";
             }
@@ -95,8 +95,7 @@ namespace Recipe.Calculator
 
             void Icon_Click(object sender, EventArgs e)
             {
-                Editor.Engine.DeselectVOs();
-                Editor.Engine.SelectVO(Resource.ItemObject, false);
+                SelectIO(Resource.ItemObject);
             }
 
             void Quantity_KeyPress(object sender, KeyPressEventArgs e)
@@ -111,7 +110,7 @@ namespace Recipe.Calculator
             {
                 if (quantity.Text != "")
                 {
-                    Resource.Given = Convert.ToInt32(quantity.Text);
+                    Resource.Amount = Convert.ToInt32(quantity.Text);
                 }
             }
 
@@ -126,20 +125,26 @@ namespace Recipe.Calculator
         {
             switch (Resource.IOType)
             {
-                case Resource.IO.Input:
+                case Resource.Type.Input:
                     var text = "";
-                    if (Resource.Quantity != 0)
+                    if (Resource.Amount != 0)
                     {
-                        text = "Res: " + Resource.Quantity;
+                        text = "Res: " + Resource.Amount;
                     }
 
                     GetControl(voNote).Text = text;
                     break;
 
-                case Resource.IO.Output:
-                    GetControl(voQuantity).Text = Resource.Quantity.ToString();
+                case Resource.Type.Output:
+                    GetControl(voQuantity).Text = Resource.Amount.ToString();
                     break;
             }
+        }
+
+        public static void SelectIO(Editor.ItemObject itemObject)
+        {
+            Editor.Engine.DeselectVOs();
+            Editor.Engine.SelectVO(itemObject, false);
         }
 
         /**/

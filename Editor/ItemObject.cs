@@ -13,13 +13,11 @@ namespace Recipe.Editor
 
         public int ID { get; set; }
 
-        public double QuantityIn { get; set; }
+        public int QuantityIn { get; set; }
 
-        public double QuantityOut { get; set; }
+        public int QuantityOut { get; set; }
 
-        public int Injected { get; set; }
-
-        public ExternalType External { get; set; } 
+        public Type IOType { get; set; } 
 
         public List<int> LinksIn { get; set; }
         
@@ -65,7 +63,7 @@ namespace Recipe.Editor
             Both
         }
 
-        public enum ExternalType
+        public enum Type
         {
             Auto,
             Input,

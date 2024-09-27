@@ -149,10 +149,11 @@ namespace Recipe.Editor
             {
                 format = JsonConvert.DeserializeObject<Format>(serialData);
             }
-            catch
+            catch (Exception e)
             {
-                MessageBox.Show("This file cannot be read as a Recipe Project", "Loading Error",
+                MessageBox.Show("This file cannot be read as a Recipe Project. \r\n" + e.Message, "Loading Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
                 return;
             }
 

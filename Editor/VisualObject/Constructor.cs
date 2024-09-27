@@ -249,19 +249,19 @@ namespace Recipe.Editor.VisualObject
 
         private static void SetItemTypeStyle(Library.Item item, Label label)
         {
-            switch (item.ItemType)
+            switch (item.Type)
             {
-                case Library.Item.Type.Mechanism:
+                case Library.Item.ItemType.Mechanism:
                     label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
                     label.ForeColor = SystemColors.ControlText;
                     break;
 
-                case Library.Item.Type.Block:
+                case Library.Item.ItemType.Block:
                     label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
                     label.ForeColor = Color.Maroon;
                     break;
 
-                case Library.Item.Type.Fluid:
+                case Library.Item.ItemType.Fluid:
                     label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
                     label.ForeColor = Color.Blue;
                     break;

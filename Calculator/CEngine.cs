@@ -64,184 +64,45 @@ namespace Recipe.Calculator
             }
 
             FormClear();
-            ScanTrees(Forest);
+            GenerateTrees();
             FormUpdate();
             isActual = true;
         }
 
-
-        public static void ScanTrees(List<Tree> forest)
+        public static void GenerateTrees()
         {
+            //clear references
             Editor.Engine.IODataBase.ForEach(x => x.Tree = null);
-            var done = new List<Editor.ItemObject>();
-            var path = new List<Editor.ItemObject>();
-            Tree tree = null;
 
-            void NodeExp(Editor.ItemObject iobj)
+            //create res, mech and create raw trees
+            if (!InitializeTrees())
             {
-                var IOBJ = iobj.ID; //test
-
-                //path level-down
-                path.Add(iobj);
-
-                //read all outputs
-                foreach (var linkOut in iobj.LinkOutTags)
-                {
-                    //if the iobj is scanned or the path is looped
-                    if (done.Contains(linkOut) || path.Contains(linkOut))
-                    {
-                        //get the existed tree
-                        if (linkOut.Tree != null && tree == null)
-                        {
-                            tree = linkOut.Tree;
-                        }
-
-                        //skip iobj
-                        continue;
-                    }
-
-                    //open included iobj
-                    NodeExp(linkOut);
-                }
-
-                //if this is an ending of a path and the tree is still undefined
-                if (tree == null)
-                {
-                    //create a new tree
-                    tree = new Tree()
-                    {
-                        Name = forest.Count.ToString()
-                    };
-                    forest.Add(tree);
-                }
-
-                bool unlinked = false;
-                var res = new Resource(iobj);
-                if (iobj.LinkOutTags.Count == 0)
-                {
-                    if (iobj.LinkInTags.Count == 0)
-                    {
-                        unlinked = true;
-                    }
-                    else
-                    {
-                        //mark it as output
-                        res.IOType = Resource.IO.Output;
-                        tree.Outputs.Add(res);
-                    }
-                }
-                else if (iobj.LinkInTags.Count == 0)
-                {
-                    //mark it as input
-                    res.IOType = Resource.IO.Input;
-                    tree.Inputs.Add(res);
-                }
-                else
-                {
-                    //it is an intermediate
-                    if (iobj.Item.ItemType == Library.Item.Type.Mechanism)
-                    {
-                        tree.Mechanisms.Add(new Mech(iobj));
-                    }
-                    else
-                    {
-                        tree.Intermediates.Add(res);
-                    }
-                }
-
-                if (!unlinked)
-                {
-                    //create a reference to the current tree in this iobj
-                    iobj.Tree = tree;
-
-                    //level-up
-                    path.Remove(iobj);
-                }
-
-                //mark the iobj as done
-                done.Add(iobj);
+                return;
             }
 
-            //build the trees
-            foreach (var iobj in Editor.Engine.IODataBase)
-            {
-                if (done.Contains(iobj))
-                {
-                    continue;
-                }
+            //test
+            var inputs = new List<int>();
+            var outputs = new List<int>();
+            var inters = new List<int>();
+            var mechs = new List<int>();
 
-                NodeExp(iobj);
-            }
+            Forest[0].Inputs.ForEach(x => inputs.Add(x.ItemObject.ID));
+            Forest[0].Outputs.ForEach(x => outputs.Add(x.ItemObject.ID));
+            Forest[0].Intermediates.ForEach(x => inters.Add(x.ItemObject.ID));
+            Forest[0].Mechanisms.ForEach(x => mechs.Add(x.ItemObject.ID));
+            //test end
 
-            foreach (var tr in forest)
+            //generate a data for trees
+            foreach (var tree in Forest)
             {
                 //generate tree names
-                if (tr.Outputs.Count > 0)
+                if (tree.Outputs.Count > 0)
                 {
-                    tr.Name = tr.Outputs[0].ItemObject.Item.Name;
+                    tree.Name = tree.Outputs[0].ItemObject.Item.Name;
                 }
 
                 //generate links
-                var result = GenerateLinks(tr);
-                if (result.Fault)
-                {
-                    MessageBox.Show(result.Text, "Failed to link", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    forest.Clear();
-                    return;
-                }
-
-                //find intemediate i/o or const
-                tr.Inputs.ForEach(x => x.Quantity = 1);
-                Trace(tr);
-
-                var rmInters = new List<Resource>();
-                foreach (var inter in tr.Intermediates)
-                {
-                    if (inter.Quantity >= 0 && inter.Insufficient)
-                    {
-                        inter.IOType = Resource.IO.Constant;
-                        tr.Constants.Add(inter.Clone() as Resource);
-                    }
-
-                    if (inter.Quantity < 0)
-                    {
-                        inter.IOType = Resource.IO.Input;
-                        tr.Inputs.Add(inter);
-                        rmInters.Add(inter);
-                    }
-                    else if (inter.Quantity > 0)
-                    {
-                        inter.IOType = Resource.IO.Output;
-                        tr.Outputs.Add(inter);
-                        rmInters.Add(inter);
-                    }
-                }
-
-                //remove all relocated resources in itermediate bank
-                rmInters.ForEach(x => tr.Intermediates.Remove(x));
-
-                //normalize coeffs
-                double k = -1;
-                foreach (var output in tr.Outputs)
-                {
-                    if (k == -1 || k > output.Quantity)
-                    {
-                        k = output.Quantity;
-                    }
-                }
-
-                k = 1 / k;
-
-                //Generate equation
-                tr.Equation = new Equation();
-                tr.Outputs.ForEach(y => tr.Equation.Outputs.Add(
-                    new Argument(y, y.Quantity * k)));
-                tr.Inputs.ForEach(x => tr.Equation.Inputs.Add(
-                    new Argument(x, k)));
-
-                //
-                tr.Inputs.ForEach(x => x.Quantity = tr.Equation.Inputs.Find(y => y.Resource == x).Coefficient);
-                tr.Outputs.ForEach(x => x.Quantity = tr.Equation.Outputs.Find(y => y.Resource == x).Coefficient);
+                GenerateLinks(tree);
             }
         }
 
@@ -294,165 +155,329 @@ namespace Recipe.Calculator
 
         public static void Calculate(Tree tree)
         {
-            tree.Outputs.ForEach(x => x.Quantity = 0);
-            tree.Inputs.ForEach(x => x.Quantity = x.Given);
+            tree.Outputs.ForEach(x => x.Amount = 0);
+            tree.Intermediates.ForEach(x => x.Amount = 0);
 
-            tree.Equation.Calculate();
+            var res_done = new List<Resource>();
+            var mech_done = new List<Mech>();
+            var mech_wait = new List<Mech>();
 
-            VisualObjects.ForEach(x => x.UpdateVO());
-        }
+            tree.ResetAmount(Tree.Bank.Output);
 
-        /**/
-
-        private static void Trace(Tree tree)
-        {
-            var done = new List<Resource>();
-            var path = new List<Mech>();
-
-            tree.Outputs.ForEach(x => x.Quantity = 0);
-
-            foreach (var inter in tree.Intermediates)
+            foreach (var res in tree.Inputs)
             {
-                if (inter.IOType != Resource.IO.Constant)
+                if (res_done.Contains(res))
                 {
-                    inter.Quantity = inter.ItemObject.Injected;
+                    continue;
                 }
+
+                Processing(res);
             }
 
-            void TraceNodes(Resource res)
-            {
-                var RES = res.ItemObject.ID; //test
-                var RES_Q = res.Quantity;
+            VisualObjects.ForEach(x => x.UpdateVO());
 
-                if (done.Contains(res))
+
+            void Processing(Resource res)
+            {
+                var RES = res.ItemObject.ID;    //test
+                var RES_Q = res.Amount;         //test
+
+                if (res_done.Contains(res))
                 {
                     return;
                 }
 
                 //assign this res as done
-                done.Add(res);
-
-                //update the quantity
-                res.Quantity += res.ItemObject.Injected;
+                res_done.Add(res);
 
                 //res is an output
-                if (tree.Outputs.Contains(res))
+                if (res.IOType == Resource.Type.Output)
                 {
                     return;
                 }
 
                 //get the mech with input "res"
                 var mech = res.LinkMechOut;
-                if (path.Contains(mech))
-                {
-                    return;
-                }
-                else
-                {
-                    path.Add(mech);
-                }
 
                 //calc productivity coefficient
-                double k = res.Quantity / res.ItemObject.QuantityOut;
-                mech.Coefficient = k;
-
-                //take an aliquot amount of all inputs
+                mech.Coefficient = -1;
                 foreach (var resIn in mech.Inputs)
                 {
-                    var RESIN = resIn.ItemObject.ID; //test
-                    resIn.Quantity -= resIn.ItemObject.QuantityOut * k;
-                    resIn.Insufficient = resIn.Quantity < 0;
-                }
-
-                //produce an aliquot amount of the output and put it to the next mech
-                foreach (var resOut in mech.Outputs)
-                {
-                    var RESOUT = resOut.ItemObject.ID;
-                    if (done.Contains(resOut))
+                    if (resIn.IOType == Resource.Type.None) //inter
                     {
                         continue;
                     }
 
-                    resOut.Quantity += resOut.ItemObject.QuantityIn * k;
-                    TraceNodes(resOut);
+                    int s = resIn.Amount / resIn.AmountOut;
+
+                    if (resIn.IOType == Resource.Type.Input)
+                    {
+                        if (!res_done.Contains(resIn))
+                        {
+                            res_done.Add(resIn);
+                        }
+                    }
+                    else if (s == 0)
+                    {
+                        mech_wait.Add(mech);
+                        return;
+                    }
+
+                    if (mech.Coefficient == -1 || mech.Coefficient > s)
+                    {
+                        mech.Coefficient = s;
+                    }
                 }
 
-                //mech is done
-                path.Remove(mech);
-            }
+                mech_wait.Remove(mech);
+                mech_done.Add(mech);
 
-            foreach (var res in tree.Inputs)
+                if (mech.Coefficient > 0)
+                {
+                    //take an aliquot amount of all inputs
+                    foreach (var resIn in mech.Inputs)
+                    {
+                        var RESIN = resIn.ItemObject.ID; //test
+
+                        resIn.Amount -= resIn.AmountOut * mech.Coefficient;
+                        resIn.Insufficient = resIn.Amount < 0;
+                    }
+
+                    //produce an aliquot amount of the output and put it to the next mech
+                    foreach (var resOut in mech.Outputs)
+                    {
+                        var RESOUT = resOut.ItemObject.ID; //test
+                        if (res_done.Contains(resOut))
+                        {
+                            continue;
+                        }
+
+                        resOut.Amount += resOut.AmountIn * mech.Coefficient;
+                        Processing(resOut);
+                    }
+                }
+            }
+        }
+
+        /**/
+
+        private static bool InitializeTrees()
+        {
+            var done = new List<Editor.ItemObject>();
+            bool error = false;
+
+            //build the trees
+            foreach (var iobj in Editor.Engine.IODataBase)
             {
-                if (done.Contains(res))
+                if (done.Contains(iobj))
                 {
                     continue;
                 }
 
-                TraceNodes(res);
+                var tree = NodeExp(iobj);
+
+                if (error)
+                {
+                    VisualObject.SelectIO(iobj);
+                    return false;
+                }
+
+                if (!Forest.Contains(tree))
+                {
+                    Forest.Add(tree);
+                }
+            }
+
+            return true;
+
+            Tree NodeExp(Editor.ItemObject iobj, Tree tree = null)
+            {
+                var IOBJ = iobj.ID; //test
+
+                //define tree
+                if (tree == null)
+                {
+                    //create new tree
+                    tree = new Tree();
+                }
+
+                if (iobj.LinkInTags.Count > 0 || iobj.LinkOutTags.Count > 0) //linked iobj
+                {
+                    //check the link rule
+                    if ((iobj.Item.Type == Library.Item.ItemType.Mechanism &&
+                        (iobj.LinkInTags.Count == 0 || iobj.LinkOutTags.Count == 0)) || //mech
+                        (iobj.Item.Type != Library.Item.ItemType.Mechanism &&
+                        (iobj.LinkInTags.Count > 1 || iobj.LinkOutTags.Count > 1))) //res
+                    {
+                        MessageBox.Show("Incorrect number of links.", "Tree Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        error = true;
+                        return null;
+                    }
+
+                    if (iobj.Item.Type == Library.Item.ItemType.Mechanism) //mech
+                    {
+                        //create new mech
+                        tree.Mechanisms.Add(new Mech(iobj));
+                    }
+                    else //resource
+                    {
+                        //create new resource
+                        if (iobj.LinkInTags.Count == 0) //input
+                        {
+                            tree.Inputs.Add(new Resource(iobj)
+                            {
+                                AmountOut = iobj.QuantityOut,
+                                IOType = Resource.Type.Input
+                            });
+                        }
+                        else if (iobj.LinkOutTags.Count == 0) //output
+                        {
+                            tree.Outputs.Add(new Resource(iobj)
+                            {
+                                AmountIn = iobj.QuantityIn,
+                                IOType = Resource.Type.Output
+                            });
+                        }
+                        else //inter
+                        {
+                            tree.Intermediates.Add(new Resource(iobj)
+                            {
+                                AmountIn = iobj.QuantityIn,
+                                AmountOut = iobj.QuantityOut,
+                                IOType = Resource.Type.None
+                            });
+                        }
+                    }
+                }
+
+                done.Add(iobj);
+
+                var links = new List<Editor.ItemObject>(iobj.LinkInTags);
+                links.AddRange(iobj.LinkOutTags);
+
+                //inputs & output
+                foreach (var ioIn in links)
+                {
+                    if (done.Contains(ioIn))
+                    {
+                        continue;
+                    }
+
+                    //check the type linking rule
+                    if (!RuleTypeLinking(iobj, ioIn))
+                    {
+                        error = true;
+                        return null;
+                    }
+
+                    NodeExp(ioIn, tree);
+                }
+
+                return tree;
             }
         }
 
-        private static Message GenerateLinks(Tree tree)
+        private static bool RuleTypeLinking(Editor.ItemObject iobj1, Editor.ItemObject iobj2)
         {
-            var resources = tree.Resources(Tree.Bank.All);
+            bool tc = iobj1.Item.Type == Library.Item.ItemType.Mechanism;
+            bool to = iobj2.Item.Type == Library.Item.ItemType.Mechanism;
 
-            //link resources
-            foreach (var res in resources)
+            if (tc == to)
             {
-                if (res.ItemObject.LinkInTags.Count > 1 || res.ItemObject.LinkOutTags.Count > 1)
-                {
-                    //error
-                    return new Message("The item has more than 1 link at the input or output side.", true);
-                }
-
-                var listIn = res.ItemObject.LinkInTags;
-                var listOut = res.ItemObject.LinkOutTags;
-
-                if (listIn.Count > 0 && listIn[0].Item.ItemType == Library.Item.Type.Mechanism)
-                {
-                    res.LinkMechIn = tree.Mechanisms.Find(x => x.ItemObject == listIn[0]);
-                }
-
-                if (listOut.Count > 0 && listOut[0].Item.ItemType == Library.Item.Type.Mechanism)
-                {
-                    res.LinkMechOut = tree.Mechanisms.Find(x => x.ItemObject == listOut[0]);
-                }
+                MessageBox.Show("The object is linked to another with the same type.", "Tree Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
-            //link mechanisms
-            foreach (var mech in tree.Mechanisms)
+            return true;
+        }
+
+        private static void GenerateLinks(Tree tree)
+        {
+            var doneRes = new List<Resource>();
+            var doneMech = new List<Mech>();
+            var resources = tree.Resources(Tree.Bank.All);
+            
+            //Res > Mech > Res1 > Mech1 > ...
+            var pathMech = new List<Mech>();
+            var pathRes = new List<Resource>();
+
+
+            foreach (var res in tree.Inputs)
             {
-                if (mech.ItemObject.LinkInTags.Count == 0 || mech.ItemObject.LinkOutTags.Count == 0)
+                if (doneRes.Contains(res))
                 {
-                    //error
-                    return new Message("The mechanism has no links at the input or output side.", true);
+                    continue;
                 }
 
-                //inputs
-                foreach (var link in mech.ItemObject.LinkInTags)
+                NodeExp(res);
+            }
+
+
+            void NodeExp(Resource res)
+            {
+                //completion check
+                if (doneRes.Contains(res))
                 {
-                    if (link.Item.ItemType == Library.Item.Type.Mechanism)
+                    return;
+                }
+
+                doneRes.Add(res);
+
+                if (res.IOType == Resource.Type.Output)
+                {
+                    return;
+                }
+
+                //update path
+                pathRes.Add(res);
+                var mech = tree.Mechanisms.Find(x => x.ItemObject == res.ItemObject);
+                if (pathMech.Contains(mech))
+                {
+                    /*
+                    R   M
+                    16  15
+                    13* 10
+                    14* (15)
+                     */
+
+                    int i = 0;
+                    int idx = pathMech.IndexOf(mech);
+                    while (pathMech.Count - i != idx)
                     {
-                        return new Message("The mechanism has an input link to the other one", true);
+                        pathRes[pathRes.Count - 1 - i].Renewable = true;
+                        i++;
                     }
 
-                    mech.Inputs.Add(resources.Find(x => x.ItemObject == link));
+                    pathRes.Remove(res);
+                    return;
                 }
+
+                if (doneMech.Contains(mech))
+                {
+                    pathRes.Remove(res);
+                    return;
+                }
+
+                doneMech.Add(mech);
+                pathMech.Add(mech);       
+
+                //input
+                res.LinkMechOut = mech;
+                mech.Inputs.Add(res);
 
                 //outputs
-                foreach (var link in mech.ItemObject.LinkOutTags)
+                foreach (var iobjOut in mech.ItemObject.LinkOutTags)
                 {
-                    if (link.Item.ItemType == Library.Item.Type.Mechanism)
-                    {
-                        //error
-                        return new Message("The mechanism has an output link to the other one", true);
-                    }
+                    var resOut = resources.Find(x => x.ItemObject == iobjOut);
 
-                    mech.Outputs.Add(resources.Find(x => x.ItemObject == link));
+                    resOut.LinkMechIn = mech;
+                    NodeExp(resOut);
                 }
-            }
 
-            return new Message("", false);
+                pathMech.Remove(mech);
+                pathRes.Remove(res);
+            }
         }
     }
 }

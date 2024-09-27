@@ -11,17 +11,19 @@ namespace Recipe.Calculator
         public Editor.ItemObject ItemObject { get; set; }
         public Mech LinkMechIn { get; set; }
         public Mech LinkMechOut { get; set; }
-        public double Quantity { get; set; }
-        public int Given { get; set; }
+        public int AmountIn { get; set; }
+        public int AmountOut { get; set; }
+        public int Amount { get; set; }
+        public bool Renewable { get; set; }
         public bool Insufficient { get; set; }
-        public IO IOType { get; set; }
+        public Type IOType { get; set; }
 
         public Resource(Editor.ItemObject iobj)
         {
             ItemObject = iobj;
         }
 
-        public enum IO
+        public enum Type
         {
             None,
             Input,
