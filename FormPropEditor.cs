@@ -61,6 +61,7 @@ namespace Recipe
                 if (CurrentIObj != null)
                 {
                     textBoxName.Text = "";
+                    labelID.Text = "";
                     GBoxQuantityUpdate(false);
                     GBoxExternalUpdate(false);
                     listBoxLinksInput.SelectedItem = null;
@@ -85,6 +86,7 @@ namespace Recipe
             listBoxLinksOutput.SelectedItem = null;
             CurrentIObj = loadItem;
 
+            labelID.Text = CurrentIObj.ID.ToString();
             textBoxName.Text = CurrentIObj.Item.Name;
             GBoxQuantityUpdate(true);
             GBoxExternalUpdate(true);

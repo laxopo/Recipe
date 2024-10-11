@@ -12,11 +12,17 @@ namespace Recipe
 {
     public partial class FormCalculator : Form
     {
+        private int scLarge, scSmall;
+
         public FormCalculator()
         {
             InitializeComponent();
-            Calculator.CEngine.Initialize(ClearData, UpdateData);
+            Calculator.CEngine.Initialize(ClearData, UpdateData, panelInputsContainer, panelOutputsContainer);
+            scLarge = vScrollBarInputs.LargeChange;
+            scSmall = vScrollBarInputs.SmallChange;
         }
+
+        /*Main*/
 
         private void ClearData()
         {
@@ -39,6 +45,13 @@ namespace Recipe
             Calculator.CEngine.Update();
         }
 
+        private void FormCalculator_Load(object sender, EventArgs e)
+        {
+            Calculator.CEngine.Update();
+        }
+
+        /*Controls*/
+
         private void listBoxTrees_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBoxTrees.SelectedIndex == -1)
@@ -48,10 +61,7 @@ namespace Recipe
 
             var tree = Calculator.CEngine.Forest[listBoxTrees.SelectedIndex];
 
-            Calculator.CEngine.GenerateVOs(tree, panelInputsContainer, panelOutputsContainer);
-
-            ContainerFit(groupBoxInput);
-            ContainerFit(groupBoxOutput);
+            Calculator.CEngine.GenerateVOs(tree);
         }
 
         private void buttonCalculate_Click(object sender, EventArgs e)
@@ -63,54 +73,101 @@ namespace Recipe
 
             var tree = Calculator.CEngine.Forest[listBoxTrees.SelectedIndex];
 
-            Calculator.CEngine.Calculate(tree);
+            Calculator.CEngine.Calculate(tree, radioButtonCalcOut.Checked);
+
         }
 
-        private void ContainerFit(Control groupBox)
+        private void radioButtonCalcIn_CheckedChanged(object sender, EventArgs e)
         {
-            VScrollBar scrollBar = null;
-            Panel container = null;
-            Panel window = null;
+            radioButtonCalcOut.Checked = !radioButtonCalcIn.Checked;
+        }
 
-            foreach (Control ctrl in groupBox.Controls)
-            {
-                if (ctrl.Name.Contains("Window"))
-                {
-                    window = ctrl as Panel;
+        private void radioButtonCalcOut_CheckedChanged(object sender, EventArgs e)
+        {
+            radioButtonCalcIn.Checked = !radioButtonCalcOut.Checked;
+        }
 
-                    foreach (Control ctr in window.Controls)
-                    {
-                        if(ctr.Name.Contains("Container"))
-                        {
-                            container = ctr as Panel;
-                        }
-                    }
-                }
-                else if (ctrl.Name.Contains("vScroll"))
-                {
-                    scrollBar = ctrl as VScrollBar;
-                }
-            }
+        /*Containers*/
 
-            int lc = scrollBar.LargeChange;
+        private void ContainerFit(VScrollBar scrollBar, Panel window, Panel container)
+        {
             scrollBar.Minimum = window.Height;
 
             if (container.Height < window.Height)
             {
-                vScrollBarInputs.Enabled = false;
+                scrollBar.Enabled = false;
                 return;
             }
 
             scrollBar.Enabled = true;
-            scrollBar.Maximum = container.Height + lc;
+            scrollBar.Maximum = container.Height + scLarge;
+
+            scrollBar.Value = scrollBar.Minimum;
         }
 
-        private void vScrollBarInputs_Scroll(object sender, ScrollEventArgs e)
+        private void ContScroll(VScrollBar vScroll, int delta)
+        {
+            if (!vScroll.Enabled)
+            {
+                return;
+            }
+
+            if (delta != 0)
+            {
+                int val = vScroll.Value - (delta / 120) * scSmall;
+
+                if (val < vScroll.Minimum)
+                {
+                    val = vScroll.Minimum;
+                }
+
+                if (val > vScroll.Maximum - scLarge)
+                {
+                    val = vScroll.Maximum - scLarge;
+                }
+
+                vScroll.Value = val;
+            }
+        }
+
+        //Inputs
+        private void panelInputsContainer_ControlAdded(object sender, ControlEventArgs e)
+        {
+            ContainerFit(vScrollBarInputs, panelInputsWindow, panelInputsContainer);
+        }
+
+        private void panelInputsContainer_ControlRemoved(object sender, ControlEventArgs e)
+        {
+            ContainerFit(vScrollBarInputs, panelInputsWindow, panelInputsContainer);
+        }
+
+        private void panelInputsContainer_MouseWheel(object sender, MouseEventArgs e)
+        {
+            ContScroll(vScrollBarInputs, e.Delta);
+        }
+
+        private void vScrollBarInputs_ValueChanged(object sender, EventArgs e)
         {
             panelInputsContainer.Top = vScrollBarInputs.Minimum - vScrollBarInputs.Value;
         }
 
-        private void vScrollBarOutputs_Scroll(object sender, ScrollEventArgs e)
+        //Outputs
+        private void panelOutputsContainer_ControlAdded(object sender, ControlEventArgs e)
+        {
+            ContainerFit(vScrollBarOutputs, panelOutputsWindow, panelOutputsContainer);
+        }
+
+        private void panelOutputsContainer_ControlRemoved(object sender, ControlEventArgs e)
+        {
+            ContainerFit(vScrollBarOutputs, panelOutputsWindow, panelOutputsContainer);
+        }
+
+        private void panelOutputsContainer_MouseWheel(object sender, MouseEventArgs e)
+        {
+            ContScroll(vScrollBarOutputs, e.Delta);
+        }
+
+        private void vScrollBarOutputs_ValueChanged(object sender, EventArgs e)
         {
             panelOutputsContainer.Top = vScrollBarOutputs.Minimum - vScrollBarOutputs.Value;
         }

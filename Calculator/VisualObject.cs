@@ -12,9 +12,20 @@ namespace Recipe.Calculator
     {
         public Resource Resource { get; set; }
         public Panel Container { get; set; }
+        public bool Extra { get; set; }
+        public Type ResourceType { get; set; }
 
         public const string voQuantity = "voQuantity";
         public const string voNote = "voNote";
+
+        public enum Type
+        {
+            Input,
+            Output,
+            Constant,
+            ExtInput,
+            ExtOutput
+        }
 
         public VisualObject(Resource res)
         {
@@ -36,28 +47,59 @@ namespace Recipe.Calculator
                 ct.Label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
             }
 
-            var quantity = new TextBox() { 
+            var quantity = new TextBox() {
                 Name = voQuantity,
                 Top = ct.Label.Bottom + 1,
                 Width = 62,
                 TextAlign = HorizontalAlignment.Center,
-                Text = Resource.Amount.ToString(),
-                MaxLength = 9,
-                Enabled = res.IOType != Resource.Type.Constant
+                MaxLength = 9
             };
 
-            var noteText = "";
-            if (res.IOType == Resource.Type.Constant)
-            {
-                noteText = "Constant";
-            }
 
             var note = new Label() { 
                 Name = voNote,
                 Top = quantity.Bottom + 1,
-                AutoSize = true,
-                Text = noteText
+                AutoSize = true
             };
+
+            switch (res.IOType)
+            {
+                case Resource.Type.Input:
+                    ResourceType = Type.Input;
+                    quantity.Text = res.AmountOut.ToString();
+                    break;
+
+                case Resource.Type.Output:
+                    ResourceType = Type.Output;
+                    quantity.Text = res.AmountIn.ToString();
+                    break;
+
+                case Resource.Type.None:
+                    Extra = true;
+                    if (res.Insufficient)
+                    {
+                        if (res.Amount == 0)
+                        {
+                            ResourceType = Type.Constant;
+                            quantity.Enabled = false;
+                            quantity.Text = res.AmountOut.ToString();
+                            note.Text = "Const.";
+                        }
+                        else
+                        {
+                            ResourceType = Type.ExtInput;
+                            note.Text = "Insuf.";
+                        }
+                    }
+                    else if (res.Amount > 0)
+                    {
+                        ResourceType = Type.ExtOutput;
+                        note.Text = "Extra";
+                    }
+                    break;
+            }
+
+            bool hand = false;
 
             ct.Icon.Click += new EventHandler(Icon_Click);
             quantity.KeyPress += new KeyPressEventHandler(Quantity_KeyPress);
@@ -96,21 +138,36 @@ namespace Recipe.Calculator
             void Icon_Click(object sender, EventArgs e)
             {
                 SelectIO(Resource.ItemObject);
+                SelectVO();
             }
 
+            
             void Quantity_KeyPress(object sender, KeyPressEventArgs e)
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
                 {
                     e.Handled = true;
                 }
+                else
+                {
+                    SelectVO();
+                    hand = true;
+                }
             }
 
+            
             void Quantity_TextChanged(object sender, EventArgs e)
             {
+                if (!hand)
+                {
+                    return;
+                }
+                hand = false;
+
                 if (quantity.Text != "")
                 {
-                    Resource.Amount = Convert.ToInt32(quantity.Text);
+                    Resource.Request = Convert.ToInt32(quantity.Text);
+                    CEngine.SelectedTree.InitialRes = Resource;
                 }
             }
 
@@ -121,30 +178,66 @@ namespace Recipe.Calculator
             }
         }
 
-        public void UpdateVO()
-        {
-            switch (Resource.IOType)
-            {
-                case Resource.Type.Input:
-                    var text = "";
-                    if (Resource.Amount != 0)
-                    {
-                        text = "Res: " + Resource.Amount;
-                    }
-
-                    GetControl(voNote).Text = text;
-                    break;
-
-                case Resource.Type.Output:
-                    GetControl(voQuantity).Text = Resource.Amount.ToString();
-                    break;
-            }
-        }
-
         public static void SelectIO(Editor.ItemObject itemObject)
         {
             Editor.Engine.DeselectVOs();
             Editor.Engine.SelectVO(itemObject, false);
+        }
+
+        public void SelectVO()
+        {
+            if (CEngine.SelectedVO != null)
+            {
+                CEngine.SelectedVO.Container.BorderStyle = BorderStyle.None;
+            }
+
+            CEngine.SelectedVO = this;
+            Container.BorderStyle = BorderStyle.FixedSingle;
+        }
+
+        public void UpdateVO()
+        {
+            var qty = GetControl(voQuantity);
+
+            switch (ResourceType)
+            {
+                case Type.Input:
+                    qty.Text = (Resource.Injected - Resource.Amount).ToString();
+                    break;
+
+                case Type.Output:
+                case Type.ExtOutput:
+                    qty.Text = Resource.Amount.ToString();
+                    break;
+
+                case Type.Constant:
+                    qty.Text = Resource.AmountOut.ToString();
+                    break;
+
+                case Type.ExtInput:
+                    qty.Text = (-Resource.Amount).ToString();
+                    break;
+            }
+        }
+
+        public bool UpdateData()
+        {
+            switch (ResourceType)
+            {
+                case Type.Input:
+                    //UNHANDLED
+                    break;
+
+                case Type.Output:
+                    var qty = GetControl(voQuantity);
+                    Resource.Request = Convert.ToInt32(qty.Text);
+                    break;
+
+                default:
+                    return false;
+            }
+
+            return true;
         }
 
         /**/

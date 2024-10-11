@@ -12,6 +12,7 @@ namespace Recipe.Calculator
         public List<Resource> Inputs { get; set; }
         public List<Resource> Outputs { get; set; }
         public List<Resource> Intermediates { get; set; }
+        public Resource InitialRes { get; set; }
         public List<Mech> Mechanisms { get; set; }
 
         public Tree()
@@ -72,17 +73,16 @@ namespace Recipe.Calculator
             return list;
         }
 
-        public void ResetAmount(Bank bank)
+        public void ResetAmounts()
         {
-            Resources(bank).ForEach(x => x.Amount = 0);
-        }
+            var resources = Resources(Bank.All);
 
-        public void ImportParams(Tree source)
-        {
-            Inputs.AddRange(source.Inputs);
-            Intermediates.AddRange(source.Intermediates);
-            Mechanisms.AddRange(source.Mechanisms);
-            Outputs.AddRange(source.Outputs);
+            foreach (var res in resources)
+            {
+                res.Amount = 0;
+                res.Request = 0;
+                res.Injected = 0;
+            }
         }
     }
 }

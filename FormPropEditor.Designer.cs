@@ -50,9 +50,11 @@ namespace Recipe
             this.textBoxInjected = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.groupBoxExternal = new System.Windows.Forms.GroupBox();
-            this.radioButtonAuto = new System.Windows.Forms.RadioButton();
-            this.radioButtonInput = new System.Windows.Forms.RadioButton();
             this.radioButtonOutput = new System.Windows.Forms.RadioButton();
+            this.radioButtonInput = new System.Windows.Forms.RadioButton();
+            this.radioButtonAuto = new System.Windows.Forms.RadioButton();
+            this.label8 = new System.Windows.Forms.Label();
+            this.labelID = new System.Windows.Forms.Label();
             this.groupBoxLinks.SuspendLayout();
             this.groupBoxQuantity.SuspendLayout();
             this.groupBoxExternal.SuspendLayout();
@@ -284,16 +286,17 @@ namespace Recipe
             this.groupBoxExternal.TabStop = false;
             this.groupBoxExternal.Text = "External";
             // 
-            // radioButtonAuto
+            // radioButtonOutput
             // 
-            this.radioButtonAuto.AutoSize = true;
-            this.radioButtonAuto.Location = new System.Drawing.Point(9, 72);
-            this.radioButtonAuto.Name = "radioButtonAuto";
-            this.radioButtonAuto.Size = new System.Drawing.Size(47, 17);
-            this.radioButtonAuto.TabIndex = 0;
-            this.radioButtonAuto.Text = "Auto";
-            this.radioButtonAuto.UseVisualStyleBackColor = true;
-            this.radioButtonAuto.CheckedChanged += new System.EventHandler(this.radioButtonAuto_CheckedChanged);
+            this.radioButtonOutput.AutoSize = true;
+            this.radioButtonOutput.Location = new System.Drawing.Point(9, 20);
+            this.radioButtonOutput.Name = "radioButtonOutput";
+            this.radioButtonOutput.Size = new System.Drawing.Size(57, 17);
+            this.radioButtonOutput.TabIndex = 2;
+            this.radioButtonOutput.Text = "Output";
+            this.radioButtonOutput.UseVisualStyleBackColor = true;
+            this.radioButtonOutput.CheckedChanged += new System.EventHandler(this.radioButtonOutput_CheckedChanged);
+            this.radioButtonOutput.EnabledChanged += new System.EventHandler(this.radioButtonOutput_EnabledChanged);
             // 
             // radioButtonInput
             // 
@@ -307,23 +310,41 @@ namespace Recipe
             this.radioButtonInput.CheckedChanged += new System.EventHandler(this.radioButtonInput_CheckedChanged);
             this.radioButtonInput.EnabledChanged += new System.EventHandler(this.radioButtonInput_EnabledChanged);
             // 
-            // radioButtonOutput
+            // radioButtonAuto
             // 
-            this.radioButtonOutput.AutoSize = true;
-            this.radioButtonOutput.Location = new System.Drawing.Point(9, 20);
-            this.radioButtonOutput.Name = "radioButtonOutput";
-            this.radioButtonOutput.Size = new System.Drawing.Size(57, 17);
-            this.radioButtonOutput.TabIndex = 2;
-            this.radioButtonOutput.Text = "Output";
-            this.radioButtonOutput.UseVisualStyleBackColor = true;
-            this.radioButtonOutput.CheckedChanged += new System.EventHandler(this.radioButtonOutput_CheckedChanged);
-            this.radioButtonOutput.EnabledChanged += new System.EventHandler(this.radioButtonOutput_EnabledChanged);
+            this.radioButtonAuto.AutoSize = true;
+            this.radioButtonAuto.Location = new System.Drawing.Point(9, 72);
+            this.radioButtonAuto.Name = "radioButtonAuto";
+            this.radioButtonAuto.Size = new System.Drawing.Size(47, 17);
+            this.radioButtonAuto.TabIndex = 0;
+            this.radioButtonAuto.Text = "Auto";
+            this.radioButtonAuto.UseVisualStyleBackColor = true;
+            this.radioButtonAuto.CheckedChanged += new System.EventHandler(this.radioButtonAuto_CheckedChanged);
             // 
-            // PropEditor
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(210, 35);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(21, 13);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "ID:";
+            // 
+            // labelID
+            // 
+            this.labelID.AutoSize = true;
+            this.labelID.Location = new System.Drawing.Point(229, 35);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(0, 13);
+            this.labelID.TabIndex = 16;
+            // 
+            // FormPropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(286, 342);
+            this.Controls.Add(this.labelID);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.groupBoxExternal);
             this.Controls.Add(this.groupBoxQuantity);
             this.Controls.Add(this.comboBoxTypes);
@@ -333,7 +354,7 @@ namespace Recipe
             this.Controls.Add(this.textBoxName);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "PropEditor";
+            this.Name = "FormPropEditor";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Properties Editor";
@@ -377,5 +398,7 @@ namespace Recipe
         private System.Windows.Forms.RadioButton radioButtonOutput;
         private System.Windows.Forms.RadioButton radioButtonInput;
         private System.Windows.Forms.RadioButton radioButtonAuto;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label labelID;
     }
 }

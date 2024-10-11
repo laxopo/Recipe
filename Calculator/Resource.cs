@@ -14,6 +14,8 @@ namespace Recipe.Calculator
         public int AmountIn { get; set; }
         public int AmountOut { get; set; }
         public int Amount { get; set; }
+        public int Request { get; set; }
+        public int Injected { get; set; }
         public bool Renewable { get; set; }
         public bool Insufficient { get; set; }
         public Type IOType { get; set; }
@@ -28,7 +30,6 @@ namespace Recipe.Calculator
             None,
             Input,
             Output,
-            Constant
         }
 
         public object Clone()

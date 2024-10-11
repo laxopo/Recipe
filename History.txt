@@ -1,4 +1,4 @@
-﻿v1.4 : ?:
+﻿v1.4 : 11.10.2024:
 Add Calculator
 Add Help
 Add quantity parameters in Properies Editor
@@ -6,7 +6,7 @@ Add object unlink
 Add link multi-operations in the Properties Editor
 Upd Editor v.1.4
 Fix multi-linking
-Fix false change of the sheet when the item type in not default
+Fix false change of the sheet when the item type is not default
 Fix object moving delay after dragging
 Fix not full reset after create or opening the file
 Fix drawing of link arrow

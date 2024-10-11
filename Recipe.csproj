@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calculator\Argument.cs" />
+    <Compile Include="Calculator\ContainerVO.cs" />
     <Compile Include="FormAboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,7 +62,6 @@
     </Compile>
     <Compile Include="Calculator\CEngine.cs" />
     <Compile Include="Calculator\Mech.cs" />
-    <Compile Include="Calculator\Message.cs" />
     <Compile Include="Calculator\Resource.cs" />
     <Compile Include="Calculator\Tree.cs" />
     <Compile Include="Calculator\VisualObject.cs" />

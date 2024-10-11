@@ -11,8 +11,24 @@ namespace Recipe.Calculator
     public static class CEngine
     {
         public static List<Tree> Forest = new List<Tree>();
-        public static List<VisualObject> VisualObjects = new List<VisualObject>();
+        public static ContainerVO Inputs, Outputs;
+        public static Tree SelectedTree;
 
+        public static VisualObject SelectedVO
+        {
+            get
+            {
+                return selectedVO;
+            }
+
+            set
+            {
+                selectedVO = value;
+                SelectedTree.InitialRes = selectedVO.Resource;
+            }
+        }
+
+        private static VisualObject selectedVO;
         private static Action FormUpdate;
         private static Action FormClear;
         private static bool isActual = false;
@@ -43,17 +59,18 @@ namespace Recipe.Calculator
             }
         }
 
-        public static void Initialize(Action clear, Action update)
+        public static void Initialize(Action clear, Action update, Control contIn, Control contOut)
         {
             FormUpdate = update;
             FormClear = clear;
+            Inputs = new ContainerVO(contIn);
+            Outputs = new ContainerVO(contOut);
         }
 
         public static void Clear()
         {
             FormClear();
             Forest.Clear();
-            VisualObjects.Clear();
         }
 
         public static void Update()
@@ -80,18 +97,6 @@ namespace Recipe.Calculator
                 return;
             }
 
-            //test
-            var inputs = new List<int>();
-            var outputs = new List<int>();
-            var inters = new List<int>();
-            var mechs = new List<int>();
-
-            Forest[0].Inputs.ForEach(x => inputs.Add(x.ItemObject.ID));
-            Forest[0].Outputs.ForEach(x => outputs.Add(x.ItemObject.ID));
-            Forest[0].Intermediates.ForEach(x => inters.Add(x.ItemObject.ID));
-            Forest[0].Mechanisms.ForEach(x => mechs.Add(x.ItemObject.ID));
-            //test end
-
             //generate a data for trees
             foreach (var tree in Forest)
             {
@@ -106,154 +111,155 @@ namespace Recipe.Calculator
             }
         }
 
-        public static void GenerateVOs(Tree tree, Control areaInputs, Control areaOutputs)
+        public static void GenerateVOs(Tree tree)
         {
-            VisualObjects = new List<VisualObject>();
+            Inputs.Clear();
+            Outputs.Clear();
 
-            areaInputs.Controls.Clear();
-            areaOutputs.Controls.Clear();
+            Inputs.AddResRange(tree.Inputs);
+            Outputs.AddResRange(tree.Outputs);
 
-            Gen(tree.Resources(Tree.Bank.InputConstant), areaInputs);
-            Gen(tree.Outputs, areaOutputs);
-
-            void Gen(List<Resource> source, Control container)
-            {
-                container.Height = 0;
-                int x = 0, y = 0, h = 0;
-
-                foreach (var res in source)
-                {
-                    var vo = new VisualObject(res);
-                    VisualObjects.Add(vo);
-
-                    if (h < vo.Container.Height)
-                    {
-                        h = vo.Container.Height;
-                    }
-
-                    if (x + vo.Container.Width > container.Width)
-                    {
-                        //new line
-                        x = 0;
-                        y += h + 10;
-
-                    }
-
-                    vo.Container.Location = new Point(x, y);
-
-                    if (container.Height < vo.Container.Bottom)
-                    {
-                        container.Height = vo.Container.Bottom;
-                    }
-
-                    container.Controls.Add(vo.Container);
-
-                    x += vo.Container.Width + 10;
-                }
-            }
+            SelectedTree = tree;
         }
 
-        public static void Calculate(Tree tree)
+        public static void Calculate(Tree tree, bool modeOutput) //ONLY OUTPUT
         {
-            tree.Outputs.ForEach(x => x.Amount = 0);
-            tree.Intermediates.ForEach(x => x.Amount = 0);
-
-            var res_done = new List<Resource>();
-            var mech_done = new List<Mech>();
-            var mech_wait = new List<Mech>();
-
-            tree.ResetAmount(Tree.Bank.Output);
-
-            foreach (var res in tree.Inputs)
+            if (tree == null || tree.InitialRes == null)
             {
-                if (res_done.Contains(res))
-                {
-                    continue;
-                }
-
-                Processing(res);
+                return;
             }
 
-            VisualObjects.ForEach(x => x.UpdateVO());
-
-
-            void Processing(Resource res)
+            if (tree.InitialRes.IOType == Resource.Type.Input) //UNHADLED
             {
-                var RES = res.ItemObject.ID;    //test
-                var RES_Q = res.Amount;         //test
+                return;
+            }
 
-                if (res_done.Contains(res))
+            var req_path = new List<Mech>();
+
+            tree.ResetAmounts();
+            Inputs.RemoveExtras();
+            Outputs.RemoveExtras();
+
+            SelectedVO.UpdateData();
+
+            Processing(SelectedVO.Resource, false);
+
+            foreach (var res in tree.Intermediates)
+            {
+                if (res.Amount > 0)
                 {
-                    return;
+                    Outputs.AddRes(res);
                 }
-
-                //assign this res as done
-                res_done.Add(res);
-
-                //res is an output
-                if (res.IOType == Resource.Type.Output)
+                else if (res.Insufficient)
                 {
-                    return;
+                    Inputs.AddRes(res);
                 }
+            }
 
-                //get the mech with input "res"
-                var mech = res.LinkMechOut;
+            Inputs.UpdateVOs();
+            Outputs.UpdateVOs();
 
-                //calc productivity coefficient
-                mech.Coefficient = -1;
-                foreach (var resIn in mech.Inputs)
+            void Processing(Resource res, bool forward)
+            {
+                var RES = res.ItemObject.ID; //test
+                Mech mech;
+
+                if (!forward)
                 {
-                    if (resIn.IOType == Resource.Type.None) //inter
+                    if (res.IOType == Resource.Type.Input)
                     {
-                        continue;
-                    }
-
-                    int s = resIn.Amount / resIn.AmountOut;
-
-                    if (resIn.IOType == Resource.Type.Input)
-                    {
-                        if (!res_done.Contains(resIn))
-                        {
-                            res_done.Add(resIn);
-                        }
-                    }
-                    else if (s == 0)
-                    {
-                        mech_wait.Add(mech);
+                        res.Amount = res.Request;
+                        res.Injected = res.Request;
                         return;
                     }
 
-                    if (mech.Coefficient == -1 || mech.Coefficient > s)
+                    mech = res.LinkMechIn;
+                }
+                else
+                {
+                    if (res.IOType == Resource.Type.Output)
                     {
-                        mech.Coefficient = s;
+                        return;
                     }
+
+                    mech = res.LinkMechOut;
                 }
 
-                mech_wait.Remove(mech);
-                mech_done.Add(mech);
+                
 
-                if (mech.Coefficient > 0)
+                var MECH = mech.ItemObject.ID; //test
+
+                if (!forward)
                 {
-                    //take an aliquot amount of all inputs
-                    foreach (var resIn in mech.Inputs)
+                    if (req_path.Contains(mech))
                     {
-                        var RESIN = resIn.ItemObject.ID; //test
-
-                        resIn.Amount -= resIn.AmountOut * mech.Coefficient;
-                        resIn.Insufficient = resIn.Amount < 0;
+                        if (res.Amount < res.Request)
+                        {
+                            res.Insufficient = true;
+                            res.Injected = res.Request - res.Amount;
+                            res.Amount += res.Injected;
+                        }
+                        return;
                     }
 
-                    //produce an aliquot amount of the output and put it to the next mech
+                    req_path.Add(mech);
+
+                    mech.Coefficient = res.Request / res.AmountIn;
+                    if (res.Request % res.AmountIn != 0)
+                    {
+                        mech.Coefficient++;
+                    }
+                    
+                    foreach (var resIn in mech.Inputs)
+                    {
+                        resIn.Request = resIn.AmountOut * mech.Coefficient;
+                        Processing(resIn, false);
+                        resIn.Amount -= resIn.Request;
+                    }
+
                     foreach (var resOut in mech.Outputs)
                     {
-                        var RESOUT = resOut.ItemObject.ID; //test
-                        if (res_done.Contains(resOut))
+                        resOut.Amount = resOut.AmountIn * mech.Coefficient - resOut.Injected;
+
+                        if (resOut == res)
                         {
                             continue;
                         }
 
+                        if (resOut.Amount > 0)
+                        {
+                            Processing(resOut, true);
+                        }
+                    }
+
+                    req_path.Remove(mech);
+                }
+                else
+                {
+                    mech.Coefficient = -1;
+                    foreach (var resIn in mech.Inputs)
+                    {
+                        int k = resIn.Amount / resIn.AmountOut;
+
+                        if (mech.Coefficient > k || mech.Coefficient == -1)
+                        {
+                            mech.Coefficient = k;
+                        }
+                    }
+
+                    foreach (var resIn in mech.Inputs)
+                    {
+                        resIn.Amount -= resIn.AmountOut * mech.Coefficient;
+                    }
+
+                    foreach (var resOut in mech.Outputs)
+                    {
                         resOut.Amount += resOut.AmountIn * mech.Coefficient;
-                        Processing(resOut);
+
+                        if (resOut.Amount > 0)
+                        {
+                            Processing(resOut, true);
+                        }
                     }
                 }
             }
@@ -322,19 +328,21 @@ namespace Recipe.Calculator
                     else //resource
                     {
                         //create new resource
-                        if (iobj.LinkInTags.Count == 0) //input
+                        if (iobj.LinkInTags.Count == 0 || iobj.IOType == Editor.ItemObject.Type.Input) //input
                         {
                             tree.Inputs.Add(new Resource(iobj)
                             {
+                                AmountIn = iobj.QuantityIn,
                                 AmountOut = iobj.QuantityOut,
                                 IOType = Resource.Type.Input
                             });
                         }
-                        else if (iobj.LinkOutTags.Count == 0) //output
+                        else if (iobj.LinkOutTags.Count == 0 || iobj.IOType == Editor.ItemObject.Type.Output) //output
                         {
                             tree.Outputs.Add(new Resource(iobj)
                             {
                                 AmountIn = iobj.QuantityIn,
+                                AmountOut = iobj.QuantityOut,
                                 IOType = Resource.Type.Output
                             });
                         }
@@ -416,6 +424,8 @@ namespace Recipe.Calculator
 
             void NodeExp(Resource res)
             {
+                var RES = res.ItemObject.ID; //test
+
                 //completion check
                 if (doneRes.Contains(res))
                 {
@@ -431,7 +441,12 @@ namespace Recipe.Calculator
 
                 //update path
                 pathRes.Add(res);
-                var mech = tree.Mechanisms.Find(x => x.ItemObject == res.ItemObject);
+                var mech = tree.Mechanisms.Find(x => x.ItemObject == res.ItemObject.LinkOutTags[0]);
+                var MECH = mech.ItemObject.ID;
+
+                res.LinkMechOut = mech;
+                mech.Inputs.Add(res);
+
                 if (pathMech.Contains(mech))
                 {
                     /*
@@ -462,16 +477,13 @@ namespace Recipe.Calculator
                 doneMech.Add(mech);
                 pathMech.Add(mech);       
 
-                //input
-                res.LinkMechOut = mech;
-                mech.Inputs.Add(res);
-
                 //outputs
                 foreach (var iobjOut in mech.ItemObject.LinkOutTags)
                 {
                     var resOut = resources.Find(x => x.ItemObject == iobjOut);
 
                     resOut.LinkMechIn = mech;
+                    mech.Outputs.Add(resOut);
                     NodeExp(resOut);
                 }
 
