@@ -186,6 +186,7 @@ namespace Recipe
             this.MaximizeBox = false;
             this.Name = "FormCalculator";
             this.Text = "Calculator";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormCalculator_FormClosing);
             this.Load += new System.EventHandler(this.FormCalculator_Load);
             this.MouseEnter += new System.EventHandler(this.FormCalculator_MouseEnter);
             this.groupBoxInput.ResumeLayout(false);

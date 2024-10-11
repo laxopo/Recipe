@@ -167,6 +167,12 @@ namespace Recipe
             ContScroll(vScrollBarOutputs, e.Delta);
         }
 
+        private void FormCalculator_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
+        }
+
         private void vScrollBarOutputs_ValueChanged(object sender, EventArgs e)
         {
             panelOutputsContainer.Top = vScrollBarOutputs.Minimum - vScrollBarOutputs.Value;
