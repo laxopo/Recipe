@@ -212,6 +212,7 @@ namespace Recipe.Calculator
                     
                     foreach (var resIn in mech.Inputs)
                     {
+                        var RESIN = resIn.ItemObject.ID; //test
                         resIn.Request = resIn.AmountOut * mech.Coefficient;
                         Processing(resIn, false);
                         resIn.Amount -= resIn.Request;
@@ -219,6 +220,7 @@ namespace Recipe.Calculator
 
                     foreach (var resOut in mech.Outputs)
                     {
+                        var RESOUT = resOut.ItemObject.ID; //test
                         resOut.Amount = resOut.AmountIn * mech.Coefficient - resOut.Injected;
 
                         if (resOut == res)
@@ -236,6 +238,11 @@ namespace Recipe.Calculator
                 }
                 else
                 {
+                    if (req_path.Contains(mech))
+                    {
+                        return;
+                    }
+
                     mech.Coefficient = -1;
                     foreach (var resIn in mech.Inputs)
                     {
@@ -249,11 +256,13 @@ namespace Recipe.Calculator
 
                     foreach (var resIn in mech.Inputs)
                     {
+                        var RESIN = resIn.ItemObject.ID; //test
                         resIn.Amount -= resIn.AmountOut * mech.Coefficient;
                     }
 
                     foreach (var resOut in mech.Outputs)
                     {
+                        var RESOUT = resOut.ItemObject.ID; //test
                         resOut.Amount += resOut.AmountIn * mech.Coefficient;
 
                         if (resOut.Amount > 0)

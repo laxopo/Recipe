@@ -66,7 +66,7 @@ namespace Recipe.Calculator
             {
                 case Resource.Type.Input:
                     ResourceType = Type.Input;
-                    quantity.Text = res.AmountOut.ToString();
+                    quantity.Text = Resource.AmountOut.ToString();
                     break;
 
                 case Resource.Type.Output:
@@ -81,20 +81,16 @@ namespace Recipe.Calculator
                         if (res.Amount == 0)
                         {
                             ResourceType = Type.Constant;
-                            quantity.Enabled = false;
                             quantity.Text = res.AmountOut.ToString();
-                            note.Text = "Const.";
                         }
                         else
                         {
                             ResourceType = Type.ExtInput;
-                            note.Text = "Insuf.";
                         }
                     }
                     else if (res.Amount > 0)
                     {
                         ResourceType = Type.ExtOutput;
-                        note.Text = "Extra";
                     }
                     break;
             }
@@ -112,6 +108,7 @@ namespace Recipe.Calculator
                 quantity,
                 note
             });
+            SetVoType(ResourceType);
 
             //Set the container size
             foreach (Control ctrl in Container.Controls)
@@ -178,6 +175,36 @@ namespace Recipe.Calculator
             }
         }
 
+        public void SetVoType(Type type)
+        {
+            ResourceType = type;
+            var quantity = GetControl(voQuantity);
+            var note = GetControl(voNote);
+
+            switch (type)
+            {
+                case Type.Input:
+                    break;
+
+                case Type.Output:
+
+                    break;
+
+                case Type.Constant:
+                    quantity.Enabled = false;
+                    note.Text = "Const.";
+                    break;
+
+                case Type.ExtInput:
+                    note.Text = "Insuf.";
+                    break;
+
+                case Type.ExtOutput:
+                    note.Text = "Extra";
+                    break;
+            }
+        }
+
         public static void SelectIO(Editor.ItemObject itemObject)
         {
             Editor.Engine.DeselectVOs();
@@ -202,7 +229,16 @@ namespace Recipe.Calculator
             switch (ResourceType)
             {
                 case Type.Input:
-                    qty.Text = (Resource.Injected - Resource.Amount).ToString();
+                    int amount = Resource.Injected - Resource.Amount;
+                    if (amount == 0)
+                    {
+                        SetVoType(Type.Constant);
+                        qty.Text = Resource.AmountOut.ToString();
+                    }
+                    else
+                    {
+                        qty.Text = (Resource.Injected - Resource.Amount).ToString();
+                    }
                     break;
 
                 case Type.Output:
