@@ -45,6 +45,7 @@ namespace Recipe.Editor.VisualObject
         {
             bool en = Engine.CurrentVObj != null;
             library.Enabled = en;
+            props.Enabled = en;
             voSender = sender;
 
             ObjMenu.Show(location);

@@ -319,7 +319,6 @@ namespace Recipe
             pasteToolStripMenuItem.Enabled = Clipboard.ContainsData(Editor.Engine.DataFormat);
         }
 
-
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Editor.Engine.Copy();
@@ -365,6 +364,11 @@ namespace Recipe
         {
             //Show property editor
             propEditor.Show();
+        }
+
+        private void calculatorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormCalculator.Show();
         }
 
         //Sheet
@@ -883,11 +887,6 @@ namespace Recipe
         private void FormMain_GotFocus(object sender, EventArgs e)
         {
             Editor.Engine.RetraceArea();
-        }
-
-        private void calculatorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FormCalculator.Show();
         }
 
         /**/
