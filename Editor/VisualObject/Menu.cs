@@ -6,7 +6,7 @@ namespace Recipe.Editor.VisualObject
 {
     public static class Menu
     {
-        private static bool init = false;
+        private static bool init;
         private static PictureBox voSender;
 
 
