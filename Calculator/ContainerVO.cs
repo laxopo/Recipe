@@ -28,6 +28,7 @@ namespace Recipe.Calculator
 
         public void Clear()
         {
+            VisualObjects.Clear();
             Container.Controls.Clear();
             Container.Height = 0;
             X = 0;
@@ -54,36 +55,65 @@ namespace Recipe.Calculator
 
         public void AddRes(Resource res)
         {
-            var vo = new VisualObject(res);
-            VisualObjects.Add(vo);
+            VisualObject vo = null;
+            bool same = false;
 
-            if (Height < vo.Container.Height)
+            foreach (var vobj in VisualObjects)
             {
-                Height = vo.Container.Height;
+                foreach (var rs in vobj.Resources)
+                {
+                    if (rs.ItemObject.Item.Name == res.ItemObject.Item.Name)
+                    {
+                        vo = vobj;
+                        same = true;
+                        break;
+                    }
+                }
+
+                if (same)
+                {
+                    break;
+                }
             }
 
-            if (X + vo.Container.Width > Container.Width)
+            if (same)
             {
-                //new line
-                X = 0;
-                Y += Height + VerticalGap;
+                vo.AddResource(res);
             }
-
-            vo.Container.Location = new Point(X, Y);
-
-            if (Container.Height < vo.Container.Bottom)
+            else
             {
-                Container.Height = vo.Container.Bottom;
-            }
+                vo = new VisualObject(res);
 
-            Container.Controls.Add(vo.Container);
+                VisualObjects.Add(vo);
 
-            X += vo.Container.Width + HorizontalGap;
+                if (Height < vo.Container.Height)
+                {
+                    Height = vo.Container.Height;
+                }
 
-            if (!vo.Extra)
-            {
-                RegX = X;
-                RegY = Y;
+                if (X + vo.Container.Width > Container.Width)
+                {
+                    //new line
+                    X = 0;
+                    Y += Height + VerticalGap;
+                }
+
+                vo.Container.Location = new Point(X, Y);
+
+                if (Container.Height < vo.Container.Bottom)
+                {
+                    Container.Height = vo.Container.Bottom;
+                }
+
+                Container.Controls.Add(vo.Container);
+
+                X += vo.Container.Width + HorizontalGap;
+
+                if (!vo.Extra)
+                {
+                    RegX = X;
+                    RegY = Y;
+                }
             }
         }
 

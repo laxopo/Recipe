@@ -62,6 +62,7 @@ namespace Recipe
                 {
                     textBoxName.Text = "";
                     labelID.Text = "";
+                    checkBoxPublic.Checked = false;
                     GBoxQuantityUpdate(false);
                     GBoxExternalUpdate(false);
                     listBoxLinksInput.SelectedItem = null;
@@ -88,6 +89,7 @@ namespace Recipe
 
             labelID.Text = CurrentIObj.ID.ToString();
             textBoxName.Text = CurrentIObj.Item.Name;
+            checkBoxPublic.Checked = CurrentIObj.Public;
             GBoxQuantityUpdate(true);
             GBoxExternalUpdate(true);
 
@@ -232,6 +234,16 @@ namespace Recipe
 
             GBoxQuantityUpdate(true);
             GBoxExternalUpdate(true);
+            if (type == Library.Item.ItemType.Mechanism)
+            {
+                CurrentIObj.Public = false;
+                checkBoxPublic.Checked = false;
+                checkBoxPublic.Enabled = false;
+            }
+            else
+            {
+                checkBoxPublic.Enabled = true;
+            }
 
             Editor.VisualObject.Constructor.ItemTypeStyleUpdate(CurrentIObj);
         }
@@ -585,7 +597,7 @@ namespace Recipe
             }
         }
 
-        /*External Access*/
+        /*I/O*/
 
         private void GBoxExternalUpdate(bool enable)
         {
@@ -705,6 +717,17 @@ namespace Recipe
         private void radioButtonInput_EnabledChanged(object sender, EventArgs e)
         {
             RBEnabledHandler(sender);
+        }
+
+        private void checkBoxPublic_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!checkBoxPublic.Focused)
+            {
+                return;
+            }
+
+            CurrentIObj.Public = checkBoxPublic.Checked;
+            Editor.Engine.Changed = true;
         }
     }
 }

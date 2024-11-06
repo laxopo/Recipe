@@ -55,6 +55,7 @@ namespace Recipe
             this.radioButtonAuto = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
             this.labelID = new System.Windows.Forms.Label();
+            this.checkBoxPublic = new System.Windows.Forms.CheckBox();
             this.groupBoxLinks.SuspendLayout();
             this.groupBoxQuantity.SuspendLayout();
             this.groupBoxExternal.SuspendLayout();
@@ -110,7 +111,7 @@ namespace Recipe
             this.groupBoxLinks.Controls.Add(this.label2);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksInput);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksOutput);
-            this.groupBoxLinks.Location = new System.Drawing.Point(12, 168);
+            this.groupBoxLinks.Location = new System.Drawing.Point(12, 186);
             this.groupBoxLinks.Name = "groupBoxLinks";
             this.groupBoxLinks.Size = new System.Drawing.Size(262, 164);
             this.groupBoxLinks.TabIndex = 5;
@@ -247,7 +248,7 @@ namespace Recipe
             this.groupBoxQuantity.Controls.Add(this.label6);
             this.groupBoxQuantity.Controls.Add(this.textBoxQtyIn);
             this.groupBoxQuantity.Enabled = false;
-            this.groupBoxQuantity.Location = new System.Drawing.Point(12, 59);
+            this.groupBoxQuantity.Location = new System.Drawing.Point(12, 77);
             this.groupBoxQuantity.Name = "groupBoxQuantity";
             this.groupBoxQuantity.Size = new System.Drawing.Size(136, 103);
             this.groupBoxQuantity.TabIndex = 13;
@@ -279,12 +280,12 @@ namespace Recipe
             this.groupBoxExternal.Controls.Add(this.radioButtonInput);
             this.groupBoxExternal.Controls.Add(this.radioButtonAuto);
             this.groupBoxExternal.Enabled = false;
-            this.groupBoxExternal.Location = new System.Drawing.Point(154, 59);
+            this.groupBoxExternal.Location = new System.Drawing.Point(154, 77);
             this.groupBoxExternal.Name = "groupBoxExternal";
             this.groupBoxExternal.Size = new System.Drawing.Size(120, 103);
             this.groupBoxExternal.TabIndex = 14;
             this.groupBoxExternal.TabStop = false;
-            this.groupBoxExternal.Text = "External";
+            this.groupBoxExternal.Text = "I/O";
             // 
             // radioButtonOutput
             // 
@@ -338,11 +339,23 @@ namespace Recipe
             this.labelID.Size = new System.Drawing.Size(0, 13);
             this.labelID.TabIndex = 16;
             // 
+            // checkBoxPublic
+            // 
+            this.checkBoxPublic.AutoSize = true;
+            this.checkBoxPublic.Location = new System.Drawing.Point(56, 59);
+            this.checkBoxPublic.Name = "checkBoxPublic";
+            this.checkBoxPublic.Size = new System.Drawing.Size(55, 17);
+            this.checkBoxPublic.TabIndex = 17;
+            this.checkBoxPublic.Text = "Public";
+            this.checkBoxPublic.UseVisualStyleBackColor = true;
+            this.checkBoxPublic.CheckedChanged += new System.EventHandler(this.checkBoxPublic_CheckedChanged);
+            // 
             // FormPropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(286, 342);
+            this.ClientSize = new System.Drawing.Size(286, 359);
+            this.Controls.Add(this.checkBoxPublic);
             this.Controls.Add(this.labelID);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.groupBoxExternal);
@@ -400,5 +413,6 @@ namespace Recipe
         private System.Windows.Forms.RadioButton radioButtonAuto;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label labelID;
+        private System.Windows.Forms.CheckBox checkBoxPublic;
     }
 }

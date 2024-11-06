@@ -23,6 +23,8 @@ namespace Recipe.Editor
         
         public List<int> LinksOut { get; set; }
 
+        public bool Public { get; set; }
+
         [JsonIgnore]
         public Point StartLocation { get; set; }
         [JsonIgnore]

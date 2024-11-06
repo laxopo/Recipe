@@ -10,7 +10,7 @@ namespace Recipe.Calculator
 {
     public class VisualObject
     {
-        public Resource Resource { get; set; }
+        public List<Resource> Resources { get; set; }
         public Panel Container { get; set; }
         public bool Extra { get; set; }
         public Type ResourceType { get; set; }
@@ -29,7 +29,8 @@ namespace Recipe.Calculator
 
         public VisualObject(Resource res)
         {
-            Resource = res;
+            Resources = new List<Resource>();
+            Resources.Add(res);
 
             Container = new Panel() {
                 Size = new Size(0, 0),
@@ -39,10 +40,10 @@ namespace Recipe.Calculator
             //Create controls
             var ct = Editor.VisualObject.Constructor.GenerateVO(res.ItemObject.Item, new Point(0, 0), false);
 
-            if ((Resource.IOType == Resource.Type.Input &&
-                Resource.ItemObject.IOType == Editor.ItemObject.Type.Input) ||
-                (Resource.IOType == Resource.Type.Output &&
-                Resource.ItemObject.IOType == Editor.ItemObject.Type.Output))
+            if ((res.IOType == Resource.Type.Input &&
+                res.ItemObject.IOType == Editor.ItemObject.Type.Input) ||
+                (res.IOType == Resource.Type.Output &&
+                res.ItemObject.IOType == Editor.ItemObject.Type.Output))
             {
                 ct.Label.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
             }
@@ -66,7 +67,7 @@ namespace Recipe.Calculator
             {
                 case Resource.Type.Input:
                     ResourceType = Type.Input;
-                    quantity.Text = Resource.AmountOut.ToString();
+                    quantity.Text = res.AmountOut.ToString();
                     break;
 
                 case Resource.Type.Output:
@@ -134,11 +135,10 @@ namespace Recipe.Calculator
 
             void Icon_Click(object sender, EventArgs e)
             {
-                SelectIO(Resource.ItemObject);
+                SelectIO(Resources[0].ItemObject);
                 SelectVO();
             }
 
-            
             void Quantity_KeyPress(object sender, KeyPressEventArgs e)
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -152,7 +152,6 @@ namespace Recipe.Calculator
                 }
             }
 
-            
             void Quantity_TextChanged(object sender, EventArgs e)
             {
                 if (!hand)
@@ -163,8 +162,8 @@ namespace Recipe.Calculator
 
                 if (quantity.Text != "")
                 {
-                    Resource.Request = Convert.ToInt32(quantity.Text);
-                    CEngine.SelectedTree.InitialRes = Resource;
+                    Resources[0].Request = Convert.ToInt32(quantity.Text);
+                    CEngine.SelectedTree.InitialRes = Resources[0];
                 }
             }
 
@@ -173,6 +172,13 @@ namespace Recipe.Calculator
                 var w = note.CreateGraphics().MeasureString(note.Text, note.Font).ToSize().Width;
                 note.Left = Container.Width / 2 - w / 2;
             }
+        }
+
+        public void AddResource(Resource res)
+        {
+            Resources.Add(res);
+            GetControl(voQuantity).Enabled = false;
+            GetControl(voNote).Text = "Poly";
         }
 
         public void SetVoType(Type type)
@@ -226,33 +232,74 @@ namespace Recipe.Calculator
         {
             var qty = GetControl(voQuantity);
 
-            switch (ResourceType)
+            if (Resources.Count > 1)
             {
-                case Type.Input:
-                    int amount = Resource.Injected - Resource.Amount;
-                    if (amount == 0)
+                int q = 0;
+                foreach (var res in Resources)
+                {
+                    switch (ResourceType)
                     {
-                        SetVoType(Type.Constant);
-                        qty.Text = Resource.AmountOut.ToString();
+                        case Type.Input:
+                            int amount = res.Injected - res.Amount;
+                            if (amount == 0)
+                            {
+                                q += res.AmountOut;
+                            }
+                            else
+                            {
+                                q += res.Injected - res.Amount;
+                            }
+                            break;
+
+                        case Type.Output:
+                        case Type.ExtOutput:
+                            q += res.Amount;
+                            break;
+
+                        case Type.Constant:
+                            q += res.AmountOut;
+                            break;
+
+                        case Type.ExtInput:
+                            q += -res.Amount;
+                            break;
                     }
-                    else
-                    {
-                        qty.Text = (Resource.Injected - Resource.Amount).ToString();
-                    }
-                    break;
 
-                case Type.Output:
-                case Type.ExtOutput:
-                    qty.Text = Resource.Amount.ToString();
-                    break;
+                    qty.Text = q.ToString();
+                }
+            }
+            else
+            {
+                var res = Resources[0];
 
-                case Type.Constant:
-                    qty.Text = Resource.AmountOut.ToString();
-                    break;
+                switch (ResourceType)
+                {
+                    case Type.Input:
+                        int amount = res.Injected - res.Amount;
+                        if (amount == 0)
+                        {
+                            SetVoType(Type.Constant);
+                            qty.Text = res.AmountOut.ToString();
+                        }
+                        else
+                        {
+                            qty.Text = (res.Injected - res.Amount).ToString();
+                        }
+                        break;
 
-                case Type.ExtInput:
-                    qty.Text = (-Resource.Amount).ToString();
-                    break;
+                    case Type.Output:
+                    case Type.ExtOutput:
+                        qty.Text = res.Amount.ToString();
+                        break;
+
+                    case Type.Constant:
+                        qty.Text = res.AmountOut.ToString();
+                        break;
+
+                    case Type.ExtInput:
+                        qty.Text = (-res.Amount).ToString();
+                        break;
+                }
             }
         }
 
@@ -265,8 +312,14 @@ namespace Recipe.Calculator
                     break;
 
                 case Type.Output:
+                    if (Resources.Count > 1)
+                    {
+                        MessageBox.Show("Cannot use a resource as argument when the tree has equal items");
+                        return false;
+                    }
+
                     var qty = GetControl(voQuantity);
-                    Resource.Request = Convert.ToInt32(qty.Text);
+                    Resources[0].Request = Convert.ToInt32(qty.Text);
                     break;
 
                 default:

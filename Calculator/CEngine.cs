@@ -24,7 +24,7 @@ namespace Recipe.Calculator
             set
             {
                 selectedVO = value;
-                SelectedTree.InitialRes = selectedVO.Resource;
+                SelectedTree.InitialRes = selectedVO.Resources[0];
             }
         }
 
@@ -142,7 +142,7 @@ namespace Recipe.Calculator
 
             SelectedVO.UpdateData();
 
-            Processing(SelectedVO.Resource, false);
+            Processing(SelectedVO.Resources[0], false);
 
             foreach (var res in tree.Intermediates)
             {
@@ -272,6 +272,19 @@ namespace Recipe.Calculator
                     }
                 }
             }
+        }
+
+        public static void InitCalc(Tree tree)
+        {
+            if (Outputs.VisualObjects[0].Resources.Count > 1)
+            {
+                return;
+            }
+
+            Outputs.VisualObjects[0].SelectVO();
+            tree.InitialRes = Outputs.VisualObjects[0].Resources[0];
+            tree.InitialRes.Request = 1;
+            Calculate(SelectedTree, true);
         }
 
         /**/
