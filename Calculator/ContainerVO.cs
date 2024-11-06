@@ -64,9 +64,12 @@ namespace Recipe.Calculator
                 {
                     if (rs.ItemObject.Item.Name == res.ItemObject.Item.Name)
                     {
-                        vo = vobj;
-                        same = true;
-                        break;
+                        if (rs.IOType == res.IOType)
+                        {
+                            vo = vobj;
+                            same = true;
+                            break;
+                        }
                     }
                 }
 
