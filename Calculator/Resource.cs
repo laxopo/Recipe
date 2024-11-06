@@ -9,6 +9,7 @@ namespace Recipe.Calculator
     public class Resource : ICloneable
     {
         public Editor.ItemObject ItemObject { get; set; }
+        public VisualObject VisualObject { get; set; }
         public Mech LinkMechIn { get; set; }
         public Mech LinkMechOut { get; set; }
         public int AmountIn { get; set; }

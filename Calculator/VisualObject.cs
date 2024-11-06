@@ -56,7 +56,6 @@ namespace Recipe.Calculator
                 MaxLength = 9
             };
 
-
             var note = new Label() { 
                 Name = voNote,
                 Top = quantity.Bottom + 1,
@@ -110,6 +109,7 @@ namespace Recipe.Calculator
                 note
             });
             SetVoType(ResourceType);
+            res.VisualObject = this;
 
             //Set the container size
             foreach (Control ctrl in Container.Controls)
@@ -177,6 +177,7 @@ namespace Recipe.Calculator
         public void AddResource(Resource res)
         {
             Resources.Add(res);
+            res.VisualObject = this;
             GetControl(voQuantity).Enabled = false;
             GetControl(voNote).Text = "Poly";
         }
@@ -215,6 +216,12 @@ namespace Recipe.Calculator
         {
             Editor.Engine.DeselectVOs();
             Editor.Engine.SelectVO(itemObject, false);
+        }
+
+        public void SelectIO()
+        {
+            Editor.Engine.DeselectVOs();
+            Editor.Engine.SelectVO(Resources[0].ItemObject, false);
         }
 
         public void SelectVO()
@@ -264,9 +271,9 @@ namespace Recipe.Calculator
                             q += -res.Amount;
                             break;
                     }
-
-                    qty.Text = q.ToString();
                 }
+
+                qty.Text = q.ToString();
             }
             else
             {

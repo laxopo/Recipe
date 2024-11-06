@@ -62,7 +62,7 @@ namespace Recipe
             var tree = Calculator.CEngine.Forest[listBoxTrees.SelectedIndex];
 
             Calculator.CEngine.GenerateVOs(tree);
-            Calculator.CEngine.InitCalc(tree);
+            //Calculator.CEngine.InitCalc(tree);
         }
 
         private void buttonCalculate_Click(object sender, EventArgs e)
