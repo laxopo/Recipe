@@ -11,6 +11,7 @@ namespace Recipe.Calculator
     public static class CEngine
     {
         public static List<Tree> Forest = new List<Tree>();
+        public static List<Resource> PublicResources = new List<Resource>();
         public static ContainerVO Inputs, Outputs;
         public static Tree SelectedTree;
 
@@ -71,6 +72,7 @@ namespace Recipe.Calculator
         {
             FormClear();
             Forest.Clear();
+            PublicResources.Clear();
         }
 
         public static void Update()
@@ -137,6 +139,12 @@ namespace Recipe.Calculator
             //init
             var req_path = new List<Mech>();
             tree.ResetAmounts();
+            foreach (var pr in PublicResources)
+            {
+                pr.Tree.ResetAmounts();
+                pr.Bridged = false;
+            }
+
             Inputs.RemoveExtras();
             Outputs.RemoveExtras();
             SelectedVO.UpdateData();
@@ -144,45 +152,60 @@ namespace Recipe.Calculator
             //calculate
             Processing(SelectedVO.Resources[0], false);
 
-            /**/
             Inputs.Clear();
 
-            foreach (var res in tree.Inputs)
+            //collect all used trees
+            var bush = new List<Tree>();
+            bush.Add(tree);
+            foreach (var pr in PublicResources)
             {
-                if (res.Injected > 0)
+                if (pr.Bridged)
                 {
-                    Inputs.AddRes(res);
-                }
-                
-                if (res.Amount == 0 && res.Insufficient)
-                {
-                    Inputs.AddRes(res);
+                    if (!bush.Contains(pr.Tree))
+                    {
+                        bush.Add(pr.Tree);
+                    }
                 }
             }
 
-            foreach (var res in tree.Intermediates)
+            //create VOs
+            foreach (var bt in bush)
             {
-                if (res.Amount > 0)
+                foreach (var res in bt.Inputs)
                 {
-                    Outputs.AddRes(res);
+                    if (res.Injected > 0)
+                    {
+                        Inputs.AddRes(res);
+                    }
+
+                    if (res.Amount == 0 && res.Insufficient)
+                    {
+                        Inputs.AddRes(res);
+                    }
                 }
-                else if (res.Insufficient)
+
+                foreach (var res in bt.Intermediates)
                 {
-                    Inputs.AddRes(res);
+                    if (res.Amount > 0)
+                    {
+                        Outputs.AddRes(res);
+                    }
+                    else if (res.Insufficient)
+                    {
+                        Inputs.AddRes(res);
+                    }
                 }
             }
 
-            
-
-
+            //Update VOs data
             Inputs.UpdateVOs();
             Outputs.UpdateVOs();
-            /**/
+
 
             void Processing(Resource res, bool forward)
             {
                 var RES = res.ItemObject.ID; //test
-                VisualObject.SelectIO(res.ItemObject); //test
+                //VisualObject.SelectIO(res.ItemObject); //test
 
                 Mech mech;
 
@@ -190,8 +213,31 @@ namespace Recipe.Calculator
                 {
                     if (res.IOType == Resource.Type.Input)
                     {
-                        res.Amount = res.Request;
-                        res.Injected = res.Request;
+                        Resource bridge = null;
+                        foreach (var pr in PublicResources)
+                        {
+                            if (pr.ItemObject.Item.Name == res.ItemObject.Item.Name)
+                            {
+                                pr.Bridged = true;
+                                bridge = pr;
+                                break;
+                            }
+                        }
+
+                        if (bridge != null)
+                        {
+                            bridge.Request = res.Request;
+                            Processing(bridge, false);
+
+                            res.Amount += bridge.Amount;
+                            bridge.Amount = 0;
+                        }
+                        else
+                        {
+                            res.Amount += res.Request;
+                            res.Injected += res.Request;
+                        }
+
                         return;
                     }
 
@@ -208,7 +254,7 @@ namespace Recipe.Calculator
                 }
 
                 var MECH = mech.ItemObject.ID; //test
-                VisualObject.SelectIO(mech.ItemObject); //test
+                //VisualObject.SelectIO(mech.ItemObject); //test
 
                 if (!forward)
                 {
@@ -234,7 +280,7 @@ namespace Recipe.Calculator
                     foreach (var resIn in mech.Inputs)
                     {
                         var RESIN = resIn.ItemObject.ID; //test
-                        VisualObject.SelectIO(resIn.ItemObject); //test
+                        //VisualObject.SelectIO(resIn.ItemObject); //test
 
                         resIn.Request = resIn.AmountOut * mech.Coefficient;
                         Processing(resIn, false);
@@ -244,7 +290,7 @@ namespace Recipe.Calculator
                     foreach (var resOut in mech.Outputs)
                     {
                         var RESOUT = resOut.ItemObject.ID; //test
-                        VisualObject.SelectIO(resOut.ItemObject); //test
+                        //VisualObject.SelectIO(resOut.ItemObject); //test
 
                         resOut.Amount = resOut.AmountIn * mech.Coefficient - resOut.Injected;
 
@@ -290,7 +336,7 @@ namespace Recipe.Calculator
                     foreach (var resIn in mech.Inputs)
                     {
                         var RESIN = resIn.ItemObject.ID; //test
-                        VisualObject.SelectIO(resIn.ItemObject); //test
+                        //VisualObject.SelectIO(resIn.ItemObject); //test
 
                         resIn.Amount -= resIn.AmountOut * mech.Coefficient;
                     }
@@ -381,37 +427,35 @@ namespace Recipe.Calculator
                     if (iobj.Item.Type == Library.Item.ItemType.Mechanism) //mech
                     {
                         //create new mech
-                        tree.Mechanisms.Add(new Mech(iobj));
+                        tree.Mechanisms.Add(new Mech(iobj, tree));
                     }
                     else //resource
                     {
                         //create new resource
+                        var res = new Resource(iobj, tree)
+                        {
+                            AmountIn = iobj.QuantityIn,
+                            AmountOut = iobj.QuantityOut,
+                        };
+
                         if (iobj.LinkInTags.Count == 0 || iobj.IOType == Editor.ItemObject.Type.Input) //input
                         {
-                            tree.Inputs.Add(new Resource(iobj)
-                            {
-                                AmountIn = iobj.QuantityIn,
-                                AmountOut = iobj.QuantityOut,
-                                IOType = Resource.Type.Input
-                            });
+                            res.IOType = Resource.Type.Input;
+                            tree.Inputs.Add(res);
                         }
                         else if (iobj.LinkOutTags.Count == 0 || iobj.IOType == Editor.ItemObject.Type.Output) //output
                         {
-                            tree.Outputs.Add(new Resource(iobj)
+                            res.IOType = Resource.Type.Output;
+                            tree.Outputs.Add(res);
+                            if (iobj.Public)
                             {
-                                AmountIn = iobj.QuantityIn,
-                                AmountOut = iobj.QuantityOut,
-                                IOType = Resource.Type.Output
-                            });
+                                PublicResources.Add(res);
+                            }
                         }
                         else //inter
                         {
-                            tree.Intermediates.Add(new Resource(iobj)
-                            {
-                                AmountIn = iobj.QuantityIn,
-                                AmountOut = iobj.QuantityOut,
-                                IOType = Resource.Type.None
-                            });
+                            res.IOType = Resource.Type.None;
+                            tree.Intermediates.Add(res);
                         }
                     }
                 }

@@ -10,6 +10,7 @@ namespace Recipe.Calculator
     {
         public Editor.ItemObject ItemObject { get; set; }
         public VisualObject VisualObject { get; set; }
+        public Tree Tree { get; set; }
         public Mech LinkMechIn { get; set; }
         public Mech LinkMechOut { get; set; }
         public int AmountIn { get; set; }
@@ -17,13 +18,16 @@ namespace Recipe.Calculator
         public int Amount { get; set; }
         public int Request { get; set; }
         public int Injected { get; set; }
+        public Type IOType { get; set; }
         public bool Renewable { get; set; }
         public bool Insufficient { get; set; }
-        public Type IOType { get; set; }
+        public bool Bridged { get; set; }
+        
 
-        public Resource(Editor.ItemObject iobj)
+        public Resource(Editor.ItemObject iobj, Tree tree)
         {
             ItemObject = iobj;
+            Tree = tree;
         }
 
         public enum Type
