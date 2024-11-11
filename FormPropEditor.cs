@@ -34,7 +34,7 @@ namespace Recipe
             enableManual = new List<Control>() {
                 checkBoxOpa,
                 groupBoxQuantity,
-                groupBoxExternal
+                groupBoxIO
             };
         }
 
@@ -89,7 +89,6 @@ namespace Recipe
 
             labelID.Text = CurrentIObj.ID.ToString();
             textBoxName.Text = CurrentIObj.Item.Name;
-            checkBoxPublic.Checked = CurrentIObj.Public;
             GBoxQuantityUpdate(true);
             GBoxExternalUpdate(true);
 
@@ -603,7 +602,7 @@ namespace Recipe
         {
             if (CurrentIObj.Item.Type != Library.Item.ItemType.Mechanism && enable)
             {
-                groupBoxExternal.Enabled = enable;
+                groupBoxIO.Enabled = enable;
                 radioButtonAuto.Enabled = enable;
 
                 switch (CurrentIObj.IOType)
@@ -634,9 +633,16 @@ namespace Recipe
             }
             else
             {
-                groupBoxExternal.Enabled = false;
-                foreach (RadioButton ctrl in groupBoxExternal.Controls)
+                groupBoxIO.Enabled = false;
+                foreach (var ct in groupBoxIO.Controls)
                 {
+                    if (!(ct is RadioButton))
+                    {
+                        continue;
+                    }
+
+                    var ctrl = ct as RadioButton;
+
                     ctrl.Enabled = false;
                     ctrl.Checked = false;
                 }
@@ -662,14 +668,14 @@ namespace Recipe
 
             if (activeRB.Checked)
             {
-                foreach (RadioButton ctrl in groupBoxExternal.Controls)
+                foreach (var ctrl in groupBoxIO.Controls)
                 {
-                    if (ctrl == sender as RadioButton)
+                    if (!(ctrl is RadioButton) || ctrl == sender as RadioButton)
                     {
                         continue;
                     }
 
-                    ctrl.Checked = false;
+                    (ctrl as RadioButton).Checked = false;
                 }
 
                 IObjExtUpdate();
@@ -678,8 +684,15 @@ namespace Recipe
 
         private void IObjExtUpdate()
         {
-            foreach (RadioButton ctrl in groupBoxExternal.Controls)
+            foreach (var ct in groupBoxIO.Controls)
             {
+                if (!(ct is RadioButton))
+                {
+                    continue;
+                }
+
+                var ctrl = ct as RadioButton;
+
                 if (ctrl.Checked)
                 {
                     var ext = (Editor.ItemObject.Type)ctrl.Tag;
@@ -706,6 +719,18 @@ namespace Recipe
 
         private void radioButtonOutput_CheckedChanged(object sender, EventArgs e)
         {
+            if (radioButtonOutput.Checked)
+            {
+                checkBoxPublic.Enabled = true;
+                checkBoxPublic.Checked = CurrentIObj.Public;
+            }
+            else
+            {
+                checkBoxPublic.Enabled = false;
+                checkBoxPublic.Checked = false;
+                CurrentIObj.Public = false;
+            }
+
             RBCheckedUpdate(sender);
         }
 

@@ -49,16 +49,16 @@ namespace Recipe
             this.groupBoxQuantity = new System.Windows.Forms.GroupBox();
             this.textBoxInjected = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.groupBoxExternal = new System.Windows.Forms.GroupBox();
+            this.groupBoxIO = new System.Windows.Forms.GroupBox();
+            this.checkBoxPublic = new System.Windows.Forms.CheckBox();
             this.radioButtonOutput = new System.Windows.Forms.RadioButton();
             this.radioButtonInput = new System.Windows.Forms.RadioButton();
             this.radioButtonAuto = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
             this.labelID = new System.Windows.Forms.Label();
-            this.checkBoxPublic = new System.Windows.Forms.CheckBox();
             this.groupBoxLinks.SuspendLayout();
             this.groupBoxQuantity.SuspendLayout();
-            this.groupBoxExternal.SuspendLayout();
+            this.groupBoxIO.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -111,7 +111,7 @@ namespace Recipe
             this.groupBoxLinks.Controls.Add(this.label2);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksInput);
             this.groupBoxLinks.Controls.Add(this.listBoxLinksOutput);
-            this.groupBoxLinks.Location = new System.Drawing.Point(12, 186);
+            this.groupBoxLinks.Location = new System.Drawing.Point(12, 168);
             this.groupBoxLinks.Name = "groupBoxLinks";
             this.groupBoxLinks.Size = new System.Drawing.Size(262, 164);
             this.groupBoxLinks.TabIndex = 5;
@@ -215,7 +215,7 @@ namespace Recipe
             this.textBoxQtyIn.Location = new System.Drawing.Point(60, 19);
             this.textBoxQtyIn.MaxLength = 9;
             this.textBoxQtyIn.Name = "textBoxQtyIn";
-            this.textBoxQtyIn.Size = new System.Drawing.Size(66, 20);
+            this.textBoxQtyIn.Size = new System.Drawing.Size(60, 20);
             this.textBoxQtyIn.TabIndex = 10;
             this.textBoxQtyIn.TextChanged += new System.EventHandler(this.textBoxQtyIn_TextChanged);
             this.textBoxQtyIn.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxQtyIn_KeyPress);
@@ -225,7 +225,7 @@ namespace Recipe
             this.textBoxQtyOut.Location = new System.Drawing.Point(60, 45);
             this.textBoxQtyOut.MaxLength = 9;
             this.textBoxQtyOut.Name = "textBoxQtyOut";
-            this.textBoxQtyOut.Size = new System.Drawing.Size(66, 20);
+            this.textBoxQtyOut.Size = new System.Drawing.Size(60, 20);
             this.textBoxQtyOut.TabIndex = 11;
             this.textBoxQtyOut.TextChanged += new System.EventHandler(this.textBoxQtyOut_TextChanged);
             this.textBoxQtyOut.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxQtyOut_KeyPress);
@@ -248,9 +248,9 @@ namespace Recipe
             this.groupBoxQuantity.Controls.Add(this.label6);
             this.groupBoxQuantity.Controls.Add(this.textBoxQtyIn);
             this.groupBoxQuantity.Enabled = false;
-            this.groupBoxQuantity.Location = new System.Drawing.Point(12, 77);
+            this.groupBoxQuantity.Location = new System.Drawing.Point(12, 59);
             this.groupBoxQuantity.Name = "groupBoxQuantity";
-            this.groupBoxQuantity.Size = new System.Drawing.Size(136, 103);
+            this.groupBoxQuantity.Size = new System.Drawing.Size(126, 103);
             this.groupBoxQuantity.TabIndex = 13;
             this.groupBoxQuantity.TabStop = false;
             this.groupBoxQuantity.Text = "Quantity";
@@ -260,7 +260,7 @@ namespace Recipe
             this.textBoxInjected.Location = new System.Drawing.Point(60, 71);
             this.textBoxInjected.MaxLength = 9;
             this.textBoxInjected.Name = "textBoxInjected";
-            this.textBoxInjected.Size = new System.Drawing.Size(66, 20);
+            this.textBoxInjected.Size = new System.Drawing.Size(60, 20);
             this.textBoxInjected.TabIndex = 14;
             this.textBoxInjected.TextChanged += new System.EventHandler(this.textBoxInjected_TextChanged);
             this.textBoxInjected.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxInjected_KeyPress);
@@ -274,18 +274,31 @@ namespace Recipe
             this.label7.TabIndex = 13;
             this.label7.Text = "Injected:";
             // 
-            // groupBoxExternal
+            // groupBoxIO
             // 
-            this.groupBoxExternal.Controls.Add(this.radioButtonOutput);
-            this.groupBoxExternal.Controls.Add(this.radioButtonInput);
-            this.groupBoxExternal.Controls.Add(this.radioButtonAuto);
-            this.groupBoxExternal.Enabled = false;
-            this.groupBoxExternal.Location = new System.Drawing.Point(154, 77);
-            this.groupBoxExternal.Name = "groupBoxExternal";
-            this.groupBoxExternal.Size = new System.Drawing.Size(120, 103);
-            this.groupBoxExternal.TabIndex = 14;
-            this.groupBoxExternal.TabStop = false;
-            this.groupBoxExternal.Text = "I/O";
+            this.groupBoxIO.Controls.Add(this.checkBoxPublic);
+            this.groupBoxIO.Controls.Add(this.radioButtonOutput);
+            this.groupBoxIO.Controls.Add(this.radioButtonInput);
+            this.groupBoxIO.Controls.Add(this.radioButtonAuto);
+            this.groupBoxIO.Enabled = false;
+            this.groupBoxIO.Location = new System.Drawing.Point(144, 59);
+            this.groupBoxIO.Name = "groupBoxIO";
+            this.groupBoxIO.Size = new System.Drawing.Size(130, 103);
+            this.groupBoxIO.TabIndex = 14;
+            this.groupBoxIO.TabStop = false;
+            this.groupBoxIO.Text = "I/O";
+            // 
+            // checkBoxPublic
+            // 
+            this.checkBoxPublic.AutoSize = true;
+            this.checkBoxPublic.Enabled = false;
+            this.checkBoxPublic.Location = new System.Drawing.Point(72, 20);
+            this.checkBoxPublic.Name = "checkBoxPublic";
+            this.checkBoxPublic.Size = new System.Drawing.Size(55, 17);
+            this.checkBoxPublic.TabIndex = 17;
+            this.checkBoxPublic.Text = "Public";
+            this.checkBoxPublic.UseVisualStyleBackColor = true;
+            this.checkBoxPublic.CheckedChanged += new System.EventHandler(this.checkBoxPublic_CheckedChanged);
             // 
             // radioButtonOutput
             // 
@@ -339,26 +352,14 @@ namespace Recipe
             this.labelID.Size = new System.Drawing.Size(0, 13);
             this.labelID.TabIndex = 16;
             // 
-            // checkBoxPublic
-            // 
-            this.checkBoxPublic.AutoSize = true;
-            this.checkBoxPublic.Location = new System.Drawing.Point(56, 59);
-            this.checkBoxPublic.Name = "checkBoxPublic";
-            this.checkBoxPublic.Size = new System.Drawing.Size(55, 17);
-            this.checkBoxPublic.TabIndex = 17;
-            this.checkBoxPublic.Text = "Public";
-            this.checkBoxPublic.UseVisualStyleBackColor = true;
-            this.checkBoxPublic.CheckedChanged += new System.EventHandler(this.checkBoxPublic_CheckedChanged);
-            // 
             // FormPropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(286, 359);
-            this.Controls.Add(this.checkBoxPublic);
+            this.ClientSize = new System.Drawing.Size(282, 343);
             this.Controls.Add(this.labelID);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.groupBoxExternal);
+            this.Controls.Add(this.groupBoxIO);
             this.Controls.Add(this.groupBoxQuantity);
             this.Controls.Add(this.comboBoxTypes);
             this.Controls.Add(this.label4);
@@ -378,8 +379,8 @@ namespace Recipe
             this.groupBoxLinks.PerformLayout();
             this.groupBoxQuantity.ResumeLayout(false);
             this.groupBoxQuantity.PerformLayout();
-            this.groupBoxExternal.ResumeLayout(false);
-            this.groupBoxExternal.PerformLayout();
+            this.groupBoxIO.ResumeLayout(false);
+            this.groupBoxIO.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -407,7 +408,7 @@ namespace Recipe
         private System.Windows.Forms.GroupBox groupBoxQuantity;
         private System.Windows.Forms.TextBox textBoxInjected;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.GroupBox groupBoxExternal;
+        private System.Windows.Forms.GroupBox groupBoxIO;
         private System.Windows.Forms.RadioButton radioButtonOutput;
         private System.Windows.Forms.RadioButton radioButtonInput;
         private System.Windows.Forms.RadioButton radioButtonAuto;
