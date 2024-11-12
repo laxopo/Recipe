@@ -12,6 +12,9 @@ namespace Recipe.Library
         public string Name { get; set; }
         public string IconPath { get; set; }
         public ItemType Type { get; set; }
+        public int Energy { get; set; }
+        public string EU { get; set; }
+        public int Time { get; set; }
         
         public enum ItemType
         {

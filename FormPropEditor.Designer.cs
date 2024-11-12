@@ -56,9 +56,17 @@ namespace Recipe
             this.radioButtonAuto = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
             this.labelID = new System.Windows.Forms.Label();
+            this.groupBoxMechProps = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.textBoxEnergy = new System.Windows.Forms.TextBox();
+            this.textBoxTime = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.comboBoxEU = new System.Windows.Forms.ComboBox();
             this.groupBoxLinks.SuspendLayout();
             this.groupBoxQuantity.SuspendLayout();
             this.groupBoxIO.SuspendLayout();
+            this.groupBoxMechProps.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -352,11 +360,91 @@ namespace Recipe
             this.labelID.Size = new System.Drawing.Size(0, 13);
             this.labelID.TabIndex = 16;
             // 
+            // groupBoxMechProps
+            // 
+            this.groupBoxMechProps.Controls.Add(this.comboBoxEU);
+            this.groupBoxMechProps.Controls.Add(this.label11);
+            this.groupBoxMechProps.Controls.Add(this.textBoxTime);
+            this.groupBoxMechProps.Controls.Add(this.textBoxEnergy);
+            this.groupBoxMechProps.Controls.Add(this.label10);
+            this.groupBoxMechProps.Controls.Add(this.label9);
+            this.groupBoxMechProps.Location = new System.Drawing.Point(280, 59);
+            this.groupBoxMechProps.Name = "groupBoxMechProps";
+            this.groupBoxMechProps.Size = new System.Drawing.Size(263, 103);
+            this.groupBoxMechProps.TabIndex = 17;
+            this.groupBoxMechProps.TabStop = false;
+            this.groupBoxMechProps.Text = "Processing";
+            this.groupBoxMechProps.Visible = false;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 22);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(43, 13);
+            this.label9.TabIndex = 10;
+            this.label9.Text = "Energy:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(16, 48);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(33, 13);
+            this.label10.TabIndex = 11;
+            this.label10.Text = "Time:";
+            // 
+            // textBoxEnergy
+            // 
+            this.textBoxEnergy.Location = new System.Drawing.Point(55, 19);
+            this.textBoxEnergy.MaxLength = 9;
+            this.textBoxEnergy.Name = "textBoxEnergy";
+            this.textBoxEnergy.Size = new System.Drawing.Size(60, 20);
+            this.textBoxEnergy.TabIndex = 12;
+            this.textBoxEnergy.Text = "0";
+            this.textBoxEnergy.TextChanged += new System.EventHandler(this.textBoxEnergy_TextChanged);
+            this.textBoxEnergy.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxEnergy_KeyPress);
+            // 
+            // textBoxTime
+            // 
+            this.textBoxTime.Location = new System.Drawing.Point(55, 45);
+            this.textBoxTime.MaxLength = 9;
+            this.textBoxTime.Name = "textBoxTime";
+            this.textBoxTime.Size = new System.Drawing.Size(60, 20);
+            this.textBoxTime.TabIndex = 13;
+            this.textBoxTime.Text = "0";
+            this.textBoxTime.TextChanged += new System.EventHandler(this.textBoxTime_TextChanged);
+            this.textBoxTime.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxTime_KeyPress);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(121, 48);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(24, 13);
+            this.label11.TabIndex = 14;
+            this.label11.Text = "sec";
+            // 
+            // comboBoxEU
+            // 
+            this.comboBoxEU.FormattingEnabled = true;
+            this.comboBoxEU.Items.AddRange(new object[] {
+            "EUg",
+            "EUi",
+            "RF",
+            "MJ"});
+            this.comboBoxEU.Location = new System.Drawing.Point(124, 18);
+            this.comboBoxEU.Name = "comboBoxEU";
+            this.comboBoxEU.Size = new System.Drawing.Size(58, 21);
+            this.comboBoxEU.TabIndex = 15;
+            this.comboBoxEU.SelectedIndexChanged += new System.EventHandler(this.comboBoxEU_SelectedIndexChanged);
+            // 
             // FormPropEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 343);
+            this.ClientSize = new System.Drawing.Size(556, 348);
+            this.Controls.Add(this.groupBoxMechProps);
             this.Controls.Add(this.labelID);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.groupBoxIO);
@@ -381,6 +469,8 @@ namespace Recipe
             this.groupBoxQuantity.PerformLayout();
             this.groupBoxIO.ResumeLayout(false);
             this.groupBoxIO.PerformLayout();
+            this.groupBoxMechProps.ResumeLayout(false);
+            this.groupBoxMechProps.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -415,5 +505,12 @@ namespace Recipe
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label labelID;
         private System.Windows.Forms.CheckBox checkBoxPublic;
+        private System.Windows.Forms.GroupBox groupBoxMechProps;
+        private System.Windows.Forms.ComboBox comboBoxEU;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox textBoxTime;
+        private System.Windows.Forms.TextBox textBoxEnergy;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
     }
 }

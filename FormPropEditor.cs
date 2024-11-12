@@ -27,6 +27,12 @@ namespace Recipe
             opacity = new OpacityForm(this, checkBoxOpa);
             gBoxQtyText = groupBoxQuantity.Text;
 
+            int bx = Width - ClientRectangle.Width;
+            int by = Height - ClientRectangle.Height;
+            Width = groupBoxIO.Right + groupBoxQuantity.Left + bx;
+            Height = groupBoxLinks.Bottom + groupBoxQuantity.Left + by;
+            groupBoxMechProps.Location = groupBoxQuantity.Location;
+
             radioButtonAuto.Tag = Editor.ItemObject.Type.Auto;
             radioButtonInput.Tag = Editor.ItemObject.Type.Input;
             radioButtonOutput.Tag = Editor.ItemObject.Type.Output;
@@ -143,6 +149,34 @@ namespace Recipe
             }
         }
 
+        private void TypingFilterInteger(KeyPressEventArgs e, object textBox = null)
+        {
+            bool pass;
+
+            if (e.KeyChar == '-' && textBox != null)
+            {
+                var tb = textBox as TextBox;
+
+                if (tb.Text.Length > 0)
+                {
+                    pass = !tb.Text.Contains('-') && tb.SelectionStart == 0;
+                }
+                else
+                {
+                    pass = true;
+                }
+            }
+            else
+            {
+                pass = char.IsDigit(e.KeyChar);
+            }
+
+            if (!char.IsControl(e.KeyChar) && !pass)
+            {
+                e.Handled = true;
+            }
+        }
+
         /*Form*/
 
         private void PropEditor_Load(object sender, EventArgs e)
@@ -199,15 +233,6 @@ namespace Recipe
             comboBoxTypes.SelectedIndexChanged -= new EventHandler(comboBoxTypes_SelectedIndexChanged);
             comboBoxTypes.Text = Enum.GetName(typeof(Library.Item.ItemType), type);
             comboBoxTypes.SelectedIndexChanged += new EventHandler(comboBoxTypes_SelectedIndexChanged);
-        }
-
-        private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var type = (Library.Item.ItemType)comboBoxTypes.SelectedIndex;
-            if (type == CurrentIObj.Item.Type)
-            {
-                return;
-            }
 
             if (type == Library.Item.ItemType.Fluid)
             {
@@ -229,20 +254,38 @@ namespace Recipe
                 }
             }
 
-            CurrentIObj.Item.Type = type;
-
-            GBoxQuantityUpdate(true);
-            GBoxExternalUpdate(true);
             if (type == Library.Item.ItemType.Mechanism)
             {
+                groupBoxQuantity.Visible = false;
+                groupBoxIO.Visible = false;
+                groupBoxMechProps.Visible = true;
                 CurrentIObj.Public = false;
                 checkBoxPublic.Checked = false;
-                checkBoxPublic.Enabled = false;
+
+                textBoxEnergy.Text = CurrentIObj.Item.Energy.ToString();
+                textBoxTime.Text = CurrentIObj.Item.Time.ToString();
+                comboBoxEU.Text = CurrentIObj.Item.EU;
             }
             else
             {
-                checkBoxPublic.Enabled = true;
+                groupBoxMechProps.Visible = false;
+                groupBoxQuantity.Visible = true;
+                groupBoxIO.Visible = true;
+
+                GBoxQuantityUpdate(true);
+                GBoxExternalUpdate(true);
             }
+        }
+
+        private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var type = (Library.Item.ItemType)comboBoxTypes.SelectedIndex;
+            if (type == CurrentIObj.Item.Type)
+            {
+                return;
+            }
+
+            CurrentIObj.Item.Type = type;
 
             Editor.VisualObject.Constructor.ItemTypeStyleUpdate(CurrentIObj);
         }
@@ -460,14 +503,7 @@ namespace Recipe
         }
 
         /*Quantity*/
-        private void TypingFilterQuantity(KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
+        
         private int IObjQtyUpdate(TextBox source, int property)
         {
             int src = Convert.ToInt32(source.Text);
@@ -555,7 +591,7 @@ namespace Recipe
 
         private void textBoxQtyIn_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterQuantity(e);
+            TypingFilterInteger(e);
         }
 
         private void textBoxQtyIn_TextChanged(object sender, EventArgs e)
@@ -565,12 +601,12 @@ namespace Recipe
                 return;
             }
 
-            CurrentIObj.QuantityIn = IObjQtyUpdate(textBoxQtyIn, (int)CurrentIObj.QuantityIn);
+            CurrentIObj.QuantityIn = IObjQtyUpdate(textBoxQtyIn, CurrentIObj.QuantityIn);
         }
 
         private void textBoxQtyOut_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterQuantity(e);
+            TypingFilterInteger(e);
         }
 
         private void textBoxQtyOut_TextChanged(object sender, EventArgs e)
@@ -585,7 +621,7 @@ namespace Recipe
 
         private void textBoxInjected_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterQuantity(e);
+            TypingFilterInteger(e);
         }
 
         private void textBoxInjected_TextChanged(object sender, EventArgs e)
@@ -753,6 +789,60 @@ namespace Recipe
 
             CurrentIObj.Public = checkBoxPublic.Checked;
             Editor.Engine.Changed = true;
+        }
+
+        /*Mech*/
+
+        private void textBoxEnergy_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            TypingFilterInteger(e, sender);
+        }
+
+        private void textBoxTime_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            TypingFilterInteger(e);
+        }
+
+        private void textBoxEnergy_TextChanged(object sender, EventArgs e)
+        {
+            if (!textBoxEnergy.Focused || textBoxEnergy.Text.Length == 0 || textBoxEnergy.Text == "-")
+            {
+                return;
+            }
+
+            CurrentIObj.Item.Energy = Convert.ToInt32(textBoxEnergy.Text);
+            Editor.Engine.Changed = true;
+            Calculator.CEngine.IsActual = false;
+        }
+
+        private void textBoxTime_TextChanged(object sender, EventArgs e)
+        {
+            if (!textBoxTime.Focused || textBoxTime.Text.Length == 0)
+            {
+                return;
+            }
+
+            CurrentIObj.Item.Time = Convert.ToInt32(textBoxTime.Text);
+            Editor.Engine.Changed = true;
+            Calculator.CEngine.IsActual = false;
+        }
+
+        private void comboBoxEU_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!comboBoxEU.Focused)
+            {
+                return;
+            }
+
+            if (comboBoxEU.SelectedIndex == -1)
+            {
+                CurrentIObj.Item.EU = null;
+                return;
+            }
+
+            CurrentIObj.Item.EU = comboBoxEU.Text;
+            Editor.Engine.Changed = true;
+            Calculator.CEngine.IsActual = false;
         }
     }
 }
