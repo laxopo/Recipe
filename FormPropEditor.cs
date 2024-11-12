@@ -789,6 +789,7 @@ namespace Recipe
 
             CurrentIObj.Public = checkBoxPublic.Checked;
             Editor.Engine.Changed = true;
+            Calculator.CEngine.IsActual = false;
         }
 
         /*Mech*/
