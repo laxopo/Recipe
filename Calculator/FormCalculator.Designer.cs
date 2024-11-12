@@ -41,6 +41,10 @@ namespace Recipe
             this.panelOutputsContainer = new System.Windows.Forms.Panel();
             this.radioButtonCalcIn = new System.Windows.Forms.RadioButton();
             this.radioButtonCalcOut = new System.Windows.Forms.RadioButton();
+            this.labelTime = new System.Windows.Forms.Label();
+            this.labelEnergy = new System.Windows.Forms.Label();
+            this.listBoxEnergy = new System.Windows.Forms.ListBox();
+            this.checkBoxPerItem = new System.Windows.Forms.CheckBox();
             this.groupBoxInput.SuspendLayout();
             this.panelInputsWindow.SuspendLayout();
             this.groupBoxOutput.SuspendLayout();
@@ -58,7 +62,7 @@ namespace Recipe
             // 
             // buttonCalculate
             // 
-            this.buttonCalculate.Location = new System.Drawing.Point(12, 182);
+            this.buttonCalculate.Location = new System.Drawing.Point(12, 136);
             this.buttonCalculate.Name = "buttonCalculate";
             this.buttonCalculate.Size = new System.Drawing.Size(120, 23);
             this.buttonCalculate.TabIndex = 4;
@@ -72,7 +76,7 @@ namespace Recipe
             this.groupBoxInput.Controls.Add(this.panelInputsWindow);
             this.groupBoxInput.Location = new System.Drawing.Point(138, 12);
             this.groupBoxInput.Name = "groupBoxInput";
-            this.groupBoxInput.Size = new System.Drawing.Size(376, 199);
+            this.groupBoxInput.Size = new System.Drawing.Size(376, 245);
             this.groupBoxInput.TabIndex = 5;
             this.groupBoxInput.TabStop = false;
             this.groupBoxInput.Text = "Input";
@@ -83,7 +87,7 @@ namespace Recipe
             this.vScrollBarInputs.LargeChange = 80;
             this.vScrollBarInputs.Location = new System.Drawing.Point(356, 19);
             this.vScrollBarInputs.Name = "vScrollBarInputs";
-            this.vScrollBarInputs.Size = new System.Drawing.Size(17, 174);
+            this.vScrollBarInputs.Size = new System.Drawing.Size(17, 219);
             this.vScrollBarInputs.SmallChange = 20;
             this.vScrollBarInputs.TabIndex = 1;
             this.vScrollBarInputs.ValueChanged += new System.EventHandler(this.vScrollBarInputs_ValueChanged);
@@ -93,7 +97,7 @@ namespace Recipe
             this.panelInputsWindow.Controls.Add(this.panelInputsContainer);
             this.panelInputsWindow.Location = new System.Drawing.Point(6, 19);
             this.panelInputsWindow.Name = "panelInputsWindow";
-            this.panelInputsWindow.Size = new System.Drawing.Size(347, 174);
+            this.panelInputsWindow.Size = new System.Drawing.Size(347, 219);
             this.panelInputsWindow.TabIndex = 0;
             // 
             // panelInputsContainer
@@ -113,7 +117,7 @@ namespace Recipe
             this.groupBoxOutput.Controls.Add(this.panelOutputsWindow);
             this.groupBoxOutput.Location = new System.Drawing.Point(520, 12);
             this.groupBoxOutput.Name = "groupBoxOutput";
-            this.groupBoxOutput.Size = new System.Drawing.Size(253, 199);
+            this.groupBoxOutput.Size = new System.Drawing.Size(253, 245);
             this.groupBoxOutput.TabIndex = 6;
             this.groupBoxOutput.TabStop = false;
             this.groupBoxOutput.Text = "Output";
@@ -124,7 +128,7 @@ namespace Recipe
             this.vScrollBarOutputs.LargeChange = 80;
             this.vScrollBarOutputs.Location = new System.Drawing.Point(233, 16);
             this.vScrollBarOutputs.Name = "vScrollBarOutputs";
-            this.vScrollBarOutputs.Size = new System.Drawing.Size(17, 177);
+            this.vScrollBarOutputs.Size = new System.Drawing.Size(17, 222);
             this.vScrollBarOutputs.SmallChange = 20;
             this.vScrollBarOutputs.TabIndex = 2;
             this.vScrollBarOutputs.ValueChanged += new System.EventHandler(this.vScrollBarOutputs_ValueChanged);
@@ -134,7 +138,7 @@ namespace Recipe
             this.panelOutputsWindow.Controls.Add(this.panelOutputsContainer);
             this.panelOutputsWindow.Location = new System.Drawing.Point(6, 19);
             this.panelOutputsWindow.Name = "panelOutputsWindow";
-            this.panelOutputsWindow.Size = new System.Drawing.Size(224, 174);
+            this.panelOutputsWindow.Size = new System.Drawing.Size(224, 219);
             this.panelOutputsWindow.TabIndex = 0;
             // 
             // panelOutputsContainer
@@ -171,11 +175,52 @@ namespace Recipe
             this.radioButtonCalcOut.UseVisualStyleBackColor = true;
             this.radioButtonCalcOut.CheckedChanged += new System.EventHandler(this.radioButtonCalcOut_CheckedChanged);
             // 
+            // labelTime
+            // 
+            this.labelTime.AutoSize = true;
+            this.labelTime.Location = new System.Drawing.Point(9, 162);
+            this.labelTime.Name = "labelTime";
+            this.labelTime.Size = new System.Drawing.Size(33, 13);
+            this.labelTime.TabIndex = 9;
+            this.labelTime.Text = "Time:";
+            // 
+            // labelEnergy
+            // 
+            this.labelEnergy.AutoSize = true;
+            this.labelEnergy.Location = new System.Drawing.Point(9, 175);
+            this.labelEnergy.Name = "labelEnergy";
+            this.labelEnergy.Size = new System.Drawing.Size(112, 13);
+            this.labelEnergy.TabIndex = 10;
+            this.labelEnergy.Text = "Energy Consumptions:";
+            // 
+            // listBoxEnergy
+            // 
+            this.listBoxEnergy.FormattingEnabled = true;
+            this.listBoxEnergy.Location = new System.Drawing.Point(12, 191);
+            this.listBoxEnergy.Name = "listBoxEnergy";
+            this.listBoxEnergy.Size = new System.Drawing.Size(120, 43);
+            this.listBoxEnergy.TabIndex = 11;
+            // 
+            // checkBoxPerItem
+            // 
+            this.checkBoxPerItem.AutoSize = true;
+            this.checkBoxPerItem.Location = new System.Drawing.Point(12, 240);
+            this.checkBoxPerItem.Name = "checkBoxPerItem";
+            this.checkBoxPerItem.Size = new System.Drawing.Size(83, 17);
+            this.checkBoxPerItem.TabIndex = 12;
+            this.checkBoxPerItem.Text = "EU Per Item";
+            this.checkBoxPerItem.UseVisualStyleBackColor = true;
+            this.checkBoxPerItem.CheckedChanged += new System.EventHandler(this.checkBoxPerItem_CheckedChanged);
+            // 
             // FormCalculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(781, 217);
+            this.ClientSize = new System.Drawing.Size(781, 262);
+            this.Controls.Add(this.checkBoxPerItem);
+            this.Controls.Add(this.listBoxEnergy);
+            this.Controls.Add(this.labelEnergy);
+            this.Controls.Add(this.labelTime);
             this.Controls.Add(this.radioButtonCalcOut);
             this.Controls.Add(this.radioButtonCalcIn);
             this.Controls.Add(this.groupBoxOutput);
@@ -211,5 +256,9 @@ namespace Recipe
         private System.Windows.Forms.Panel panelOutputsContainer;
         private System.Windows.Forms.RadioButton radioButtonCalcIn;
         private System.Windows.Forms.RadioButton radioButtonCalcOut;
+        private System.Windows.Forms.Label labelTime;
+        private System.Windows.Forms.Label labelEnergy;
+        private System.Windows.Forms.ListBox listBoxEnergy;
+        private System.Windows.Forms.CheckBox checkBoxPerItem;
     }
 }

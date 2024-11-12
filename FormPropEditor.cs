@@ -149,21 +149,43 @@ namespace Recipe
             }
         }
 
-        private void TypingFilterInteger(KeyPressEventArgs e, object textBox = null)
+        private void TypingFilterNumeric(KeyPressEventArgs e, object textBox = null, bool isDouble = false)
         {
             bool pass;
 
-            if (e.KeyChar == '-' && textBox != null)
+            if (textBox != null)
             {
                 var tb = textBox as TextBox;
+                var len = tb.Text.Length > 0;
 
-                if (tb.Text.Length > 0)
+                switch (e.KeyChar)
                 {
-                    pass = !tb.Text.Contains('-') && tb.SelectionStart == 0;
-                }
-                else
-                {
-                    pass = true;
+                    case '-':
+                        if (len)
+                        {
+                            pass = !tb.Text.Contains('-') && tb.SelectionStart == 0;
+                        }
+                        else
+                        {
+                            pass = true;
+                        }
+                        break;
+
+                    case ',':
+                        if (len && isDouble)
+                        {
+                            pass = !tb.Text.Contains(',') && tb.SelectionStart > 0 
+                                && char.IsDigit(tb.Text[tb.SelectionStart - 1]);
+                        }
+                        else
+                        {
+                            pass = false;
+                        }
+                        break;
+
+                    default:
+                        pass = char.IsDigit(e.KeyChar);
+                        break;
                 }
             }
             else
@@ -591,7 +613,7 @@ namespace Recipe
 
         private void textBoxQtyIn_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterInteger(e);
+            TypingFilterNumeric(e);
         }
 
         private void textBoxQtyIn_TextChanged(object sender, EventArgs e)
@@ -606,7 +628,7 @@ namespace Recipe
 
         private void textBoxQtyOut_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterInteger(e);
+            TypingFilterNumeric(e);
         }
 
         private void textBoxQtyOut_TextChanged(object sender, EventArgs e)
@@ -621,7 +643,7 @@ namespace Recipe
 
         private void textBoxInjected_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterInteger(e);
+            TypingFilterNumeric(e);
         }
 
         private void textBoxInjected_TextChanged(object sender, EventArgs e)
@@ -796,12 +818,12 @@ namespace Recipe
 
         private void textBoxEnergy_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterInteger(e, sender);
+            TypingFilterNumeric(e, sender);
         }
 
         private void textBoxTime_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TypingFilterInteger(e);
+            TypingFilterNumeric(e, sender, true);
         }
 
         private void textBoxEnergy_TextChanged(object sender, EventArgs e)
@@ -812,6 +834,12 @@ namespace Recipe
             }
 
             CurrentIObj.Item.Energy = Convert.ToInt32(textBoxEnergy.Text);
+
+            if (CurrentIObj.Item.Energy == 0)
+            {
+                CurrentIObj.Item.EU = null;
+            }
+
             Editor.Engine.Changed = true;
             Calculator.CEngine.IsActual = false;
         }
@@ -823,7 +851,7 @@ namespace Recipe
                 return;
             }
 
-            CurrentIObj.Item.Time = Convert.ToInt32(textBoxTime.Text);
+            CurrentIObj.Item.Time = Convert.ToDouble(textBoxTime.Text);
             Editor.Engine.Changed = true;
             Calculator.CEngine.IsActual = false;
         }

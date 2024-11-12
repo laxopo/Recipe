@@ -124,16 +124,18 @@ namespace Recipe.Calculator
             SelectedTree = tree;
         }
 
-        public static void Calculate(Tree tree, bool modeOutput) //ONLY OUTPUT
+        public static Result Calculate(Tree tree, bool modeOutput) //ONLY OUTPUT
         {
+            var result = new Result();
+
             if (tree == null || tree.InitialRes == null)
             {
-                return;
+                return result;
             }
 
             if (tree.InitialRes.IOType == Resource.Type.Input) //UNHADLED
             {
-                return;
+                return result;
             }
 
             //init
@@ -151,6 +153,7 @@ namespace Recipe.Calculator
 
             //calculate
             Processing(SelectedVO.Resources[0], false);
+            result.Amount = tree.InitialRes.Amount;
 
             Inputs.Clear();
 
@@ -200,6 +203,8 @@ namespace Recipe.Calculator
             //Update VOs data
             Inputs.UpdateVOs();
             Outputs.UpdateVOs();
+
+            return result;
 
 
             void Processing(Resource res, bool forward)
@@ -305,6 +310,9 @@ namespace Recipe.Calculator
                         }
                     }
 
+                    result.Time += mech.ItemObject.Item.Time * mech.Coefficient;
+                    result.Energy.Record(mech.ItemObject.Item.EU, mech.ItemObject.Item.Energy * mech.Coefficient);
+
                     req_path.Remove(mech);
                 }
                 else
@@ -346,6 +354,8 @@ namespace Recipe.Calculator
                     {
                         var RESOUT = resOut.ItemObject.ID; //test
                         resOut.Amount += resOut.AmountIn * mech.Coefficient;
+                        result.Time += mech.ItemObject.Item.Time * mech.Coefficient;
+                        result.Energy.Record(mech.ItemObject.Item.EU, mech.ItemObject.Item.Energy * mech.Coefficient);
 
                         if (resOut.Amount > 0)
                         {

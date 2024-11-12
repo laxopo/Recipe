@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculator\ContainerVO.cs" />
+    <Compile Include="Calculator\Energy.cs" />
+    <Compile Include="Calculator\Result.cs" />
     <Compile Include="FormAboutBox.cs">
       <SubType>Form</SubType>
     </Compile>

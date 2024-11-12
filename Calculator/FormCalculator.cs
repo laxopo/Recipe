@@ -13,6 +13,7 @@ namespace Recipe
     public partial class FormCalculator : Form
     {
         private int scLarge, scSmall;
+        private Calculator.Result result;
 
         public FormCalculator()
         {
@@ -32,6 +33,9 @@ namespace Recipe
             panelOutputsContainer.Controls.Clear();
             panelInputsContainer.Top = 0;
             panelOutputsContainer.Top = 0;
+            labelTime.Text = "Time:";
+            listBoxEnergy.Items.Clear();
+            result = null;
         }
 
         private void UpdateData()
@@ -59,6 +63,8 @@ namespace Recipe
                 return;
             }
 
+            labelTime.Text = "Time:";
+            listBoxEnergy.Items.Clear();
             var tree = Calculator.CEngine.Forest[listBoxTrees.SelectedIndex];
 
             Calculator.CEngine.GenerateVOs(tree);
@@ -74,8 +80,8 @@ namespace Recipe
 
             var tree = Calculator.CEngine.Forest[listBoxTrees.SelectedIndex];
 
-            Calculator.CEngine.Calculate(tree, radioButtonCalcOut.Checked);
-
+            result = Calculator.CEngine.Calculate(tree, radioButtonCalcOut.Checked);
+            ShowResult();
         }
 
         private void radioButtonCalcIn_CheckedChanged(object sender, EventArgs e)
@@ -177,6 +183,24 @@ namespace Recipe
         private void vScrollBarOutputs_ValueChanged(object sender, EventArgs e)
         {
             panelOutputsContainer.Top = vScrollBarOutputs.Minimum - vScrollBarOutputs.Value;
+        }
+
+        //Others
+        private void checkBoxPerItem_CheckedChanged(object sender, EventArgs e)
+        {
+            if (result == null)
+            {
+                return;
+            }
+
+            ShowResult();
+        }
+
+        private void ShowResult()
+        {
+            labelTime.Text = "Time: " + result.GetTime(checkBoxPerItem.Checked) + "s";
+            listBoxEnergy.Items.Clear();
+            listBoxEnergy.Items.AddRange(result.GetEnergyList(checkBoxPerItem.Checked));
         }
     }
 }

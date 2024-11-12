@@ -14,7 +14,7 @@ namespace Recipe.Library
         public ItemType Type { get; set; }
         public int Energy { get; set; }
         public string EU { get; set; }
-        public int Time { get; set; }
+        public double Time { get; set; }
         
         public enum ItemType
         {
