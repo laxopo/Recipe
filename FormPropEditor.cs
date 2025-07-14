@@ -256,6 +256,34 @@ namespace Recipe
             comboBoxTypes.Text = Enum.GetName(typeof(Library.Item.ItemType), type);
             comboBoxTypes.SelectedIndexChanged += new EventHandler(comboBoxTypes_SelectedIndexChanged);
 
+            if (type == Library.Item.ItemType.Mechanism)
+            {
+                groupBoxQuantity.Visible = false;
+                groupBoxIO.Visible = false;
+                groupBoxMechProps.Visible = true;
+                CurrentIObj.Public = false;
+                checkBoxPublic.Checked = false;
+
+                textBoxEnergy.Text = CurrentIObj.Item.Energy.ToString();
+                textBoxTime.Text = CurrentIObj.Item.Time.ToString();
+                comboBoxEU.Text = CurrentIObj.Item.EU;
+            }
+            else
+            {
+                groupBoxMechProps.Visible = false;
+                groupBoxQuantity.Visible = true;
+                groupBoxIO.Visible = true;
+            }
+        }
+
+        private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var type = (Library.Item.ItemType)comboBoxTypes.SelectedIndex;
+            if (type == CurrentIObj.Item.Type)
+            {
+                return;
+            }
+
             if (type == Library.Item.ItemType.Fluid)
             {
                 CurrentIObj.QuantityIn *= 1000;
@@ -276,38 +304,10 @@ namespace Recipe
                 }
             }
 
-            if (type == Library.Item.ItemType.Mechanism)
-            {
-                groupBoxQuantity.Visible = false;
-                groupBoxIO.Visible = false;
-                groupBoxMechProps.Visible = true;
-                CurrentIObj.Public = false;
-                checkBoxPublic.Checked = false;
-
-                textBoxEnergy.Text = CurrentIObj.Item.Energy.ToString();
-                textBoxTime.Text = CurrentIObj.Item.Time.ToString();
-                comboBoxEU.Text = CurrentIObj.Item.EU;
-            }
-            else
-            {
-                groupBoxMechProps.Visible = false;
-                groupBoxQuantity.Visible = true;
-                groupBoxIO.Visible = true;
-
-                GBoxQuantityUpdate(true);
-                GBoxExternalUpdate(true);
-            }
-        }
-
-        private void comboBoxTypes_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var type = (Library.Item.ItemType)comboBoxTypes.SelectedIndex;
-            if (type == CurrentIObj.Item.Type)
-            {
-                return;
-            }
-
             CurrentIObj.Item.Type = type;
+
+            GBoxQuantityUpdate(true);
+            GBoxExternalUpdate(true);
 
             Editor.VisualObject.Constructor.ItemTypeStyleUpdate(CurrentIObj);
         }
